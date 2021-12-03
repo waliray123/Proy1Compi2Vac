@@ -1,20 +1,55 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Compilador Prueba</title>
     <link href="css/estilo1.css" rel="stylesheet" type="text/css">
+    <link rel="stylesheet" href="css/multiPest.css">
 </head>
 
 <body>
-
-    <h1> Compilador </h1>
-
-    <button>Abrir Archivo</button>
-    <button>Guardar Archivo</button>
-    
+    <nav>
+        <a href="#">
+            <h1>Compilador</h1>
+        </a>
+        <div>
+            <ul class="nav-ul">
+                <li class="nav-li">
+                    <a href="" class="nav-link">
+                        <input type="file" name="file-input" id="file-input" class="nav-file">
+                        Abrir Archivo
+                    </a>
+                </li>
+                <li class="nav-li">
+                    <a href=""  class="nav-link" id="dwn-btn">
+                        Guardar Archivo
+                    </a>
+                </li>
+                <li class="nav-li">
+                    <button class="nav-link nav-btn" onclick="javascript:addTab()">
+                        Agregar Nueva Pestaña
+                    </button>
+                </li>
+                <li class="nav-li">
+                    <a href=""  class="nav-link">
+                        Generacion de Reportes
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
     <div id="contenedor-secciones">
-
+        <div class="t-container">
+            <ul class="t-tabs" id="tabs">
+                <li class="t-tab">Pestaña 1</li>              
+            </ul>
+            <ul class="t-contents" id="tabs-cont">
+                <textarea class="t-content" name="contenido" id="contenido"></textarea>             
+            </ul>      
+        </div>  
     </div>
 
     <div id="contenedor-consola">
@@ -24,7 +59,8 @@
     <div id="contenedor-reportes">
         
     </div>
-
+    <script src="js/funBasicas.js"></script>
+    <script src="js/multiPest.js"></script>
 </body>
 
 </html>
