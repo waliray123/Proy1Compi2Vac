@@ -1,0 +1,79 @@
+/*@import url('https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300&display=swap');*/
+
+/*---USO DE LAS FUENTES---*/
+/*Titillium Web: font-family: 'Titillium Web', sans-serif;*/
+
+body {
+    background-color: #201c1c;
+}
+
+h1 {
+    font-family: "Ubuntu Mono", monospace;
+    font-weight: 700;
+    font-size: 50px;
+    text-align: center;
+    color: #f3f3f3;
+}
+
+button {
+    border-radius: 5px;
+    border: none;
+    height: 25px;
+    width: 120px;
+    font-family: "Ubuntu Mono", monospace;
+    font-weight: bold;
+    color: #f3f3f3;
+    background-color: #202428;
+}
+
+button:hover {
+    background-color: #373838;
+}
+
+p {
+    font-family: "Ubuntu Mono", monospace;
+    color: #f3f3f3;
+    font-size: 20px;
+}
+
+#contenedor-secciones {
+    color: #f3f3f3;
+}
+
+#consola {
+    width: 80%;
+    background-color: #202428;
+    height: 100%;
+    margin: 0;
+    font-family: "Ubuntu Mono", monospace;
+    color: #f3f3f3;
+    font-size: 16px;
+    width: max-content;
+    outline: none;
+    resize: none;
+    margin-left: 2.5%;
+    min-width: 500px;
+    max-width: 100%;
+    min-height: 50px;
+    height: 80%;
+    width: 80%;
+    border: none;
+}
+
+.CodeMirror {
+    font-family: Arial, monospace;
+    font-size: 14px;
+}
+
+/*---COLORES DE TEXTOS---*/
+/*
+    public void private -> 
+
+    tipo : Clase, String, ->
+
+    this,return ->
+
+    variables -> #f3f3f3
+
+
+*/
