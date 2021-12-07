@@ -13,9 +13,7 @@ function leerArchivo(e){
   }
   
   function mostrarContenido(contenido) {
-      // var elemento = document.querySelector(".editor")
-      // elemento.innerHTML = contenido;
-      list_editors[index_tab_active].setValue(contenido)
+      list_editors[index_tab_active].setValue(contenido) //variables declaradas en multPest
       document.getElementById('file-input').value ='';
     }
   

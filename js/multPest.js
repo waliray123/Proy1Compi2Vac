@@ -1,4 +1,5 @@
 
+//variables usadas tambien en funBasicas.js
 var list_editors = [];
 var index_tab_active=0;
 
@@ -10,7 +11,7 @@ function editor(){
         mode: "javascript",
         lineNumbers: true,
         autoRefresh: true,
-        theme: "ayu-dark"
+        theme: "abcdef"
       });
       editor.save();
       list_editors.push(editor);
@@ -39,7 +40,7 @@ var indexTab = 1;
 function addTab(){
     indexTab += 1;
     var tabs = document.getElementById('tabs');
-    tabs.innerHTML += `<li class="tab" data-tab="${indexTab}">${indexTab+1}</li>`
+    tabs.innerHTML += `<li class="tab" data-tab="${indexTab}" id="tab-${indexTab}">${indexTab+1}</li>`
     var tabs_editors = document.getElementById('tab-editors');
     tabs_editors.innerHTML += `<div class="tab-pane" data-pane="${indexTab}"><textarea class="editor" id="editor-${indexTab}">// here is the ${indexTab+1}</textarea></div>`
     CreateEditor(`editor-${indexTab}`);
@@ -53,14 +54,16 @@ function CreateEditor(name){
         mode: "javascript",
         lineNumbers: true,
         autoRefresh: true,
-        theme: "ayu-dark"
+        theme: "abcdef"
       });
       editor.save();
       list_editors.push(editor);
 }
 
 function autoRefresh(){
-  list_editors.forEach(function(elemento, indice, array) {
-    elemento.refresh();
+  list_editors.forEach(function(editor, indice, array) {
+    // editor.setOption("viewportMargin", Infinity)
+    editor.refresh()
+    console.log(indice)
   })
 }
