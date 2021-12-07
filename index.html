@@ -11,6 +11,7 @@
     <script src="ts/Objeto.js"></script>
 
     <script src="jison/Gramatica.js"></script>
+    <link rel="stylesheet" href="css/multPest.css">
 </head>
 
 <body>
@@ -19,10 +20,25 @@
 
     <button>Abrir Archivo</button>
     <button>Guardar Archivo</button>
-    <button onclick="ejecutar();">Ejecutar</button>
+    <button onclick="addTab()" >Agregar Pestaña</button>
+    
+    <div id="contenedor-secciones" >
+        <div class="tabs-container">
+            <ul class="tabs" id="tabs">
+              <li class="tab active" data-tab="0">1</li>
+              <li class="tab" data-tab="1">2</li>
+            </ul>
+            <div id="tab-editors">
+                <div class="tab-pane active" data-pane="0">
+                    <textarea  id="textareaEditor" class="editor">// here is the first one</textarea>
+                  </div>
+                  <div class="tab-pane" data-pane="1">
+                    <textarea class="editor">// here is the second one 
+                  </textarea>
+                  </div>
+            </div>           
 
-    <div id="contenedor-secciones">
-        <textarea id="textareaEditor" class="codemirror-textarea"></textarea>
+          </div>
     </div>
 
     <p>Consola</p>
@@ -33,13 +49,12 @@
     <div id="contenedor-reportes">
 
     </div>
-
-
+    
     <script src="js/jquery-3.6.0.min.js"></script>
     <script src="plugins/codemirror-5.64.0/lib/codemirror.js"></script>
     <script src="js/confCodeMirror.js"></script>
-
-
+    <script src="js/funBasicas.js"></script>
+    <script src="js/multPest.js"></script>
     <script src="js/EjecutarCodigo.js"></script>
 </body>
 
