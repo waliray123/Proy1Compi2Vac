@@ -13,8 +13,13 @@
 
     <h1> Compilador </h1>
 
-    <button>Abrir Archivo</button>
-    <button>Guardar Archivo</button>
+
+    <div class="open-file">
+      <input type="file" name="file-input" id="file-input">
+      <button>Abrir Archivo</button>
+    </div>
+
+    <button id="dwn-btn">Guardar Archivo</button>
     <button onclick="addTab()" >Agregar Pestaña</button>
     
     <div id="contenedor-secciones" >
@@ -25,10 +30,10 @@
             </ul>
             <div id="tab-editors">
                 <div class="tab-pane active" data-pane="0">
-                    <textarea class="editor">// here is the first one</textarea>
+                    <textarea class="editor" id="editor-0">// here is the first one</textarea>
                   </div>
                   <div class="tab-pane" data-pane="1">
-                    <textarea class="editor">// here is the second one 
+                    <textarea class="editor" id="editor-1">// here is the second one 
                   </textarea>
                   </div>
             </div>           
@@ -47,8 +52,8 @@
     <script src="js/jquery-3.6.0.min.js"></script>
     <script src="plugins/codemirror-5.64.0/lib/codemirror.js"></script>
     <script src="js/confCodeMirror.js"></script>
-    <script src="js/funBasicas.js"></script>
     <script src="js/multPest.js"></script>
+    <script src="js/funBasicas.js"></script>
 </body>
 
 </html>
