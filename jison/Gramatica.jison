@@ -41,6 +41,7 @@ BSL               "\\".
 "do"                  	return 'STR_DO';
 "for"                 	return 'STR_FOR';
 "break"               	return 'BREAK';
+"continue"              return 'CONTINUE';
 "switch"              	return 'STR_SWITCH';
 "case"                	return 'STR_CASE';
 "default"             	return 'STR_DEFAULT';
@@ -81,12 +82,6 @@ BSL               "\\".
 "toUppercase"           return 'UPPERCASE';
 "toLowercase"           return 'LOWERCASE';
 
-/*---PALABRAS DE FUNCIONES---*/
-"ordenamiento"          return 'ORDENAMIENTO';
-"imprimirLista"         return 'IMPRIMIRLISTA';
-"nuevaLinea"            return 'NUEVALINEA';
-
-
 
 
 /*---OPERADORES BASICOS---*/
@@ -97,10 +92,7 @@ BSL               "\\".
 ">"                   	return 'OP_MAY';
 "!="                  	return 'OP_DIF';
 "||"                  	return 'OP_OR';
-"|"                   	return 'OP_INCLOR';
-"^"                   	return 'OP_XOR';
 "&&"                  	return 'OP_AND';
-"&"                   	return 'OP_INCLAND';
 "!"                   	return 'OP_NEG';
 "="                   	return 'OP_IGUAL';
 "+="                  	return 'OP_MASIG';
@@ -116,13 +108,14 @@ BSL               "\\".
 "/"                   	return 'OP_DIVI';
 "%"                   	return 'OP_MOD';
 "."						return 'OP_CALL';
+"^"						return 'OP_ELV';
 "?"						return 'OP_TER';
 "#"						return 'OP_HASH';
 "null"                	return 'STR_NULL';
 //"~"                   	return 'OPERATOR_BITWISE_NEGATION';
 
 /*---EXPRESIONES REGULARES---*/
-[A-Z][a-zA-Z0-9_]*   	return 'ID_CLASE';
+[A-Z][a-zA-Z0-9_]*   	return 'ID_VAR';
 
 [a-zA-Z][a-zA-Z0-9_]*   return 'ID_VAR';
 
@@ -140,7 +133,18 @@ BSL               "\\".
 %start ini
 
 %{
+    //const {ErrorCom} = require(['../ts/ErrorCom']);
+    
+
     /*---CODIGO INCRUSTADO---*/
+    var errores = [
+        "Se esperaba una instruccion como : "
+    ];
+
+    function genError(desc,linea,columna,val){
+        let errorCom = new ErrorCom("Sintactico",linea,columna,errores[desc],val);
+        return errorCom;
+    }
 %}
 
 %% /* Definición de la gramática */
@@ -148,6 +152,59 @@ BSL               "\\".
 ini 
     : EOF
     {
+        $$.push("aaa");
         console.log("EOF encontrado");
+        return $$;
     }    
+    | instrucciones EOF
+    {
+        $$ = $1;     
+        return $$;   
+    }
+;
+
+
+instrucciones
+    : instruccion instrucciones
+    {
+        $2.push($1);
+        $$ = $2;               
+    }
+    | instruccion
+    {        
+        $$ = [$1];
+    }
+    | error instrucciones
+    {                
+        $2.push([new ErrorCom("Sintactico",@1.first_line,@1.last_column,$1)]);
+        $$ = $2;
+    }
+    | error 
+    {             
+        $$ = [new ErrorCom("Sintactico",@1.first_line,@1.last_column,$1)];
+    }
+;
+
+instruccion 
+    : declaracion_bloque
+    {
+        $$ = new Objeto("Declaracion",@1.first_line,@1.last_column,[]);
+    }
+;
+
+declaracion_bloque
+    : tiposVar nombreVars PUNTCOMA
+;
+
+tiposVar 
+    : STR_STRING
+    | STR_DOUBLE
+    | STR_INTEGER
+    | STR_BOOLEAN
+    | STR_CHAR    
+;
+
+nombreVars 
+    : ID_VAR
+    | ID_VAR COMA nombreVars
 ;
