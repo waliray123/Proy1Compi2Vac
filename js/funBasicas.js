@@ -13,8 +13,8 @@ function leerArchivo(e){
   }
   
   function mostrarContenido(contenido) {
-      var elemento = document.querySelector(".t-content.selected")
-      elemento.innerHTML = contenido;
+      list_editors[index_tab_active].setValue(contenido) //variables declaradas en multPest
+      document.getElementById('file-input').value ='';
     }
   
     document.getElementById('file-input')
@@ -39,7 +39,7 @@ function leerArchivo(e){
   // Start file download.
   document.getElementById("dwn-btn").addEventListener("click", function(){
       // Generate download of hello.txt file with some content
-      var text = document.querySelector(".t-content.selected").value;
+      var text = list_editors[index_tab_active].getValue();
       //var filename = "hello.txt";
       var filename = prompt('Ingrese el nombre del archivo')
       if (filename!= null){
