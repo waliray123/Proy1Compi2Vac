@@ -1,5 +1,5 @@
 function ejecutar(){
-    let codigo = editor.getValue();    
+    let codigo = list_editors[index_tab_active].getValue();    
     console.log(codigo);
     var erroresCom = [];
     var objetos = Gramatica.parse(codigo);
