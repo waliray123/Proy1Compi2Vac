@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Operacion = exports.Operador = void 0;
 var Tipo_1 = require("../AST/Tipo");
 var Operador;
 (function (Operador) {
