@@ -3,8 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "dependencies": {},
-  "devDependencies": {},
+  "dependencies": {
+    "tsify": "^5.0.4"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -18,5 +19,8 @@
   "bugs": {
     "url": "https://github.com/waliray123/Proy1Compi2Vac/issues"
   },
-  "homepage": "https://github.com/waliray123/Proy1Compi2Vac#readme"
+  "homepage": "https://github.com/waliray123/Proy1Compi2Vac#readme",
+  "devDependencies": {
+    "@types/node": "^16.11.12"
+  }
 }
