@@ -2,7 +2,7 @@ import { AST } from "./AST/AST";
 import { Entorno } from "./AST/Entorno";
 import { Instruccion } from "./Interfaces/Instruccion";
 
-const gramatica = require('./Gramatica/gramatica');
+const gramatica = require('../jison/Gramatica');
 
 function ejecutarCodigo(entrada:string){
     //traigo todas las raices
@@ -14,3 +14,6 @@ function ejecutarCodigo(entrada:string){
         element.ejecutar(entornoGlobal,ast);
     })
 }
+
+ejecutarCodigo(`int id12;
+int var2;`)
