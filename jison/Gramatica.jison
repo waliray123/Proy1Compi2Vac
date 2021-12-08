@@ -140,6 +140,7 @@ BSL               "\\".
     //const {ErrorCom} = require(['../ts/ErrorCom']);
     /*---CLASES IMPORTADAS---*/
     const {Print} = require("../dist/Instrucciones/Print");
+    const {Declaracion} = require("../dist/Instrucciones/Declaracion");
     const {Primitivo} = require("../dist/Expresiones/Primitivo");
     const {Operacion, Operador} = require("../dist/Expresiones/Operacion");
     const {Objeto} = require("../dist/Expresiones/Objeto");
@@ -217,6 +218,7 @@ declaracion_bloque
     : tiposVar nombreVars PUNTCOMA 
     { 
         //$$ = new Declaracion("Declaracion",@1.first_line,@1.last_column,$1,$2);
+        $$ =  new Declaracion($2,$1,@1.first_line,@1.last_column);
     }
     | tiposVar nombreVars asignacion PUNTCOMA 
 ;

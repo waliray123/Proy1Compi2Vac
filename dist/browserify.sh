@@ -1,0 +1,1 @@
+browserify .\Ejecutar.js .\AST\AST.js .\AST\Entorno.js .\AST\Simbolo.js .\AST\Tipo.js .\Expresiones\Atributo.js .\Expresiones\Objeto.js .\Expresiones\Operacion.js .\Expresiones\Primitivo.js .\Interfaces\Expresion.js .\Interfaces\Instruccion.js ..\jison\Gramatica.js .\Instrucciones\Declaracion.js .\Instrucciones\Print.js -o bundle.js

@@ -125,6 +125,7 @@ break;
 case 8:
  
         //this.$ = new Declaracion("Declaracion",_$[$0-2].first_line,_$[$0-2].last_column,$$[$0-2],$$[$0-1]);
+        this.$ =  new Declaracion($$[$0-1],$$[$0-2],_$[$0-2].first_line,_$[$0-2].last_column);
     
 break;
 case 10:
@@ -403,6 +404,7 @@ _handle_error:
     //const {ErrorCom} = require(['../ts/ErrorCom']);
     /*---CLASES IMPORTADAS---*/
     const {Print} = require("../dist/Instrucciones/Print");
+    const {Declaracion} = require("../dist/Instrucciones/Declaracion");
     const {Primitivo} = require("../dist/Expresiones/Primitivo");
     const {Operacion, Operador} = require("../dist/Expresiones/Operacion");
     const {Objeto} = require("../dist/Expresiones/Objeto");
