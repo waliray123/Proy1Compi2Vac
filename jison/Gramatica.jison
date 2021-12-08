@@ -93,6 +93,7 @@ BSL               "\\".
 "!="                  	return 'OP_DIF';
 "||"                  	return 'OP_OR';
 "&&"                  	return 'OP_AND';
+"&"                  	return 'OP_AMP';
 "!"                   	return 'OP_NEG';
 "="                   	return 'OP_IGUAL';
 "+="                  	return 'OP_MASIG';
@@ -124,6 +125,9 @@ BSL               "\\".
 "\"\""                	return 'STRINGL';
 "\""([^"]|{BSL})*"\"" 	return 'STRINGL';
 
+"\'"([^']|{BSL})*"\'" 	return 'CHARL';
+"\'""\'" 	            return 'CHARL';
+
 
 <<EOF>>               return 'EOF';
 .                     return 'INVALID';
@@ -134,7 +138,12 @@ BSL               "\\".
 
 %{
     //const {ErrorCom} = require(['../ts/ErrorCom']);
-    
+    /*---CLASES IMPORTADAS---*/
+    const {Print} = require("../dist/Instrucciones/Print");
+    const {Primitivo} = require("../dist/Expresiones/Primitivo");
+    const {Operacion, Operador} = require("../dist/Expresiones/Operacion");
+    const {Objeto} = require("../dist/Expresiones/Objeto");
+    const {Atributo} = require("../dist/Expresiones/Atributo");
 
     /*---CODIGO INCRUSTADO---*/
     var errores = [
@@ -142,17 +151,29 @@ BSL               "\\".
     ];
 
     function genError(desc,linea,columna,val){
-        let errorCom = new ErrorCom("Sintactico",linea,columna,errores[desc],val);
+        //let errorCom = new ErrorCom("Sintactico",linea,columna,errores[desc],val);
         return errorCom;
     }
 %}
+
+/*---DEFINICION DE PRESEDENCIA DE OPERADORES---*/
+
+%left 'OP_OR'
+%left 'OP_AND'
+%left 'OP_MEN' 'OP_MENIG' 'OP_MAY' 'OP_MAYIG' 'OP_IGUAL' 'OP_DOBIG'
+%left 'OP_SUMA' 'OP_RESTA'
+%left 'OP_MULT' 'OP_DIVI' 'OP_MOD'
+%left 'OP_ELV'
+%left 'OP_NEG'
+%left  UMINUS
+
+%left 'PARI' 'PARD'
 
 %% /* Definición de la gramática */
 
 ini 
     : EOF
-    {
-        $$.push("aaa");
+    {        
         console.log("EOF encontrado");
         return $$;
     }    
@@ -176,35 +197,92 @@ instrucciones
     }
     | error instrucciones
     {                
-        $2.push([new ErrorCom("Sintactico",@1.first_line,@1.last_column,$1)]);
+        //$2.push([new ErrorCom("Sintactico",@1.first_line,@1.last_column,$1)]);
         $$ = $2;
     }
     | error 
     {             
-        $$ = [new ErrorCom("Sintactico",@1.first_line,@1.last_column,$1)];
+        //$$ = [new ErrorCom("Sintactico",@1.first_line,@1.last_column,$1)];
     }
 ;
 
 instruccion 
     : declaracion_bloque
     {
-        $$ = new Objeto("Declaracion",@1.first_line,@1.last_column,[]);
-    }
+        $$ = $1;
+    }    
 ;
 
 declaracion_bloque
-    : tiposVar nombreVars PUNTCOMA
+    : tiposVar nombreVars PUNTCOMA 
+    { 
+        //$$ = new Declaracion("Declaracion",@1.first_line,@1.last_column,$1,$2);
+    }
+    | tiposVar nombreVars asignacion PUNTCOMA 
 ;
 
 tiposVar 
-    : STR_STRING
-    | STR_DOUBLE
-    | STR_INTEGER
-    | STR_BOOLEAN
-    | STR_CHAR    
+    : STR_STRING    {$$ = "STRING"}
+    | STR_DOUBLE    {$$ = "DOUBLE"}
+    | STR_INTEGER   {$$ = "INTEGER"}
+    | STR_BOOLEAN   {$$ = "BOOLEAN"}
+    | STR_CHAR      {$$ = "CHAR"}
 ;
 
 nombreVars 
-    : ID_VAR
-    | ID_VAR COMA nombreVars
+    : ID_VAR {$$ = [$1];}
+    | ID_VAR COMA nombreVars { $3.push($1);$$ = $3;}
 ;
+
+asignacion
+    : OP_IGUAL expresion
+;
+
+expresion
+    : logico1
+;
+
+logico1
+    : logico2 OP_OR logico1
+    | logico2
+;
+
+logico2
+    : logico3 OP_AND logico2
+    | logico3
+;
+
+logico3
+    : OP_NEG relacional1
+;
+
+relacional1
+    : operador1 OP_DOBIG relacional1
+    | operador1 OP_DIF relacional1
+    | operador1 OP_MAYIG relacional1
+    | operador1 OP_MENIG relacional1
+    | operador1 OP_MEN relacional1
+    | operador1 OP_MAY relacional1
+    | operador1
+;
+
+operador1
+    : elementoExpr OP_MULT operador1
+    | elementoExpr OP_DIVI operador1
+    | elementoExpr OP_SUMA operador1
+    | elementoExpr OP_RESTA operador1
+    | elementoExpr OP_AMP operador1
+    | elementoExpr OP_ELV operador1
+    | elementoExpr OP_MOD operador1
+;
+
+elementoExpr
+    : STR_FALSE
+    | STR_TRUE
+    | ENTERO
+    | FLOTANTE
+    | STRINGL
+    | PARI expresion PARD
+;
+
+
