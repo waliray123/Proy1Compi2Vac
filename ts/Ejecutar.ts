@@ -4,7 +4,11 @@ import { Instruccion } from "./Interfaces/Instruccion";
 
 const gramatica = require('../jison/Gramatica');
 
-function ejecutarCodigo(entrada:string){
+declare global {
+    interface Window { ejecutarCodigo: any; }
+}
+
+window.ejecutarCodigo = function (entrada:string){
     //traigo todas las raices
     const instrucciones = gramatica.parse(entrada);
     const ast:AST = new AST(instrucciones);
@@ -15,5 +19,5 @@ function ejecutarCodigo(entrada:string){
     })
 }
 
-ejecutarCodigo(`int id12;
-int var2;`)
+// ejecutarCodigo(`int id12;
+// int var2;`)
