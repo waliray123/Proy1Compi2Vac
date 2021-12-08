@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var AST_1 = require("./AST/AST");
 var Entorno_1 = require("./AST/Entorno");
 var gramatica = require('../jison/Gramatica');
-function ejecutarCodigo(entrada) {
+window.ejecutarCodigo = function (entrada) {
     //traigo todas las raices
     var instrucciones = gramatica.parse(entrada);
     var ast = new AST_1.AST(instrucciones);
@@ -12,5 +12,6 @@ function ejecutarCodigo(entrada) {
     instrucciones.forEach(function (element) {
         element.ejecutar(entornoGlobal, ast);
     });
-}
-ejecutarCodigo("int id12;\nint var2;");
+};
+// ejecutarCodigo(`int id12;
+// int var2;`)
