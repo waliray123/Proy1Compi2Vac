@@ -141,7 +141,7 @@ BSL               "\\".
     //const {ErrorCom} = require(['../ts/ErrorCom']);
     /*---CLASES IMPORTADAS---*/
     const {Print} = require("../dist/Instrucciones/Print");
-    const {Declaracion} = require("../dist/Instrucciones/Declaracion");
+    const {Declaracion} = require("../dist/Instrucciones/Declaracion");    
     const {Asignacion} = require("../dist/Instrucciones/Asignacion");
     const {Funcion} = require("../dist/Instrucciones/Funcion");
     const {Parametro} = require("../dist/Instrucciones/Parametro");
@@ -218,8 +218,8 @@ instruccion
 ;
 
 asignacion_funcion
-    : VOID MAIN PARI PARD cuerpoFuncion      {$$ = new Funcion("main","void",@1.first_line,@1.first_column,$5);}
-    | tiposVar ID_VAR PARI parametros_funcion PARD cuerpoFuncion {$$ = new Funcion($2,$1,@1.first_line,@1.first_column,$6,$4);}
+    : VOID MAIN PARI PARD cuerpoFuncion                             {$$ = new Funcion("main","void",@1.first_line,@1.first_column,$5);}
+    | tiposVar ID_VAR PARI parametros_funcion PARD cuerpoFuncion    {$$ = new Funcion($2,$1,@1.first_line,@1.first_column,$6,$4);}
 ;
 
 parametros_funcion
@@ -234,32 +234,21 @@ parametro_funcion
 
 cuerpoFuncion
     : BRACKI instrucciones_funciones BRACKD {$$ = $2;}
+    | BRACKI BRACKD {$$ = null;}
 ;
 
 instrucciones_funciones
-    : instruccion_funcion instrucciones_funciones
-    {        
-        $2.push($1);
-        $$ = $2;
-    }
-    | instruccion_funcion
-    {                
-        $$ = [$1];
-    }
-    | error instrucciones_funciones
-    {                
-        //$2.push([new ErrorCom("Sintactico",@1.first_line,@1.last_column,$1)]);
-        $$ = $2;
-    }
+    : instruccion_funcion instrucciones_funciones   {$2.push($1);$$ = $2;}
+    | instruccion_funcion                           {$$ = [$1];}
+    | error instrucciones_funciones                 {$$ = $2;}
     | error 
-    {             
-        //$$ = [new ErrorCom("Sintactico",@1.first_line,@1.last_column,$1)];
-    }
 ;
 
 instruccion_funcion
     : declaracion_bloque    {$$ = $1;} //TODO: FALTA AGREGAR EL IF, SWITCH, DEMAS...
     | asignacion_bloque     {$$ = $1;}
+    | print_bloque          {$$ = $1;}
+    | if_bloque             {$$ = $1;}
 ;
 
 declaracion_bloque
@@ -269,6 +258,28 @@ declaracion_bloque
 
 asignacion_bloque
     : nombreVars asignacion PUNTCOMA {$$ = new Asignacion($1,@1.first_line,@1.first_column,$2);}
+;
+
+print_bloque
+    : PRINT PARI expresion PARD PUNTCOMA        {$$ = new Print($3,@1.first_line,@1.first_column,false);}
+    | PRINTLN PARI expresion PARD PUNTCOMA      {$$ = new Print($3,@1.first_line,@1.first_column,true);}
+;
+
+if_bloque
+    : STR_IF PARI expresion PARD cuerpoFuncion sinos_bloque
+    | STR_IF PARI expresion PARD instruccion_funcion 
+;
+
+instruccion_devuelta
+    : instruccion_funcion {$$ = [$1]}
+;
+
+sinos_bloque
+    : STR_ELSE cuerpoFuncion
+    | STR_ELSE instruccion_devuelta
+    | STR_ELSEIF PARI expresion PARD cuerpoFuncion sinos_bloque
+    | STR_ELSEIF PARI expresion PARD instruccion_devuelta 
+    |
 ;
 
 tiposVar 

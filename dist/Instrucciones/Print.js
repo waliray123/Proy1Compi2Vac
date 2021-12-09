@@ -2,10 +2,11 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 // print("hola mundo");
 var Print = /** @class */ (function () {
-    function Print(exp, linea, columna) {
+    function Print(exp, linea, columna, haysalto) {
         this.expresion = exp;
         this.linea = linea;
         this.columna = columna;
+        this.haysalto = haysalto;
     }
     Print.prototype.traducir = function (ent, arbol) {
         throw new Error("Method not implemented.");
