@@ -3,18 +3,14 @@ import { Entorno } from "../AST/Entorno";
 import { Expresion } from "../Interfaces/Expresion";
 import { Instruccion } from "../Interfaces/Instruccion";
 
-// print("hola mundo");
-
-export class Declaracion implements Instruccion{
+export class Asignacion implements Instruccion{
     linea: number;
     columna: number;
     public id:Array<String>;
     public expresion:Expresion;
-    public tipo:String;
 
-    constructor(id:Array<String>,tipo:String, linea:number, columna:number,expresion:any=null){
+    constructor(id:Array<String>, linea:number, columna:number,expresion:Expresion){
         this.id = id;
-        this.tipo = tipo;
         this.expresion = expresion;
         this.linea = linea;
         this.columna = columna;

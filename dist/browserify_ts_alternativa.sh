@@ -1,1 +1,2 @@
-browserify ..\ts\Ejecutar.ts -p [ tsify --noImplicitAny] > bundle.js
+#!/bin/bash
+browserify ../ts/Ejecutar.ts -p [ tsify --noImplicitAny] > bundle.js

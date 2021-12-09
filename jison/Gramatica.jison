@@ -34,6 +34,7 @@ BSL               "\\".
 "print"  				return "PRINT";
 
 "void"                	return 'VOID';
+"main"                	return 'MAIN';
 "if"                  	return 'STR_IF';
 "elseif"                return 'STR_ELSEIF';
 "else"                	return 'STR_ELSE';
@@ -141,6 +142,9 @@ BSL               "\\".
     /*---CLASES IMPORTADAS---*/
     const {Print} = require("../dist/Instrucciones/Print");
     const {Declaracion} = require("../dist/Instrucciones/Declaracion");
+    const {Asignacion} = require("../dist/Instrucciones/Asignacion");
+    const {Funcion} = require("../dist/Instrucciones/Funcion");
+    const {Parametro} = require("../dist/Instrucciones/Parametro");
     const {Primitivo} = require("../dist/Expresiones/Primitivo");
     const {Operacion, Operador} = require("../dist/Expresiones/Operacion");
     const {Objeto} = require("../dist/Expresiones/Objeto");
@@ -161,8 +165,8 @@ BSL               "\\".
 
 %left 'OP_OR'
 %left 'OP_AND'
-%left 'OP_MEN' 'OP_MENIG' 'OP_MAY' 'OP_MAYIG' 'OP_IGUAL' 'OP_DOBIG'
-%left 'OP_SUMA' 'OP_RESTA'
+%left 'OP_MEN' 'OP_MENIG' 'OP_MAY' 'OP_MAYIG' 'OP_IGUAL' 'OP_DOBIG' 'OP_DIF'
+%left 'OP_SUMA' 'OP_RESTA' 'OP_AMP'
 %left 'OP_MULT' 'OP_DIVI' 'OP_MOD'
 %left 'OP_ELV'
 %left 'OP_NEG'
@@ -190,7 +194,7 @@ instrucciones
     : instruccion instrucciones
     {
         $2.push($1);
-        $$ = $2;               
+        $$ = $2;
     }
     | instruccion
     {        
@@ -208,27 +212,71 @@ instrucciones
 ;
 
 instruccion 
-    : declaracion_bloque
-    {
-        $$ = $1;
-    }    
+    : declaracion_bloque    {$$ = $1;}
+    | asignacion_bloque     {$$ = $1;}    
+    | asignacion_funcion    {$$ = $1;}
+;
+
+asignacion_funcion
+    : VOID MAIN PARI PARD cuerpoFuncion      {$$ = new Funcion("main","void",@1.first_line,@1.first_column,$5);}
+    | tiposVar ID_VAR PARI parametros_funcion PARD cuerpoFuncion {$$ = new Funcion($2,$1,@1.first_line,@1.first_column,$6,$4);}
+;
+
+parametros_funcion
+    :   parametro_funcion COMA parametros_funcion   {$3.push($1);$$ = $3;}
+    |   parametro_funcion                           {$$ = [$1];}
+    |   {$$ = [];}
+;
+
+parametro_funcion
+    : tiposVar ID_VAR {$$ = new Parametro($2,$1,@1.first_line,@1.first_column);}
+;
+
+cuerpoFuncion
+    : BRACKI instrucciones_funciones BRACKD {$$ = $2;}
+;
+
+instrucciones_funciones
+    : instruccion_funcion instrucciones_funciones
+    {        
+        $2.push($1);
+        $$ = $2;
+    }
+    | instruccion_funcion
+    {                
+        $$ = [$1];
+    }
+    | error instrucciones_funciones
+    {                
+        //$2.push([new ErrorCom("Sintactico",@1.first_line,@1.last_column,$1)]);
+        $$ = $2;
+    }
+    | error 
+    {             
+        //$$ = [new ErrorCom("Sintactico",@1.first_line,@1.last_column,$1)];
+    }
+;
+
+instruccion_funcion
+    : declaracion_bloque    {$$ = $1;} //TODO: FALTA AGREGAR EL IF, SWITCH, DEMAS...
+    | asignacion_bloque     {$$ = $1;}
 ;
 
 declaracion_bloque
-    : tiposVar nombreVars PUNTCOMA 
-    { 
-        //$$ = new Declaracion("Declaracion",@1.first_line,@1.last_column,$1,$2);
-        $$ =  new Declaracion($2,$1,@1.first_line,@1.last_column);
-    }
-    | tiposVar nombreVars asignacion PUNTCOMA 
+    : tiposVar nombreVars PUNTCOMA              {$$ = new Declaracion($2,$1,@1.first_line,@1.first_column);}
+    | tiposVar nombreVars asignacion PUNTCOMA   {$$ = new Declaracion($2,$1,@1.first_line,@1.first_column,$3);}
+;
+
+asignacion_bloque
+    : nombreVars asignacion PUNTCOMA {$$ = new Asignacion($1,@1.first_line,@1.first_column,$2);}
 ;
 
 tiposVar 
-    : STR_STRING    {$$ = "STRING"}
-    | STR_DOUBLE    {$$ = "DOUBLE"}
-    | STR_INTEGER   {$$ = "INTEGER"}
-    | STR_BOOLEAN   {$$ = "BOOLEAN"}
-    | STR_CHAR      {$$ = "CHAR"}
+    : STR_STRING    {$$ = "STRING";}
+    | STR_DOUBLE    {$$ = "DOUBLE";}
+    | STR_INTEGER   {$$ = "INTEGER";}
+    | STR_BOOLEAN   {$$ = "BOOLEAN";}
+    | STR_CHAR      {$$ = "CHAR";}
 ;
 
 nombreVars 
@@ -237,54 +285,48 @@ nombreVars
 ;
 
 asignacion
-    : OP_IGUAL expresion
+    : OP_IGUAL expresion {$$ = $2;}
 ;
 
 expresion
-    : logico1
+    : primitivas    {$$ = $1;}
+    | logicas       {$$ = $1;}
+    | operadores    {$$ = $1;}
+    | relacionales  {$$ = $1;}
 ;
 
-logico1
-    : logico2 OP_OR logico1
-    | logico2
+logicas
+    : expresion OP_AND expresion    {$$ = new Operacion($1,$3,Operador.AND, @1.first_line, @1.first_column);}
+    | expresion OP_OR expresion     {$$ = new Operacion($1,$3,Operador.OR, @1.first_line, @1.first_column);}
 ;
 
-logico2
-    : logico3 OP_AND logico2
-    | logico3
+relacionales
+    : expresion OP_DOBIG expresion  {$$ = new Operacion($1,$3,Operador.IGUAL_IGUAL, @1.first_line, @1.first_column);}
+    | expresion OP_DIF expresion    {$$ = new Operacion($1,$3,Operador.DIFERENTE_QUE, @1.first_line, @1.first_column);}
+    | expresion OP_MAYIG expresion  {$$ = new Operacion($1,$3,Operador.MAYOR_IGUA_QUE, @1.first_line, @1.first_column);}
+    | expresion OP_MENIG expresion  {$$ = new Operacion($1,$3,Operador.MENOR_IGUA_QUE, @1.first_line, @1.first_column);}
+    | expresion OP_MEN expresion    {$$ = new Operacion($1,$3,Operador.MENOR_QUE, @1.first_line, @1.first_column);}
+    | expresion OP_MAY expresion    {$$ = new Operacion($1,$3,Operador.MAYOR_QUE, @1.first_line, @1.first_column);}
 ;
 
-logico3
-    : OP_NEG relacional1
+operadores
+    : expresion OP_MULT expresion   {$$ = new Operacion($1,$3,Operador.MULTIPLICACION, @1.first_line, @1.first_column);}
+    | expresion OP_DIVI expresion   {$$ = new Operacion($1,$3,Operador.DIVISION, @1.first_line, @1.first_column);}
+    | expresion OP_SUMA expresion   {$$ = new Operacion($1,$3,Operador.SUMA, @1.first_line, @1.first_column);}
+    | expresion OP_RESTA expresion  {$$ = new Operacion($1,$3,Operador.RESTA, @1.first_line, @1.first_column);}
+    | expresion OP_AMP expresion    {$$ = new Operacion($1,$3,Operador.AMPERSON, @1.first_line, @1.first_column);}
+    | expresion OP_ELV expresion    {$$ = new Operacion($1,$3,Operador.ELEVADO, @1.first_line, @1.first_column);}
+    | expresion OP_MOD expresion    {$$ = new Operacion($1,$3,Operador.MODULO, @1.first_line, @1.first_column);}
+    | PARI expresion PARD           {$$ = $2;}
+    | OP_RESTA expresion %prec UMINUS   {$$ = new Operacion($1,$3,Operador.MENOS_UNARIO, @1.first_line, @1.first_column);}
 ;
 
-relacional1
-    : operador1 OP_DOBIG relacional1
-    | operador1 OP_DIF relacional1
-    | operador1 OP_MAYIG relacional1
-    | operador1 OP_MENIG relacional1
-    | operador1 OP_MEN relacional1
-    | operador1 OP_MAY relacional1
-    | operador1
-;
-
-operador1
-    : elementoExpr OP_MULT operador1
-    | elementoExpr OP_DIVI operador1
-    | elementoExpr OP_SUMA operador1
-    | elementoExpr OP_RESTA operador1
-    | elementoExpr OP_AMP operador1
-    | elementoExpr OP_ELV operador1
-    | elementoExpr OP_MOD operador1
-;
-
-elementoExpr
-    : STR_FALSE
-    | STR_TRUE
-    | ENTERO
-    | FLOTANTE
-    | STRINGL
-    | PARI expresion PARD
+primitivas
+    : STR_FALSE             {$$ = new Primitivo(false, @1.first_line, @1.first_column);}
+    | STR_TRUE              {$$ = new Primitivo(true, @1.first_line, @1.first_column);}
+    | ENTERO                {$$ = new Primitivo(Number($1), @1.first_line, @1.first_column);}
+    | FLOTANTE              {$$ = new Primitivo(Number($1), @1.first_line, @1.first_column);}
+    | STRINGL               {$$ = new Primitivo($1, @1.first_line, @1.first_column);}
 ;
 
 
