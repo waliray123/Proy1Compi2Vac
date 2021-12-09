@@ -144,6 +144,7 @@ BSL               "\\".
     const {Declaracion} = require("../dist/Instrucciones/Declaracion");
     const {Asignacion} = require("../dist/Instrucciones/Asignacion");
     const {Funcion} = require("../dist/Instrucciones/Funcion");
+    const {Struct} = require("../dist/Instrucciones/Struct");
     const {Parametro} = require("../dist/Instrucciones/Parametro");
     const {Primitivo} = require("../dist/Expresiones/Primitivo");
     const {Operacion, Operador} = require("../dist/Expresiones/Operacion");
@@ -191,30 +192,51 @@ ini
 
 
 instrucciones
-    : instruccion instrucciones
+    : instrucciones instruccion 
     {
-        $2.push($1);
-        $$ = $2;
+        $1.push($2);
+        $$ = $1;
     }
     | instruccion
     {        
         $$ = [$1];
     }
-    | error instrucciones
-    {                
-        //$2.push([new ErrorCom("Sintactico",@1.first_line,@1.last_column,$1)]);
-        $$ = $2;
-    }
-    | error 
-    {             
-        //$$ = [new ErrorCom("Sintactico",@1.first_line,@1.last_column,$1)];
-    }
+    // | error instrucciones
+    // {                
+    //     //$2.push([new ErrorCom("Sintactico",@1.first_line,@1.last_column,$1)]);
+    //     $$ = $2;
+    // }
+    // | error 
+    // {             
+    //     //$$ = [new ErrorCom("Sintactico",@1.first_line,@1.last_column,$1)];
+    // }
 ;
 
 instruccion 
     : declaracion_bloque    {$$ = $1;}
     | asignacion_bloque     {$$ = $1;}    
     | asignacion_funcion    {$$ = $1;}
+    | struct_declaracion    {$$ = $1;}
+    | error                 {}
+;
+
+struct_declaracion 
+    : STR_STRUCT ID_VAR cuerpo_struct {$$ = new Struct($2,$3,@1.first_line,@1.first_column); }
+;
+
+cuerpo_struct 
+    : BRACKI BRACKD PUNTCOMA      {$$ = []; }
+    | BRACKI contenido_struct BRACKD PUNTCOMA {$$ = $2;}
+;
+
+contenido_struct 
+    : declaracion_struct                            {$$ = [$1];}
+    | declaracion_struct COMA contenido_struct      {$3.push($1); $$= $3; }
+;
+
+declaracion_struct
+    : tiposVar ID_VAR       {$$ = new Declaracion($2,$1,@1.first_line,@1.first_column);}
+    | ID_VAR ID_VAR         {$$ = new Declaracion($2,$1,@1.first_line,@1.first_column);}
 ;
 
 asignacion_funcion
