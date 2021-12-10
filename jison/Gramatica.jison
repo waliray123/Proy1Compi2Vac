@@ -144,12 +144,14 @@ BSL               "\\".
     const {Print} = require("../dist/Instrucciones/Print");
     const {Declaracion} = require("../dist/Instrucciones/Declaracion");    
     const {Asignacion} = require("../dist/Instrucciones/Asignacion");
+    const {While} = require("../dist/Instrucciones/While");
     const {Funcion} = require("../dist/Instrucciones/Funcion");
     const {Struct} = require("../dist/Instrucciones/Struct");
     const {Parametro} = require("../dist/Instrucciones/Parametro");
     const {For} = require("../dist/Instrucciones/For");
     const {Forin} = require("../dist/Instrucciones/Forin");
     const {Primitivo} = require("../dist/Expresiones/Primitivo");
+    const {ArrbegEnd} = require("../dist/Expresiones/ArrbegEnd");
     const {Operacion, Operador} = require("../dist/Expresiones/Operacion");
     const {Objeto} = require("../dist/Expresiones/Objeto");
     const {Atributo} = require("../dist/Expresiones/Atributo");
@@ -252,6 +254,7 @@ instruccion_funcion
     | print_bloque          {$$ = $1;}
     | if_bloque             {$$ = $1;}
     | for_bloque            {$$ = $1;}
+    | while_bloque          {$$ = $1;}
 ;
 
 declaracion_bloque
@@ -290,6 +293,10 @@ for_bloque
     | STR_FOR ID_VAR STR_IN ID_VAR cuerpoFuncion                                            {$$ = new Forin(@1.first_line,@1.first_column,$5,$2,$4);}
     | STR_FOR ID_VAR STR_IN arr_decl cuerpoFuncion                                          {$$ = new Forin(@1.first_line,@1.first_column,$5,$2,$4);}
     | STR_FOR ID_VAR STR_IN arr_begin_end cuerpoFuncion                                     {$$ = new Forin(@1.first_line,@1.first_column,$5,$2,$4);}
+;
+
+while_bloque
+    : STR_WHILE PARI expresion PARD cuerpoFuncion       {$$ = new While(@1.first_line,@1.first_column,$5,$3);}
 ;
 
 decl_asign
