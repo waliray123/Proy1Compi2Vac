@@ -147,6 +147,10 @@ BSL               "\\".
     const {While} = require("../dist/Instrucciones/While");
     const {Funcion} = require("../dist/Instrucciones/Funcion");
     const {Struct} = require("../dist/Instrucciones/Struct");
+    const {Switch} = require("../dist/Instrucciones/Switch");
+    const {SwitchCaso} = require("../dist/Instrucciones/SwitchCaso");
+    const {Break} = require("../dist/Instrucciones/Break");
+    const {Continue} = require("../dist/Instrucciones/Continue");
     const {Parametro} = require("../dist/Instrucciones/Parametro");
     const {For} = require("../dist/Instrucciones/For");
     const {Forin} = require("../dist/Instrucciones/Forin");
@@ -174,7 +178,7 @@ BSL               "\\".
 %left 'OP_MEN' 'OP_MENIG' 'OP_MAY' 'OP_MAYIG' 'OP_IGUAL' 'OP_DOBIG' 'OP_DIF'
 %left 'OP_SUMA' 'OP_RESTA' 'OP_AMP'
 %left 'OP_MULT' 'OP_DIVI' 'OP_MOD'
-%left 'OP_ELV'
+%left 'OP_ELV' 'OP_TER'
 %left 'OP_NEG'
 %left  UMINUS
 
@@ -242,10 +246,24 @@ cuerpoFuncion
 ;
 
 instrucciones_funciones
-    : instruccion_funcion instrucciones_funciones   {$2.push($1);$$ = $2;}
-    | instruccion_funcion                           {$$ = [$1];}
-    | error instrucciones_funciones                 {$$ = $2;}
-    | error 
+    : instrucciones_funciones instruccion_funcion
+    {        
+        $1.push($2);
+        $$ = $1;
+    }
+    | instruccion_funcion
+    {                
+        $$ = [$1];
+    }
+    // | error instrucciones_funciones
+    // {                
+    //     //$2.push([new ErrorCom("Sintactico",@1.first_line,@1.last_column,$1)]);
+    //     $$ = [$2];
+    // }
+    // | error 
+    // {             
+    //     //$$ = [new ErrorCom("Sintactico",@1.first_line,@1.last_column,$1)];
+    // }
 ;
 
 instruccion_funcion
@@ -255,6 +273,61 @@ instruccion_funcion
     | if_bloque             {$$ = $1;}
     | for_bloque            {$$ = $1;}
     | while_bloque          {$$ = $1;}
+    | switch_bloque          {$$ = $1;}
+;
+
+switch_bloque
+    : STR_SWITCH PARI expresion PARD switch_cuerpo      {$$ = new Switch($3,$5,@1.first_line,@1.first_column);}
+    |error
+;
+ 
+switch_cuerpo
+    : BRACKI BRACKD     {$$= [];}
+    | BRACKI casos_switch opcional_default BRACKD   
+        {
+            if ($3 != null){
+                $2.push($3);
+            }
+            $$ = $2;
+        }
+;
+
+casos_switch
+    : casos_switch caso_switch    {$1.push($2); $$ = $1;}       
+    | caso_switch                 {$$ = [$1];}
+;
+
+caso_switch
+    : STR_CASE ID_VAR DOSPUNT contenido_caso        {let temp = new SwitchCaso($2,$4,@1.first_line,@1.first_column); $$ = [temp] }
+;
+
+contenido_caso
+    : instrucciones_funciones opcional_break        
+        {
+            if ($2 != null){
+                $1.push($2);
+            }
+            $$ = $1;
+        }
+    | opcional_break                                
+        {
+            if ($1 == null){
+                $$ = [];
+            }else{
+                $$ = [$1];
+            }
+        }
+;
+
+opcional_default
+    : STR_DEFAULT DOSPUNT contenido_caso            {$$ = new SwitchCaso('DEFAULT',$3,@1.first_line,@1.first_column);}
+    |                                               {$$ = null;}
+;
+
+opcional_break
+    : BREAK PUNTCOMA            {$$ = new Break(@1.first_line,@1.first_column);}
+    | CONTINUE PUNTCOMA         {$$ = new Continue(@1.first_line,@1.first_column);}
+    |                           {$$ = null;}
 ;
 
 declaracion_bloque
@@ -340,11 +413,16 @@ asignacion
 ;
 
 expresion
-    : primitivas    {$$ = $1;}
-    | logicas       {$$ = $1;}
-    | operadores    {$$ = $1;}
-    | relacionales  {$$ = $1;}
-    | incr_decr     {$$ = $1;}
+    : primitivas            {$$ = $1;}
+    | logicas               {$$ = $1;}
+    | operadores            {$$ = $1;}
+    | relacionales          {$$ = $1;}
+    | expresion_ternario    {$$ = $1;}
+    | incr_decr             {$$ = $1;}
+;
+
+expresion_ternario
+    : expresion OP_TER expresion DOSPUNT expresion          {}
 ;
 
 logicas
