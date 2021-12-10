@@ -1,16 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Tipo_1 = require("../AST/Tipo");
-var Primitivo = /** @class */ (function () {
-    function Primitivo(valor, linea, columna) {
+var ArrbegEnd = /** @class */ (function () {
+    function ArrbegEnd(id, linea, columna, expresion1, expresion2) {
         this.linea = linea;
         this.columna = columna;
-        this.valor = valor;
+        this.id = id;
+        this.expresion1 = expresion1;
+        this.expresion2 = expresion2;
     }
-    Primitivo.prototype.traducir = function (ent, arbol) {
+    ArrbegEnd.prototype.traducir = function (ent, arbol) {
         throw new Error("Method not implemented.");
     };
-    Primitivo.prototype.getTipo = function (ent, arbol) {
+    ArrbegEnd.prototype.getTipo = function (ent, arbol) {
         var valor = this.getValorImplicito(ent, arbol);
         if (typeof (valor) === 'boolean') {
             return Tipo_1.Tipo.BOOL;
@@ -29,12 +31,12 @@ var Primitivo = /** @class */ (function () {
         }
         return Tipo_1.Tipo.VOID;
     };
-    Primitivo.prototype.getValorImplicito = function (ent, arbol) {
-        return this.valor;
+    ArrbegEnd.prototype.getValorImplicito = function (ent, arbol) {
+        return this.id;
     };
-    Primitivo.prototype.isInt = function (n) {
+    ArrbegEnd.prototype.isInt = function (n) {
         return Number(n) === n && n % 1 === 0;
     };
-    return Primitivo;
+    return ArrbegEnd;
 }());
-exports.Primitivo = Primitivo;
+exports.ArrbegEnd = ArrbegEnd;

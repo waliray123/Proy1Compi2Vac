@@ -9,11 +9,13 @@ export class Print implements Instruccion{
     linea: number;
     columna: number;
     public expresion:Expresion;
+    public haysalto:boolean;
 
-    constructor(exp:Expresion, linea:number, columna:number){
+    constructor(exp:Expresion, linea:number, columna:number,haysalto:boolean){
         this.expresion = exp;
         this.linea = linea;
         this.columna = columna;
+        this.haysalto = haysalto;
     }
 
     traducir(ent: Entorno, arbol: AST) {

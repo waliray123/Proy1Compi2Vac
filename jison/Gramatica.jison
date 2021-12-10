@@ -58,6 +58,7 @@ BSL               "\\".
 "begin"              	return 'STR_BEGIN';
 "end"              	    return 'STR_END';
 "function"              return 'STR_FUNCTION';
+"in"                 	return 'STR_IN';
 
 
 /*---PALABRAS FUNCIONES NATIVAS---*/
@@ -141,8 +142,9 @@ BSL               "\\".
     //const {ErrorCom} = require(['../ts/ErrorCom']);
     /*---CLASES IMPORTADAS---*/
     const {Print} = require("../dist/Instrucciones/Print");
-    const {Declaracion} = require("../dist/Instrucciones/Declaracion");
+    const {Declaracion} = require("../dist/Instrucciones/Declaracion");    
     const {Asignacion} = require("../dist/Instrucciones/Asignacion");
+    const {While} = require("../dist/Instrucciones/While");
     const {Funcion} = require("../dist/Instrucciones/Funcion");
     const {Struct} = require("../dist/Instrucciones/Struct");
     const {Switch} = require("../dist/Instrucciones/Switch");
@@ -150,7 +152,10 @@ BSL               "\\".
     const {Break} = require("../dist/Instrucciones/Break");
     const {Continue} = require("../dist/Instrucciones/Continue");
     const {Parametro} = require("../dist/Instrucciones/Parametro");
+    const {For} = require("../dist/Instrucciones/For");
+    const {Forin} = require("../dist/Instrucciones/Forin");
     const {Primitivo} = require("../dist/Expresiones/Primitivo");
+    const {ArrbegEnd} = require("../dist/Expresiones/ArrbegEnd");
     const {Operacion, Operador} = require("../dist/Expresiones/Operacion");
     const {Objeto} = require("../dist/Expresiones/Objeto");
     const {Atributo} = require("../dist/Expresiones/Atributo");
@@ -178,42 +183,19 @@ BSL               "\\".
 %left  UMINUS
 
 %left 'PARI' 'PARD'
+%right 'OP_INCR' 'OP_DECR'
 
 %% /* Definición de la gramática */
 
 ini 
-    : EOF
-    {        
-        console.log("EOF encontrado");
-        return $$;
-    }    
-    | instrucciones EOF
-    {
-        $$ = $1;     
-        return $$;   
-    }
+    : EOF                   {console.log("EOF encontrado");return [];}    
+    | instrucciones EOF     {$$ = $1;return $$;}
 ;
 
 
 instrucciones
-    : instrucciones instruccion 
-    {
-        $1.push($2);
-        $$ = $1;
-    }
-    | instruccion
-    {        
-        $$ = [$1];
-    }
-    // | error instrucciones
-    // {                
-    //     //$2.push([new ErrorCom("Sintactico",@1.first_line,@1.last_column,$1)]);
-    //     $$ = $2;
-    // }
-    // | error 
-    // {             
-    //     //$$ = [new ErrorCom("Sintactico",@1.first_line,@1.last_column,$1)];
-    // }
+    : instrucciones instruccion {$1.push($2); $$ = $1;}
+    | instruccion               {$$ = [$1];}
 ;
 
 instruccion 
@@ -244,8 +226,8 @@ declaracion_struct
 ;
 
 asignacion_funcion
-    : VOID MAIN PARI PARD cuerpoFuncion      {$$ = new Funcion("main","void",@1.first_line,@1.first_column,$5);}
-    | tiposVar ID_VAR PARI parametros_funcion PARD cuerpoFuncion {$$ = new Funcion($2,$1,@1.first_line,@1.first_column,$6,$4);}
+    : VOID MAIN PARI PARD cuerpoFuncion                             {$$ = new Funcion("main","void",@1.first_line,@1.first_column,$5);}
+    | tiposVar ID_VAR PARI parametros_funcion PARD cuerpoFuncion    {$$ = new Funcion($2,$1,@1.first_line,@1.first_column,$6,$4);}
 ;
 
 parametros_funcion
@@ -260,6 +242,7 @@ parametro_funcion
 
 cuerpoFuncion
     : BRACKI instrucciones_funciones BRACKD {$$ = $2;}
+    | BRACKI BRACKD {$$ = null;}
 ;
 
 instrucciones_funciones
@@ -286,6 +269,10 @@ instrucciones_funciones
 instruccion_funcion
     : declaracion_bloque    {$$ = $1;} //TODO: FALTA AGREGAR EL IF, SWITCH, DEMAS...
     | asignacion_bloque     {$$ = $1;}
+    | print_bloque          {$$ = $1;}
+    | if_bloque             {$$ = $1;}
+    | for_bloque            {$$ = $1;}
+    | while_bloque          {$$ = $1;}
     | switch_bloque          {$$ = $1;}
 ;
 
@@ -352,6 +339,62 @@ asignacion_bloque
     : nombreVars asignacion PUNTCOMA {$$ = new Asignacion($1,@1.first_line,@1.first_column,$2);}
 ;
 
+print_bloque
+    : PRINT PARI expresion PARD PUNTCOMA        {$$ = new Print($3,@1.first_line,@1.first_column,false);}
+    | PRINTLN PARI expresion PARD PUNTCOMA      {$$ = new Print($3,@1.first_line,@1.first_column,true);}
+;
+
+if_bloque
+    : STR_IF PARI expresion PARD cuerpoFuncion sinos_bloque
+    | STR_IF PARI expresion PARD instruccion_funcion 
+;
+
+instruccion_devuelta
+    : instruccion_funcion {$$ = [$1]}
+;
+
+sinos_bloque
+    : STR_ELSE cuerpoFuncion
+    | STR_ELSE instruccion_devuelta
+    | STR_ELSEIF PARI expresion PARD cuerpoFuncion sinos_bloque
+    | STR_ELSEIF PARI expresion PARD instruccion_devuelta 
+    |
+;
+
+for_bloque
+    : STR_FOR PARI decl_asign PUNTCOMA expresion PUNTCOMA expresion PARD cuerpoFuncion      {$$ = new For(@1.first_line,@1.first_column,$9,$3,$5,$7);}
+    | STR_FOR ID_VAR STR_IN ID_VAR cuerpoFuncion                                            {$$ = new Forin(@1.first_line,@1.first_column,$5,$2,$4);}
+    | STR_FOR ID_VAR STR_IN arr_decl cuerpoFuncion                                          {$$ = new Forin(@1.first_line,@1.first_column,$5,$2,$4);}
+    | STR_FOR ID_VAR STR_IN arr_begin_end cuerpoFuncion                                     {$$ = new Forin(@1.first_line,@1.first_column,$5,$2,$4);}
+;
+
+while_bloque
+    : STR_WHILE PARI expresion PARD cuerpoFuncion       {$$ = new While(@1.first_line,@1.first_column,$5,$3);}
+;
+
+decl_asign
+    : tiposVar nombreVars asignacion    {$$ = new Declaracion($2,$1,@1.first_line,@1.first_column,$3);}
+    | nombreVars asignacion             {$$ = new Asignacion($1,@1.first_line,@1.first_column,$2);}
+;
+
+
+arr_decl
+    : CORCHI parametros_arreglo CORCHD {$$ = $2}
+;
+
+parametros_arreglo
+    : expresion                         {$$ = [$1]}
+    | expresion COMA parametros_arreglo {$2.push($1);$$ = $2;}
+;
+
+arr_begin_end
+    : ID_VAR CORCHI expresion DOSPUNT expresion CORCHD  {$$ = new ArrbegEnd($1,@1.first_line,@1.first_column,$3,$5);}
+    | ID_VAR CORCHI STR_BEGIN DOSPUNT expresion CORCHD  {let beg = new Primitivo("begin", @1.first_line, @1.first_column); $$ = new ArrbegEnd($1,@1.first_line,@1.first_column,beg,$5);}
+    | ID_VAR CORCHI STR_BEGIN DOSPUNT STR_END CORCHD    {let beg1 = new Primitivo("begin", @1.first_line, @1.first_column); let end1 = new Primitivo("end", @1.first_line, @1.first_column); $$ = new ArrbegEnd($1,@1.first_line,@1.first_column,beg1,end1);}
+    | ID_VAR CORCHI expresion DOSPUNT STR_END CORCHD    {let beg2 = new Primitivo("end", @1.first_line, @1.first_column); $$ = new ArrbegEnd($1,@1.first_line,@1.first_column,$3,beg2);}
+;
+
+
 tiposVar 
     : STR_STRING    {$$ = "STRING";}
     | STR_DOUBLE    {$$ = "DOUBLE";}
@@ -375,6 +418,7 @@ expresion
     | operadores            {$$ = $1;}
     | relacionales          {$$ = $1;}
     | expresion_ternario    {$$ = $1;}
+    | incr_decr             {$$ = $1;}
 ;
 
 expresion_ternario
@@ -407,12 +451,18 @@ operadores
     | OP_RESTA expresion %prec UMINUS   {$$ = new Operacion($1,$3,Operador.MENOS_UNARIO, @1.first_line, @1.first_column);}
 ;
 
+incr_decr
+    : expresion OP_INCR         {$$ = new Operacion($1,null,Operador.INCREMENTO, @1.first_line, @1.first_column);}
+    | expresion OP_DECR         {$$ = new Operacion($1,null,Operador.DECREMENTO, @1.first_line, @1.first_column);}
+;
+
 primitivas
     : STR_FALSE             {$$ = new Primitivo(false, @1.first_line, @1.first_column);}
     | STR_TRUE              {$$ = new Primitivo(true, @1.first_line, @1.first_column);}
     | ENTERO                {$$ = new Primitivo(Number($1), @1.first_line, @1.first_column);}
     | FLOTANTE              {$$ = new Primitivo(Number($1), @1.first_line, @1.first_column);}
     | STRINGL               {$$ = new Primitivo($1, @1.first_line, @1.first_column);}
+    | ID_VAR                {$$ = new Primitivo($1, @1.first_line, @1.first_column);}
 ;
 
 

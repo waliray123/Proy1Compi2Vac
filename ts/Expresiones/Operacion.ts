@@ -21,6 +21,8 @@ export enum Operador {
     NOT,
     MAYOR_IGUA_QUE,
     MENOR_IGUA_QUE,
+    INCREMENTO,
+    DECREMENTO,
     DESCONOCIDO
 }
 
