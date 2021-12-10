@@ -298,7 +298,7 @@ casos_switch
 ;
 
 caso_switch
-    : STR_CASE expresion DOSPUNT contenido_caso        {let temp = new SwitchCaso($2,$4,@1.first_line,@1.first_column); $$ = [temp] }
+    : STR_CASE expresion DOSPUNT contenido_caso        {$$ = new SwitchCaso($2,$4,@1.first_line,@1.first_column);}
 ;
 
 contenido_caso

@@ -160,7 +160,7 @@ case 37:
         
 break;
 case 40:
-let temp = new SwitchCaso($$[$0-2],$$[$0],_$[$0-3].first_line,_$[$0-3].first_column); this.$ = [temp] 
+this.$ = new SwitchCaso($$[$0-2],$$[$0],_$[$0-3].first_line,_$[$0-3].first_column);
 break;
 case 41:
 
