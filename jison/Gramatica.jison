@@ -151,6 +151,7 @@ BSL               "\\".
     const {SwitchCaso} = require("../dist/Instrucciones/SwitchCaso");
     const {Break} = require("../dist/Instrucciones/Break");
     const {Continue} = require("../dist/Instrucciones/Continue");
+    const {FuncionReturn} = require("../dist/Instrucciones/FuncionReturn");
     const {Parametro} = require("../dist/Instrucciones/Parametro");
     const {For} = require("../dist/Instrucciones/For");
     const {Forin} = require("../dist/Instrucciones/Forin");
@@ -273,7 +274,12 @@ instruccion_funcion
     | if_bloque             {$$ = $1;}
     | for_bloque            {$$ = $1;}
     | while_bloque          {$$ = $1;}
-    | switch_bloque          {$$ = $1;}
+    | switch_bloque         {$$ = $1;}
+    | funcion_return        {$$ = $1;}
+;
+
+funcion_return
+    : ID_VAR PARI parametros_funcion PARD PUNTCOMA      {$$ = new FuncionReturn($1,@1.first_line,@1.first_column,$3);}
 ;
 
 switch_bloque
@@ -384,7 +390,7 @@ arr_decl
 
 parametros_arreglo
     : expresion                         {$$ = [$1]}
-    | expresion COMA parametros_arreglo {$2.push($1);$$ = $2;}
+    | parametros_arreglo COMA expresion {$1.push($2);$$ = $1;}
 ;
 
 arr_begin_end
