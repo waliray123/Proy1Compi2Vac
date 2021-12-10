@@ -58,6 +58,7 @@ BSL               "\\".
 "begin"              	return 'STR_BEGIN';
 "end"              	    return 'STR_END';
 "function"              return 'STR_FUNCTION';
+"in"                 	return 'STR_IN';
 
 
 /*---PALABRAS FUNCIONES NATIVAS---*/
@@ -144,7 +145,10 @@ BSL               "\\".
     const {Declaracion} = require("../dist/Instrucciones/Declaracion");    
     const {Asignacion} = require("../dist/Instrucciones/Asignacion");
     const {Funcion} = require("../dist/Instrucciones/Funcion");
+    const {Struct} = require("../dist/Instrucciones/Struct");
     const {Parametro} = require("../dist/Instrucciones/Parametro");
+    const {For} = require("../dist/Instrucciones/For");
+    const {Forin} = require("../dist/Instrucciones/Forin");
     const {Primitivo} = require("../dist/Expresiones/Primitivo");
     const {Operacion, Operador} = require("../dist/Expresiones/Operacion");
     const {Objeto} = require("../dist/Expresiones/Objeto");
@@ -173,48 +177,46 @@ BSL               "\\".
 %left  UMINUS
 
 %left 'PARI' 'PARD'
+%right 'OP_INCR' 'OP_DECR'
 
 %% /* Definición de la gramática */
 
 ini 
-    : EOF
-    {        
-        console.log("EOF encontrado");
-        return $$;
-    }    
-    | instrucciones EOF
-    {
-        $$ = $1;     
-        return $$;   
-    }
+    : EOF                   {console.log("EOF encontrado");return [];}    
+    | instrucciones EOF     {$$ = $1;return $$;}
 ;
 
 
 instrucciones
-    : instruccion instrucciones
-    {
-        $2.push($1);
-        $$ = $2;
-    }
-    | instruccion
-    {        
-        $$ = [$1];
-    }
-    | error instrucciones
-    {                
-        //$2.push([new ErrorCom("Sintactico",@1.first_line,@1.last_column,$1)]);
-        $$ = $2;
-    }
-    | error 
-    {             
-        //$$ = [new ErrorCom("Sintactico",@1.first_line,@1.last_column,$1)];
-    }
+    : instrucciones instruccion {$1.push($2); $$ = $1;}
+    | instruccion               {$$ = [$1];}
 ;
 
 instruccion 
     : declaracion_bloque    {$$ = $1;}
     | asignacion_bloque     {$$ = $1;}    
     | asignacion_funcion    {$$ = $1;}
+    | struct_declaracion    {$$ = $1;}
+    | error                 {}
+;
+
+struct_declaracion 
+    : STR_STRUCT ID_VAR cuerpo_struct {$$ = new Struct($2,$3,@1.first_line,@1.first_column); }
+;
+
+cuerpo_struct 
+    : BRACKI BRACKD PUNTCOMA      {$$ = []; }
+    | BRACKI contenido_struct BRACKD PUNTCOMA {$$ = $2;}
+;
+
+contenido_struct 
+    : declaracion_struct                            {$$ = [$1];}
+    | declaracion_struct COMA contenido_struct      {$3.push($1); $$= $3; }
+;
+
+declaracion_struct
+    : tiposVar ID_VAR       {$$ = new Declaracion($2,$1,@1.first_line,@1.first_column);}
+    | ID_VAR ID_VAR         {$$ = new Declaracion($2,$1,@1.first_line,@1.first_column);}
 ;
 
 asignacion_funcion
@@ -249,6 +251,7 @@ instruccion_funcion
     | asignacion_bloque     {$$ = $1;}
     | print_bloque          {$$ = $1;}
     | if_bloque             {$$ = $1;}
+    | for_bloque            {$$ = $1;}
 ;
 
 declaracion_bloque
@@ -282,6 +285,36 @@ sinos_bloque
     |
 ;
 
+for_bloque
+    : STR_FOR PARI decl_asign PUNTCOMA expresion PUNTCOMA expresion PARD cuerpoFuncion      {$$ = new For(@1.first_line,@1.first_column,$9,$3,$5,$7);}
+    | STR_FOR ID_VAR STR_IN ID_VAR cuerpoFuncion                                            {$$ = new Forin(@1.first_line,@1.first_column,$5,$2,$4);}
+    | STR_FOR ID_VAR STR_IN arr_decl cuerpoFuncion                                          {$$ = new Forin(@1.first_line,@1.first_column,$5,$2,$4);}
+    | STR_FOR ID_VAR STR_IN arr_begin_end cuerpoFuncion                                     {$$ = new Forin(@1.first_line,@1.first_column,$5,$2,$4);}
+;
+
+decl_asign
+    : tiposVar nombreVars asignacion    {$$ = new Declaracion($2,$1,@1.first_line,@1.first_column,$3);}
+    | nombreVars asignacion             {$$ = new Asignacion($1,@1.first_line,@1.first_column,$2);}
+;
+
+
+arr_decl
+    : CORCHI parametros_arreglo CORCHD {$$ = $2}
+;
+
+parametros_arreglo
+    : expresion                         {$$ = [$1]}
+    | expresion COMA parametros_arreglo {$2.push($1);$$ = $2;}
+;
+
+arr_begin_end
+    : ID_VAR CORCHI expresion DOSPUNT expresion CORCHD  {$$ = new ArrbegEnd($1,@1.first_line,@1.first_column,$3,$5);}
+    | ID_VAR CORCHI STR_BEGIN DOSPUNT expresion CORCHD  {let beg = new Primitivo("begin", @1.first_line, @1.first_column); $$ = new ArrbegEnd($1,@1.first_line,@1.first_column,beg,$5);}
+    | ID_VAR CORCHI STR_BEGIN DOSPUNT STR_END CORCHD    {let beg1 = new Primitivo("begin", @1.first_line, @1.first_column); let end1 = new Primitivo("end", @1.first_line, @1.first_column); $$ = new ArrbegEnd($1,@1.first_line,@1.first_column,beg1,end1);}
+    | ID_VAR CORCHI expresion DOSPUNT STR_END CORCHD    {let beg2 = new Primitivo("end", @1.first_line, @1.first_column); $$ = new ArrbegEnd($1,@1.first_line,@1.first_column,$3,beg2);}
+;
+
+
 tiposVar 
     : STR_STRING    {$$ = "STRING";}
     | STR_DOUBLE    {$$ = "DOUBLE";}
@@ -304,6 +337,7 @@ expresion
     | logicas       {$$ = $1;}
     | operadores    {$$ = $1;}
     | relacionales  {$$ = $1;}
+    | incr_decr     {$$ = $1;}
 ;
 
 logicas
@@ -332,12 +366,18 @@ operadores
     | OP_RESTA expresion %prec UMINUS   {$$ = new Operacion($1,$3,Operador.MENOS_UNARIO, @1.first_line, @1.first_column);}
 ;
 
+incr_decr
+    : expresion OP_INCR         {$$ = new Operacion($1,null,Operador.INCREMENTO, @1.first_line, @1.first_column);}
+    | expresion OP_DECR         {$$ = new Operacion($1,null,Operador.DECREMENTO, @1.first_line, @1.first_column);}
+;
+
 primitivas
     : STR_FALSE             {$$ = new Primitivo(false, @1.first_line, @1.first_column);}
     | STR_TRUE              {$$ = new Primitivo(true, @1.first_line, @1.first_column);}
     | ENTERO                {$$ = new Primitivo(Number($1), @1.first_line, @1.first_column);}
     | FLOTANTE              {$$ = new Primitivo(Number($1), @1.first_line, @1.first_column);}
     | STRINGL               {$$ = new Primitivo($1, @1.first_line, @1.first_column);}
+    | ID_VAR                {$$ = new Primitivo($1, @1.first_line, @1.first_column);}
 ;
 
 

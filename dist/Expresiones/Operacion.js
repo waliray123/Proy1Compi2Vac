@@ -20,7 +20,9 @@ var Operador;
     Operador[Operador["NOT"] = 14] = "NOT";
     Operador[Operador["MAYOR_IGUA_QUE"] = 15] = "MAYOR_IGUA_QUE";
     Operador[Operador["MENOR_IGUA_QUE"] = 16] = "MENOR_IGUA_QUE";
-    Operador[Operador["DESCONOCIDO"] = 17] = "DESCONOCIDO";
+    Operador[Operador["INCREMENTO"] = 17] = "INCREMENTO";
+    Operador[Operador["DECREMENTO"] = 18] = "DECREMENTO";
+    Operador[Operador["DESCONOCIDO"] = 19] = "DESCONOCIDO";
 })(Operador = exports.Operador || (exports.Operador = {}));
 var Operacion = /** @class */ (function () {
     function Operacion(op_izquierda, op_derecha, operacion, linea, columna) {
