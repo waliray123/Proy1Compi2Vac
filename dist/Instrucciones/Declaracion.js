@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Declaracion = void 0;
 // print("hola mundo");
 var Declaracion = /** @class */ (function () {
     function Declaracion(id, tipo, linea, columna, expresion) {
