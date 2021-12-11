@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.DoWhile = void 0;
 var DoWhile = /** @class */ (function () {
     function DoWhile(linea, columna, instrucciones, expresion) {
         this.linea = linea;

@@ -141,6 +141,7 @@ BSL               "\\".
 %{
     //const {ErrorCom} = require(['../ts/ErrorCom']);
     /*---CLASES IMPORTADAS---*/
+    const {Tipo} = require("../dist/AST/Tipo");
     const {Print} = require("../dist/Instrucciones/Print");
     const {Declaracion} = require("../dist/Instrucciones/Declaracion");    
     const {Asignacion} = require("../dist/Instrucciones/Asignacion");
@@ -157,6 +158,7 @@ BSL               "\\".
     const {For} = require("../dist/Instrucciones/For");
     const {Forin} = require("../dist/Instrucciones/Forin");
     const {Primitivo} = require("../dist/Expresiones/Primitivo");
+    const {AccesoVariable} = require("../dist/Expresiones/AccesoVariable");
     const {ArrbegEnd} = require("../dist/Expresiones/ArrbegEnd");
     const {Operacion, Operador} = require("../dist/Expresiones/Operacion");
     const {Objeto} = require("../dist/Expresiones/Objeto");
@@ -329,7 +331,7 @@ opcional_break
 ;
 
 declaracion_bloque
-    : tiposVar nombreVars PUNTCOMA              {$$ = new Declaracion($2,$1,@1.first_line,@1.first_column);}
+    : tiposVar nombreVars PUNTCOMA              {$$ = new Declaracion($2,$1,@1.first_line,@1.first_column,null);}
     | tiposVar nombreVars asignacion PUNTCOMA   {$$ = new Declaracion($2,$1,@1.first_line,@1.first_column,$3);}
 ;
 
@@ -395,11 +397,11 @@ arr_begin_end
 
 
 tiposVar 
-    : STR_STRING    {$$ = "STRING";}
-    | STR_DOUBLE    {$$ = "DOUBLE";}
-    | STR_INTEGER   {$$ = "INTEGER";}
-    | STR_BOOLEAN   {$$ = "BOOLEAN";}
-    | STR_CHAR      {$$ = "CHAR";}
+    : STR_STRING    {$$ = Tipo.STRING;}
+    | STR_DOUBLE    {$$ = Tipo.DOUBLE;}
+    | STR_INTEGER   {$$ = Tipo.INT;}
+    | STR_BOOLEAN   {$$ = Tipo.BOOL;}
+    | STR_CHAR      {$$ = Tipo.CHAR;}
 ;
 
 nombreVars 
@@ -471,7 +473,7 @@ primitivas
     | FLOTANTE              {$$ = new Primitivo(Number($1), @1.first_line, @1.first_column);}
     | STRINGL               {$$ = new Primitivo($1, @1.first_line, @1.first_column);}
     | CHARL                 {$$ = new Primitivo($1, @1.first_line, @1.first_column);}
-    | ID_VAR                {$$ = new Primitivo($1, @1.first_line, @1.first_column);}
+    | ID_VAR                {$$ = new AccesoVariable($1, @1.first_line, @1.first_column);}
 ;
 
 
