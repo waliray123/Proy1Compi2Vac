@@ -75,7 +75,9 @@ export class Operacion implements Expresion {
     
 
     getValorImplicito(ent: Entorno, arbol: AST) {
-        if (this.operador !== Operador.MENOS_UNARIO && this.operador !== Operador.NOT){
+        if (this.operador !== Operador.MENOS_UNARIO && this.operador !== Operador.NOT
+            && this.operador != Operador.SQRT && this.operador != Operador.SIN && this.operador != Operador.COS
+            && this.operador != Operador.TAN){
             let op1 = this.op_izquierda.getValorImplicito(ent, arbol);
             let op2 = this.op_derecha.getValorImplicito(ent, arbol);
             
@@ -170,7 +172,37 @@ export class Operacion implements Expresion {
                     console.log('Error semantico, No se puede completar la accion ^ en la linea '+ this.linea + ' y columna ' + this.columna);
                 }
             }
-
+            else if(this.operador == Operador.MAYOR_QUE){                
+                return op1 > op2;
+            }
+            else if(this.operador == Operador.MENOR_QUE){                
+                return op1 < op2;
+            }
+            else if(this.operador == Operador.MAYOR_IGUA_QUE){                
+                return op1 >= op2;
+            }
+            else if(this.operador == Operador.MENOR_IGUA_QUE){                
+                return op1 <= op2;
+            }
+            else if(this.operador == Operador.IGUAL_IGUAL){                
+                return op1 == op2;
+            }
+            else if(this.operador == Operador.DIFERENTE_QUE){                
+                return op1 != op2;
+            }
+            else if(this.operador == Operador.OR){                
+                return op1 || op2;
+            }
+            else if(this.operador == Operador.AND){                
+                return op1 && op2;
+            }
+            else if(this.operador == Operador.POW){
+                if (typeof(op1==="number") && typeof(op2==="number")){
+                    return Math.pow(op1, op2);
+                }else{
+                    console.log("Error de tipos de datos no permitidos realizando una potencia");
+                }                
+            }
         }else{
             let op1 = this.op_izquierda.getValorImplicito(ent, arbol);
             if (this.operador == Operador.MENOS_UNARIO)
@@ -183,6 +215,39 @@ export class Operacion implements Expresion {
                 {
                     console.log("Error de tipos de datos no permitidos realizando una operación unaria");
                     return null;
+                }
+            }
+            else if (this.operador == Operador.NOT)
+            {
+                //No se si esta bien
+                return !op1;               
+            }            
+            else if(this.operador == Operador.SIN){
+                if (typeof(op1==="number")){
+                    return Math.sin(op1);
+                }else{
+                    console.log("Error de tipos de datos no permitidos realizando una operacion seno");
+                }
+            }
+            else if(this.operador == Operador.COS){
+                if (typeof(op1==="number")){
+                    return Math.sin(op1);
+                }else{
+                    console.log("Error de tipos de datos no permitidos realizando una operacion coseno");
+                }
+            }
+            else if(this.operador == Operador.TAN){
+                if (typeof(op1==="number")){
+                    return Math.cos(op1);
+                }else{
+                    console.log("Error de tipos de datos no permitidos realizando una operacion tangente");
+                }
+            }
+            else if(this.operador == Operador.SQRT){
+                if (typeof(op1==="number")){
+                    return Math.sqrt(op1);
+                }else{
+                    console.log("Error de tipos de datos no permitidos realizando una raiz");
                 }
             }
         }

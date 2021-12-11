@@ -463,7 +463,8 @@ operadores
     | expresion OP_ELV expresion    {$$ = new Operacion($1,$3,Operador.ELEVADO, @1.first_line, @1.first_column);}
     | expresion OP_MOD expresion    {$$ = new Operacion($1,$3,Operador.MODULO, @1.first_line, @1.first_column);}
     | PARI expresion PARD           {$$ = $2;}
-    | OP_RESTA expresion %prec UMINUS   {$$ = new Operacion($2,null,Operador.MENOS_UNARIO, @1.first_line, @1.first_column);}
+    | OP_RESTA expresion %prec UMINUS   {$$ = new Operacion($1,$3,Operador.MENOS_UNARIO, @1.first_line, @1.first_column);}
+    | OP_NEG expresion              {$$ = new Operacion($1,$3,Operador.NOT, @1.first_line, @1.first_column);}
 ;
 
 incr_decr
@@ -472,11 +473,11 @@ incr_decr
 ;
 
 nativas
-    : STR_POW PARI primitivas PARD  {$$ = new Operacion($3,null,Operador.POW, @1.first_line, @1.first_column);}
-    | STR_SQRT PARI primitivas PARD {$$ = new Operacion($3,null,Operador.SQRT, @1.first_line, @1.first_column);}
-    | STR_SIN PARI primitivas PARD  {$$ = new Operacion($3,null,Operador.SIN, @1.first_line, @1.first_column);}
-    | STR_COS PARI primitivas PARD  {$$ = new Operacion($3,null,Operador.COS, @1.first_line, @1.first_column);}
-    | STR_TAN PARI primitivas PARD  {$$ = new Operacion($3,null,Operador.TAN, @1.first_line, @1.first_column);}
+    : STR_POW PARI expresion COMA expresion PARD  {$$ = new Operacion($3,$5,Operador.POW, @1.first_line, @1.first_column);}
+    | STR_SQRT PARI expresion PARD {$$ = new Operacion($3,null,Operador.SQRT, @1.first_line, @1.first_column);}
+    | STR_SIN PARI expresion PARD  {$$ = new Operacion($3,null,Operador.SIN, @1.first_line, @1.first_column);}
+    | STR_COS PARI expresion PARD  {$$ = new Operacion($3,null,Operador.COS, @1.first_line, @1.first_column);}
+    | STR_TAN PARI expresion PARD  {$$ = new Operacion($3,null,Operador.TAN, @1.first_line, @1.first_column);}
 ;
 
 primitivas

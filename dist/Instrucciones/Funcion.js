@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Funcion = void 0;
 var AST_1 = require("../AST/AST");
 var Entorno_1 = require("../AST/Entorno");
 var Funcion = /** @class */ (function () {
