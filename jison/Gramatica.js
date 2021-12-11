@@ -309,7 +309,7 @@ case 108:
 this.$ = new Operacion($$[$0-2],$$[$0],Operador.MODULO, _$[$0-2].first_line, _$[$0-2].first_column);
 break;
 case 110:
-this.$ = new Operacion($$[$0-1],$$[$01],Operador.MENOS_UNARIO, _$[$0-1].first_line, _$[$0-1].first_column);
+this.$ = new Operacion($$[$0],null,Operador.MENOS_UNARIO, _$[$0-1].first_line, _$[$0-1].first_column);
 break;
 case 111:
 this.$ = new Operacion($$[$0-1],null,Operador.INCREMENTO, _$[$0-1].first_line, _$[$0-1].first_column);
@@ -1143,9 +1143,9 @@ case 89:return 109;
 break;
 case 90:return 108;
 break;
-case 91:return 110;
+case 91:yy_.yytext = yy_.yytext.slice(1,-1); return 110;
 break;
-case 92:return 110;
+case 92:yy_.yytext = yy_.yytext.slice(1,-1); return 110;
 break;
 case 93:return 111;
 break;
