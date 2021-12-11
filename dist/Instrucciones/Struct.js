@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Struct = void 0;
 // print("hola mundo");
 var Struct = /** @class */ (function () {
     function Struct(id, lista_atributos, linea, columna) {
