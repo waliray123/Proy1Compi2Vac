@@ -143,7 +143,8 @@ BSL               "\\".
     /*---CLASES IMPORTADAS---*/
     const {Tipo} = require("../dist/AST/Tipo");
     const {Print} = require("../dist/Instrucciones/Print");
-    const {Declaracion} = require("../dist/Instrucciones/Declaracion");    
+    const {Declaracion} = require("../dist/Instrucciones/Declaracion");
+    const {DeclaracionArray} = require("../dist/Instrucciones/DeclaracionArray");
     const {Asignacion} = require("../dist/Instrucciones/Asignacion");
     const {While} = require("../dist/Instrucciones/While");
     const {DoWhile} = require("../dist/Instrucciones/DoWhile");
@@ -177,7 +178,7 @@ BSL               "\\".
 
 /*---DEFINICION DE PRESEDENCIA DE OPERADORES---*/
 
-%left 'OP_OR'
+%left 'OP_OR' 'COMA'
 %left 'OP_AND'
 %left 'OP_MEN' 'OP_MENIG' 'OP_MAY' 'OP_MAYIG' 'OP_IGUAL' 'OP_DOBIG' 'OP_DIF'
 %left 'OP_SUMA' 'OP_RESTA' 'OP_AMP'
@@ -186,7 +187,7 @@ BSL               "\\".
 %left 'OP_NEG'
 %left  UMINUS
 
-%left 'PARI' 'PARD'
+%left 'PARI' 'PARD' 'CORCHI' 'CORCHD'
 %right 'OP_INCR' 'OP_DECR'
 
 %% /* Definición de la gramática */
@@ -333,6 +334,12 @@ opcional_break
 declaracion_bloque
     : tiposVar nombreVars PUNTCOMA              {$$ = new Declaracion($2,$1,@1.first_line,@1.first_column,null);}
     | tiposVar nombreVars asignacion PUNTCOMA   {$$ = new Declaracion($2,$1,@1.first_line,@1.first_column,$3);}
+    | declaracion_arreglo                       {$$ = $1;}
+;
+
+declaracion_arreglo
+    : tiposVar arr_decl nombreVars PUNTCOMA                 {$$ = new DeclaracionArray($3,$1,$2,@1.first_line,@1.first_column,null);}
+    | tiposVar arr_decl nombreVars asignacion PUNTCOMA      {$$ = new DeclaracionArray($3,$1,$2,@1.first_line,@1.first_column,$4);}
 ;
 
 asignacion_bloque
@@ -381,11 +388,16 @@ decl_asign
 
 arr_decl
     : CORCHI parametros_arreglo CORCHD {$$ = $2}
+    | CORCHI CORCHD {$$ = [];}
 ;
 
 parametros_arreglo
-    : expresion                         {$$ = [$1]}
-    | parametros_arreglo COMA expresion {$1.push($2);$$ = $1;}
+    : expresion_arreglo                         {$$ = [$1]}
+    | parametros_arreglo COMA parametros_arreglo  {$1.push($3);$$ = $1;}
+;
+
+expresion_arreglo
+    : expresion         {$$ = $1;}
 ;
 
 arr_begin_end
@@ -406,7 +418,7 @@ tiposVar
 
 nombreVars 
     : ID_VAR {$$ = [$1];}
-    | ID_VAR COMA nombreVars { $3.push($1);$$ = $3;}
+    | nombreVars COMA ID_VAR  { $1.push($3);$$ = $1;}
 ;
 
 asignacion
@@ -421,6 +433,7 @@ expresion
     | expresion_ternario    {$$ = $1;}
     | incr_decr             {$$ = $1;}
     | nativas               {$$ = $1;}
+    | arr_decl              {$$ = $1;}
 ;
 
 expresion_ternario
