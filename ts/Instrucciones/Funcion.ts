@@ -2,16 +2,17 @@ import { AST } from "../AST/AST";
 import { Entorno } from "../AST/Entorno";
 import { Instruccion } from "../Interfaces/Instruccion";
 import { Parametro } from "../Instrucciones/Parametro";
+import { Tipo } from "../AST/Tipo";
 
 export class Funcion implements Instruccion{
     linea: number;
     columna: number;
     public nombrefuncion:String;
     public instrucciones:Array<Instruccion>;
-    public tipoFuncion:String;
+    public tipoFuncion:Tipo;
     public parametros:Array<Parametro>;
 
-    constructor(nombrefuncion:String, tipoFuncion:String,linea:number, columna:number,instrucciones:Array<Instruccion>,parametros:Array<Parametro>=[]){
+    constructor(nombrefuncion:String, tipoFuncion:Tipo,linea:number, columna:number,instrucciones:Array<Instruccion>,parametros:Array<Parametro>=[]){
         this.nombrefuncion = nombrefuncion;
         this.linea = linea;
         this.columna = columna;

@@ -192,7 +192,7 @@ case 48:
 this.$ = new Continue(_$[$0-1].first_line,_$[$0-1].first_column);
 break;
 case 50:
-this.$ = new Declaracion($$[$0-1],$$[$0-2],_$[$0-2].first_line,_$[$0-2].first_column);
+this.$ = new Declaracion($$[$0-1],$$[$0-2],_$[$0-2].first_line,_$[$0-2].first_column,null);
 break;
 case 51:
 this.$ = new Declaracion($$[$0-2],$$[$0-3],_$[$0-3].first_line,_$[$0-3].first_column,$$[$0-1]);
@@ -246,19 +246,19 @@ case 77:
 let beg2 = new Primitivo("end", _$[$0-5].first_line, _$[$0-5].first_column); this.$ = new ArrbegEnd($$[$0-5],_$[$0-5].first_line,_$[$0-5].first_column,$$[$0-3],beg2);
 break;
 case 78:
-this.$ = "STRING";
+this.$ = Tipo.STRING;
 break;
 case 79:
-this.$ = "DOUBLE";
+this.$ = Tipo.DOUBLE;
 break;
 case 80:
-this.$ = "INTEGER";
+this.$ = Tipo.INT;
 break;
 case 81:
-this.$ = "BOOLEAN";
+this.$ = Tipo.BOOL;
 break;
 case 82:
-this.$ = "CHAR";
+this.$ = Tipo.CHAR;
 break;
 case 84:
  $$[$0].push($$[$0-2]);this.$ = $$[$0];
@@ -341,8 +341,11 @@ break;
 case 120: case 121:
 this.$ = new Primitivo(Number($$[$0]), _$[$0].first_line, _$[$0].first_column);
 break;
-case 122: case 123: case 124:
+case 122: case 123:
 this.$ = new Primitivo($$[$0], _$[$0].first_line, _$[$0].first_column);
+break;
+case 124:
+this.$ = new AccesoVariable($$[$0], _$[$0].first_line, _$[$0].first_column);
 break;
 }
 },
@@ -598,6 +601,7 @@ _handle_error:
 
     //const {ErrorCom} = require(['../ts/ErrorCom']);
     /*---CLASES IMPORTADAS---*/
+    const {Tipo} = require("../dist/AST/Tipo");
     const {Print} = require("../dist/Instrucciones/Print");
     const {Declaracion} = require("../dist/Instrucciones/Declaracion");    
     const {Asignacion} = require("../dist/Instrucciones/Asignacion");
@@ -614,6 +618,7 @@ _handle_error:
     const {For} = require("../dist/Instrucciones/For");
     const {Forin} = require("../dist/Instrucciones/Forin");
     const {Primitivo} = require("../dist/Expresiones/Primitivo");
+    const {AccesoVariable} = require("../dist/Expresiones/AccesoVariable");
     const {ArrbegEnd} = require("../dist/Expresiones/ArrbegEnd");
     const {Operacion, Operador} = require("../dist/Expresiones/Operacion");
     const {Objeto} = require("../dist/Expresiones/Objeto");

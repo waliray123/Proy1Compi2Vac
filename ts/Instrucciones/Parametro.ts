@@ -1,14 +1,15 @@
 import { AST } from "../AST/AST";
 import { Entorno } from "../AST/Entorno";
+import { Tipo } from "../AST/Tipo";
 import { Instruccion } from "../Interfaces/Instruccion";
 
 export class Parametro implements Instruccion{
     linea: number;
     columna: number;
     public id:String;
-    public tipoParametro:String;
+    public tipoParametro:Tipo;
 
-    constructor(id:String, tipoParametro:String,linea:number, columna:number){
+    constructor(id:String, tipoParametro:Tipo,linea:number, columna:number){
         this.id = id;
         this.linea = linea;
         this.columna = columna;

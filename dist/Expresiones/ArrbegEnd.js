@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ArrbegEnd = void 0;
 var Tipo_1 = require("../AST/Tipo");
 var ArrbegEnd = /** @class */ (function () {
     function ArrbegEnd(id, linea, columna, expresion1, expresion2) {

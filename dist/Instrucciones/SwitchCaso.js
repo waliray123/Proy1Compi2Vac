@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.SwitchCaso = void 0;
 // print("hola mundo");
 var SwitchCaso = /** @class */ (function () {
     function SwitchCaso(id, lista_intstrucciones, linea, columna) {

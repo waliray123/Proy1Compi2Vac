@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Asignacion = void 0;
 var Asignacion = /** @class */ (function () {
     function Asignacion(id, linea, columna, expresion) {
         this.id = id;
