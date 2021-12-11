@@ -123,18 +123,22 @@ var Operacion = /** @class */ (function () {
                     return null;
                 }
             }
-            //Amperson TODO
+            //AMPERSON
             else if (this.operador == Operador.AMPERSON) {
-                if (typeof (op1 === "string") && typeof (op2 === "string")) {
-                    if (op2 === 0) {
-                        console.log("Resultado indefinido, no puede ejecutarse operación sobre cero.");
-                        return null;
-                    }
-                    return op1 % op2;
+                if (typeof (op1 === 'string') && typeof (op2 === 'string')) {
+                    return op1.concat(op2.toString());
                 }
                 else {
-                    console.log("Error de tipos de datos no permitidos realizando una suma");
-                    return null;
+                    console.log('Error semantico, Solo se puede concatenar (&) Strings en la linea ' + this.linea + ' y columna ' + this.columna);
+                }
+            }
+            //ELEVADO
+            else if (this.operador == Operador.ELEVADO) {
+                if (this.op_izquierda.getTipo(ent, arbol) == Tipo_1.Tipo.STRING && this.op_derecha.getTipo(ent, arbol) == Tipo_1.Tipo.INT) {
+                    return op1.repeat(Number(op2));
+                }
+                else {
+                    console.log('Error semantico, No se puede completar la accion ^ en la linea ' + this.linea + ' y columna ' + this.columna);
                 }
             }
             else if (this.operador == Operador.MAYOR_QUE) {

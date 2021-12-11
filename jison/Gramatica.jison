@@ -124,8 +124,8 @@ BSL               "\\".
 
 ({Ds}"."{Ds}?{EXPO}?[fFdD]?|"."{Ds}{EXPO}?[fFdD]?|{Ds}{EXPO}[fFdD]?|{Ds}{EXPO}?[fFdD])/([^\w]|$)   return 'FLOTANTE';
 {Ds}          			return 'ENTERO';
-"\"\""                	return 'STRINGL';
-"\""([^"]|{BSL})*"\"" 	return 'STRINGL';
+"\"\""                	 yytext = yytext.slice(1,-1); return 'STRINGL';
+"\""([^"]|{BSL})*"\"" 	 yytext = yytext.slice(1,-1); return 'STRINGL';
 
 "\'"([^']|{BSL})*"\'" 	return 'CHARL';
 "\'""\'" 	            return 'CHARL';
@@ -420,7 +420,7 @@ expresion
     | relacionales          {$$ = $1;}
     | expresion_ternario    {$$ = $1;}
     | incr_decr             {$$ = $1;}
-    | nativas
+    | nativas               {$$ = $1;}
 ;
 
 expresion_ternario

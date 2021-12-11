@@ -36,8 +36,13 @@ export class Declaracion implements Instruccion{
                     let simbol = new Simbolo(this.tipo,id,this.linea,this.columna,this.getValDefault());
                     ent.agregar(id,simbol);
                 }else{
-                    let simbol = new Simbolo(this.tipo,id,this.linea,this.columna,this.expresion.getValorImplicito(ent,arbol));
-                    ent.agregar(id,simbol);
+                    let tipoExpr:Tipo = this.expresion.getTipo(ent,arbol);
+                    if(tipoExpr == this.tipo){
+                        let simbol = new Simbolo(this.tipo,id,this.linea,this.columna,this.expresion.getValorImplicito(ent,arbol));
+                        ent.agregar(id,simbol);
+                    }else{
+                        console.log('Error semantico, El tipo declarado (' + this.tipo +') no concuerda con el tipo asignado (' + tipoExpr + ') en la linea '+ this.linea + ' y columna ' + this.columna);
+                    }                    
                 }
             }
         })

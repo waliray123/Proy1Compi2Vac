@@ -20,12 +20,12 @@ var Entorno = /** @class */ (function () {
         this.anterior = anterior;
     }
     Entorno.prototype.agregar = function (id, simbolo) {
-        id = id.toLowerCase();
-        simbolo.indentificador = simbolo.indentificador.toLowerCase();
+        id = id;
+        simbolo.indentificador = simbolo.indentificador;
         this.tabla[id] = simbolo;
     };
     Entorno.prototype.eliminar = function (id) {
-        id = id.toLowerCase();
+        id = id;
         for (var e = this; e != null; e = e.anterior) {
             var value = e.tabla[id];
             if (value !== undefined) {
@@ -36,7 +36,7 @@ var Entorno = /** @class */ (function () {
         return false;
     };
     Entorno.prototype.existe = function (id) {
-        id = id.toLowerCase();
+        id = id;
         for (var e = this; e != null; e = e.anterior) {
             var value = e.tabla[id];
             if (value !== undefined) {
@@ -46,14 +46,14 @@ var Entorno = /** @class */ (function () {
         return false;
     };
     Entorno.prototype.existeEnActual = function (id) {
-        id = id.toLowerCase();
+        id = id;
         if (this.tabla[id] !== undefined) {
             return true;
         }
         return false;
     };
     Entorno.prototype.getSimbolo = function (id) {
-        id = id.toLowerCase();
+        id = id;
         for (var e = this; e != null; e = e.anterior) {
             if (e.tabla[id] !== undefined) {
                 return e.tabla[id];
@@ -62,7 +62,7 @@ var Entorno = /** @class */ (function () {
         return null;
     };
     Entorno.prototype.reemplazar = function (id, nuevoValor) {
-        id = id.toLowerCase();
+        id = id;
         for (var e = this; e != null; e = e.anterior) {
             var value = e.tabla[id];
             if (value !== undefined) {
@@ -353,18 +353,22 @@ var Operacion = /** @class */ (function () {
                     return null;
                 }
             }
-            //Amperson TODO
+            //AMPERSON
             else if (this.operador == Operador.AMPERSON) {
-                if (typeof (op1 === "string") && typeof (op2 === "string")) {
-                    if (op2 === 0) {
-                        console.log("Resultado indefinido, no puede ejecutarse operación sobre cero.");
-                        return null;
-                    }
-                    return op1 % op2;
+                if (typeof (op1 === 'string') && typeof (op2 === 'string')) {
+                    return op1.concat(op2.toString());
                 }
                 else {
-                    console.log("Error de tipos de datos no permitidos realizando una suma");
-                    return null;
+                    console.log('Error semantico, Solo se puede concatenar (&) Strings en la linea ' + this.linea + ' y columna ' + this.columna);
+                }
+            }
+            //ELEVADO
+            else if (this.operador == Operador.ELEVADO) {
+                if (this.op_izquierda.getTipo(ent, arbol) == Tipo_1.Tipo.STRING && this.op_derecha.getTipo(ent, arbol) == Tipo_1.Tipo.INT) {
+                    return op1.repeat(Number(op2));
+                }
+                else {
+                    console.log('Error semantico, No se puede completar la accion ^ en la linea ' + this.linea + ' y columna ' + this.columna);
                 }
             }
             else if (this.operador == Operador.MAYOR_QUE) {
@@ -513,7 +517,22 @@ var Asignacion = /** @class */ (function () {
         throw new Error("Method not implemented.");
     };
     Asignacion.prototype.ejecutar = function (ent, arbol) {
-        console.log('ejecutado...' + this.id);
+        var _this = this;
+        this.id.forEach(function (id) {
+            if (ent.existe(id)) {
+                var simbol = ent.getSimbolo(id);
+                var tipo = simbol.getTipo(ent, arbol);
+                if (tipo == _this.expresion.getTipo(ent, arbol)) {
+                    simbol.valor = _this.expresion.getValorImplicito(ent, arbol);
+                }
+                else {
+                    console.log('Error semantico, El tipo de la variable (' + tipo + ') no concuerda con el tipo asignado (' + _this.expresion.getTipo(ent, arbol) + ') en la linea ' + _this.linea + ' y columna ' + _this.columna);
+                }
+            }
+            else {
+                console.log('Error semantico, no existe la variable ' + id + 'en la linea ' + _this.linea + ' y columna ' + _this.columna);
+            }
+        });
     };
     return Asignacion;
 }());
@@ -587,8 +606,14 @@ var Declaracion = /** @class */ (function () {
                     ent.agregar(id, simbol);
                 }
                 else {
-                    var simbol = new Simbolo_1.Simbolo(_this.tipo, id, _this.linea, _this.columna, _this.expresion.getValorImplicito(ent, arbol));
-                    ent.agregar(id, simbol);
+                    var tipoExpr = _this.expresion.getTipo(ent, arbol);
+                    if (tipoExpr == _this.tipo) {
+                        var simbol = new Simbolo_1.Simbolo(_this.tipo, id, _this.linea, _this.columna, _this.expresion.getValorImplicito(ent, arbol));
+                        ent.agregar(id, simbol);
+                    }
+                    else {
+                        console.log('Error semantico, El tipo declarado (' + _this.tipo + ') no concuerda con el tipo asignado (' + tipoExpr + ') en la linea ' + _this.linea + ' y columna ' + _this.columna);
+                    }
                 }
             }
         });
@@ -976,7 +1001,7 @@ break;
 case 4: case 13: case 20: case 41: case 83:
 this.$ = [$$[$0]];
 break;
-case 5: case 6: case 7: case 8: case 27: case 28: case 29: case 30: case 31: case 32: case 33: case 34: case 85: case 86: case 87: case 88: case 89: case 90: case 91:
+case 5: case 6: case 7: case 8: case 27: case 28: case 29: case 30: case 31: case 32: case 33: case 34: case 85: case 86: case 87: case 88: case 89: case 90: case 91: case 92:
 this.$ = $$[$0];
 break;
 case 10:
@@ -2027,9 +2052,9 @@ case 89:return 110;
 break;
 case 90:return 109;
 break;
-case 91:return 111;
+case 91:yy_.yytext = yy_.yytext.slice(1,-1); return 111;
 break;
-case 92:return 111;
+case 92:yy_.yytext = yy_.yytext.slice(1,-1); return 111;
 break;
 case 93:return 112;
 break;
@@ -2096,12 +2121,12 @@ var Entorno = /** @class */ (function () {
         this.anterior = anterior;
     }
     Entorno.prototype.agregar = function (id, simbolo) {
-        id = id.toLowerCase();
-        simbolo.indentificador = simbolo.indentificador.toLowerCase();
+        id = id;
+        simbolo.indentificador = simbolo.indentificador;
         this.tabla[id] = simbolo;
     };
     Entorno.prototype.eliminar = function (id) {
-        id = id.toLowerCase();
+        id = id;
         for (var e = this; e != null; e = e.anterior) {
             var value = e.tabla[id];
             if (value !== undefined) {
@@ -2112,7 +2137,7 @@ var Entorno = /** @class */ (function () {
         return false;
     };
     Entorno.prototype.existe = function (id) {
-        id = id.toLowerCase();
+        id = id;
         for (var e = this; e != null; e = e.anterior) {
             var value = e.tabla[id];
             if (value !== undefined) {
@@ -2122,14 +2147,14 @@ var Entorno = /** @class */ (function () {
         return false;
     };
     Entorno.prototype.existeEnActual = function (id) {
-        id = id.toLowerCase();
+        id = id;
         if (this.tabla[id] !== undefined) {
             return true;
         }
         return false;
     };
     Entorno.prototype.getSimbolo = function (id) {
-        id = id.toLowerCase();
+        id = id;
         for (var e = this; e != null; e = e.anterior) {
             if (e.tabla[id] !== undefined) {
                 return e.tabla[id];
@@ -2138,7 +2163,7 @@ var Entorno = /** @class */ (function () {
         return null;
     };
     Entorno.prototype.reemplazar = function (id, nuevoValor) {
-        id = id.toLowerCase();
+        id = id;
         for (var e = this; e != null; e = e.anterior) {
             var value = e.tabla[id];
             if (value !== undefined) {

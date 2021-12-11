@@ -27,8 +27,14 @@ var Declaracion = /** @class */ (function () {
                     ent.agregar(id, simbol);
                 }
                 else {
-                    var simbol = new Simbolo_1.Simbolo(_this.tipo, id, _this.linea, _this.columna, _this.expresion.getValorImplicito(ent, arbol));
-                    ent.agregar(id, simbol);
+                    var tipoExpr = _this.expresion.getTipo(ent, arbol);
+                    if (tipoExpr == _this.tipo) {
+                        var simbol = new Simbolo_1.Simbolo(_this.tipo, id, _this.linea, _this.columna, _this.expresion.getValorImplicito(ent, arbol));
+                        ent.agregar(id, simbol);
+                    }
+                    else {
+                        console.log('Error semantico, El tipo declarado (' + _this.tipo + ') no concuerda con el tipo asignado (' + tipoExpr + ') en la linea ' + _this.linea + ' y columna ' + _this.columna);
+                    }
                 }
             }
         });
