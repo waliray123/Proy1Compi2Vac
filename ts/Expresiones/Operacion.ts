@@ -152,6 +152,24 @@ export class Operacion implements Expresion {
                     return null;
                 }
             }
+            //AMPERSON
+            else if (this.operador == Operador.AMPERSON)
+            {
+                if (typeof(op1 === 'string') && typeof(op2 === 'string') ) {
+                    return op1.concat(op2.toString());
+                }
+                else{
+                    console.log('Error semantico, Solo se puede concatenar (&) Strings en la linea '+ this.linea + ' y columna ' + this.columna);
+                }
+            }
+            //ELEVADO
+            else if (this.operador == Operador.ELEVADO) {
+                if (this.op_izquierda.getTipo(ent,arbol) == Tipo.STRING && this.op_derecha.getTipo(ent,arbol) == Tipo.INT ) {
+                    return op1.repeat(Number(op2));
+                }else{
+                    console.log('Error semantico, No se puede completar la accion ^ en la linea '+ this.linea + ' y columna ' + this.columna);
+                }
+            }
 
         }else{
             let op1 = this.op_izquierda.getValorImplicito(ent, arbol);
