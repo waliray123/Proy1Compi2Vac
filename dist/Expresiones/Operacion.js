@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Operacion = exports.Operador = void 0;
 var Tipo_1 = require("../AST/Tipo");
 var Operador;
 (function (Operador) {
@@ -23,7 +22,12 @@ var Operador;
     Operador[Operador["MENOR_IGUA_QUE"] = 16] = "MENOR_IGUA_QUE";
     Operador[Operador["INCREMENTO"] = 17] = "INCREMENTO";
     Operador[Operador["DECREMENTO"] = 18] = "DECREMENTO";
-    Operador[Operador["DESCONOCIDO"] = 19] = "DESCONOCIDO";
+    Operador[Operador["POW"] = 19] = "POW";
+    Operador[Operador["SQRT"] = 20] = "SQRT";
+    Operador[Operador["SIN"] = 21] = "SIN";
+    Operador[Operador["COS"] = 22] = "COS";
+    Operador[Operador["TAN"] = 23] = "TAN";
+    Operador[Operador["DESCONOCIDO"] = 24] = "DESCONOCIDO";
 })(Operador = exports.Operador || (exports.Operador = {}));
 var Operacion = /** @class */ (function () {
     function Operacion(op_izquierda, op_derecha, operacion, linea, columna) {

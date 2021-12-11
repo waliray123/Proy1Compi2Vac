@@ -9,7 +9,9 @@ declare global {
 }
 
 window.ejecutarCodigo = function (entrada:string){
-    //traigo todas las raices
+    //Reiniciar consola
+    reiniciarConsola();
+    //traigo todas las raices    
     const instrucciones = gramatica.parse(entrada);
     console.log(instrucciones);
     // /*
@@ -20,6 +22,11 @@ window.ejecutarCodigo = function (entrada:string){
         element.ejecutar(entornoGlobal,ast);
     })
     // */
+}
+
+function reiniciarConsola(){
+    const areaConsola = document.getElementById('consola') as HTMLTextAreaElement;
+    areaConsola.value = "";
 }
 
 // ejecutarCodigo(`int id12;

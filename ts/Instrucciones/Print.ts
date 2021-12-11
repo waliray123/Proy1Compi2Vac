@@ -26,6 +26,15 @@ export class Print implements Instruccion{
         const valor = this.expresion.getValorImplicito(ent, arbol);
         if(valor!==null){
             console.log('>',valor);
+            const area = document.getElementById('consola') as HTMLTextAreaElement;
+
+            if(this.haysalto){
+                area.value = area.value + valor + "\n";
+            }else{
+                area.value = area.value + valor;
+            }
+            
+            
         }else{
             console.log('>> Error, no se pueden imprimir valores nulos');
         }

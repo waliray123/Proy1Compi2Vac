@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Print = void 0;
 // print("hola mundo");
 var Print = /** @class */ (function () {
     function Print(exp, linea, columna, haysalto) {
@@ -16,6 +15,13 @@ var Print = /** @class */ (function () {
         var valor = this.expresion.getValorImplicito(ent, arbol);
         if (valor !== null) {
             console.log('>', valor);
+            var area = document.getElementById('consola');
+            if (this.haysalto) {
+                area.value = area.value + valor + "\n";
+            }
+            else {
+                area.value = area.value + valor;
+            }
         }
         else {
             console.log('>> Error, no se pueden imprimir valores nulos');

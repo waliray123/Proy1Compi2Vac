@@ -4,7 +4,9 @@ var AST_1 = require("./AST/AST");
 var Entorno_1 = require("./AST/Entorno");
 var gramatica = require('../jison/Gramatica');
 window.ejecutarCodigo = function (entrada) {
-    //traigo todas las raices
+    //Reiniciar consola
+    reiniciarConsola();
+    //traigo todas las raices    
     var instrucciones = gramatica.parse(entrada);
     console.log(instrucciones);
     // /*
@@ -16,5 +18,9 @@ window.ejecutarCodigo = function (entrada) {
     });
     // */
 };
+function reiniciarConsola() {
+    var areaConsola = document.getElementById('consola');
+    areaConsola.value = "";
+}
 // ejecutarCodigo(`int id12;
 // int var2;`)

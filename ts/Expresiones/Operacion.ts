@@ -23,6 +23,11 @@ export enum Operador {
     MENOR_IGUA_QUE,
     INCREMENTO,
     DECREMENTO,
+    POW,
+    SQRT,
+    SIN,
+    COS,
+    TAN,
     DESCONOCIDO
 }
 

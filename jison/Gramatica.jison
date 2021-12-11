@@ -145,6 +145,7 @@ BSL               "\\".
     const {Declaracion} = require("../dist/Instrucciones/Declaracion");    
     const {Asignacion} = require("../dist/Instrucciones/Asignacion");
     const {While} = require("../dist/Instrucciones/While");
+    const {DoWhile} = require("../dist/Instrucciones/DoWhile");
     const {Funcion} = require("../dist/Instrucciones/Funcion");
     const {Struct} = require("../dist/Instrucciones/Struct");
     const {Switch} = require("../dist/Instrucciones/Switch");
@@ -255,15 +256,6 @@ instrucciones_funciones
     {                
         $$ = [$1];
     }
-    // | error instrucciones_funciones
-    // {                
-    //     //$2.push([new ErrorCom("Sintactico",@1.first_line,@1.last_column,$1)]);
-    //     $$ = [$2];
-    // }
-    // | error 
-    // {             
-    //     //$$ = [new ErrorCom("Sintactico",@1.first_line,@1.last_column,$1)];
-    // }
 ;
 
 instruccion_funcion
@@ -369,7 +361,8 @@ for_bloque
 ;
 
 while_bloque
-    : STR_WHILE PARI expresion PARD cuerpoFuncion       {$$ = new While(@1.first_line,@1.first_column,$5,$3);}
+    : STR_WHILE PARI expresion PARD cuerpoFuncion           {$$ = new While(@1.first_line,@1.first_column,$5,$3);}
+    | STR_DO cuerpoFuncion STR_WHILE PARI expresion PARD    {$$ = new DoWhile(@1.first_line,@1.first_column,$2,$5);}
 ;
 
 decl_asign
@@ -419,6 +412,7 @@ expresion
     | relacionales          {$$ = $1;}
     | expresion_ternario    {$$ = $1;}
     | incr_decr             {$$ = $1;}
+    | nativas
 ;
 
 expresion_ternario
@@ -456,12 +450,21 @@ incr_decr
     | expresion OP_DECR         {$$ = new Operacion($1,null,Operador.DECREMENTO, @1.first_line, @1.first_column);}
 ;
 
+nativas
+    : STR_POW PARI primitivas PARD  {$$ = new Operacion($3,null,Operador.POW, @1.first_line, @1.first_column);}
+    | STR_SQRT PARI primitivas PARD {$$ = new Operacion($3,null,Operador.SQRT, @1.first_line, @1.first_column);}
+    | STR_SIN PARI primitivas PARD  {$$ = new Operacion($3,null,Operador.SIN, @1.first_line, @1.first_column);}
+    | STR_COS PARI primitivas PARD  {$$ = new Operacion($3,null,Operador.COS, @1.first_line, @1.first_column);}
+    | STR_TAN PARI primitivas PARD  {$$ = new Operacion($3,null,Operador.TAN, @1.first_line, @1.first_column);}
+;
+
 primitivas
     : STR_FALSE             {$$ = new Primitivo(false, @1.first_line, @1.first_column);}
     | STR_TRUE              {$$ = new Primitivo(true, @1.first_line, @1.first_column);}
     | ENTERO                {$$ = new Primitivo(Number($1), @1.first_line, @1.first_column);}
     | FLOTANTE              {$$ = new Primitivo(Number($1), @1.first_line, @1.first_column);}
     | STRINGL               {$$ = new Primitivo($1, @1.first_line, @1.first_column);}
+    | CHARL                 {$$ = new Primitivo($1, @1.first_line, @1.first_column);}
     | ID_VAR                {$$ = new Primitivo($1, @1.first_line, @1.first_column);}
 ;
 
