@@ -420,7 +420,7 @@ expresion
     | relacionales          {$$ = $1;}
     | expresion_ternario    {$$ = $1;}
     | incr_decr             {$$ = $1;}
-    | nativas
+    | nativas               {$$ = $1;}
 ;
 
 expresion_ternario

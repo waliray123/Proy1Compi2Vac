@@ -95,7 +95,7 @@ break;
 case 4: case 13: case 20: case 41: case 83:
 this.$ = [$$[$0]];
 break;
-case 5: case 6: case 7: case 8: case 27: case 28: case 29: case 30: case 31: case 32: case 33: case 34: case 85: case 86: case 87: case 88: case 89: case 90: case 91:
+case 5: case 6: case 7: case 8: case 27: case 28: case 29: case 30: case 31: case 32: case 33: case 34: case 85: case 86: case 87: case 88: case 89: case 90: case 91: case 92:
 this.$ = $$[$0];
 break;
 case 10:
