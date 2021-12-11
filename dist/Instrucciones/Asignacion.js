@@ -12,7 +12,22 @@ var Asignacion = /** @class */ (function () {
         throw new Error("Method not implemented.");
     };
     Asignacion.prototype.ejecutar = function (ent, arbol) {
-        console.log('ejecutado...' + this.id);
+        var _this = this;
+        this.id.forEach(function (id) {
+            if (ent.existe(id)) {
+                var simbol = ent.getSimbolo(id);
+                var tipo = simbol.getTipo(ent, arbol);
+                if (tipo == _this.expresion.getTipo(ent, arbol)) {
+                    simbol.valor = _this.expresion.getValorImplicito(ent, arbol);
+                }
+                else {
+                    console.log('Error semantico, El tipo de la variable (' + tipo + ') no concuerda con el tipo asignado (' + _this.expresion.getTipo(ent, arbol) + ') en la linea ' + _this.linea + ' y columna ' + _this.columna);
+                }
+            }
+            else {
+                console.log('Error semantico, no existe la variable ' + id + 'en la linea ' + _this.linea + ' y columna ' + _this.columna);
+            }
+        });
     };
     return Asignacion;
 }());
