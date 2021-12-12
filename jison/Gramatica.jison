@@ -151,7 +151,7 @@ BSL               "\\".
     const {Funcion} = require("../dist/Instrucciones/Funcion");
     const {Struct} = require("../dist/Instrucciones/Struct");
     const {Switch} = require("../dist/Instrucciones/Switch");
-    const {Ternario} = require("../dist/Instrucciones/Ternario");
+    const {Ternario} = require("../dist/Expresiones/Ternario");
     const {AccesoAtributo} = require("../dist/Expresiones/AccesoAtributo");
     const {DeclaracionStruct} = require("../dist/Instrucciones/DeclaracionStruct");
     const {SwitchCaso} = require("../dist/Instrucciones/SwitchCaso");

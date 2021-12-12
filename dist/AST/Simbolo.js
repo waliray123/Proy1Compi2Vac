@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Simbolo = void 0;
 var Simbolo = /** @class */ (function () {
     function Simbolo(tipo, id, linea, columna, valor) {
         this.indentificador = id;
