@@ -151,6 +151,9 @@ BSL               "\\".
     const {Funcion} = require("../dist/Instrucciones/Funcion");
     const {Struct} = require("../dist/Instrucciones/Struct");
     const {Switch} = require("../dist/Instrucciones/Switch");
+    const {Ternario} = require("../dist/Instrucciones/Ternario");
+    const {AccesoAtributo} = require("../dist/Expresiones/AccesoAtributo");
+    const {DeclaracionStruct} = require("../dist/Instrucciones/DeclaracionStruct");
     const {SwitchCaso} = require("../dist/Instrucciones/SwitchCaso");
     const {Break} = require("../dist/Instrucciones/Break");
     const {Continue} = require("../dist/Instrucciones/Continue");
@@ -178,7 +181,7 @@ BSL               "\\".
 
 /*---DEFINICION DE PRESEDENCIA DE OPERADORES---*/
 
-%left 'OP_OR' 'COMA'
+%left 'OP_OR' 'COMA' 'OP_CALL'
 %left 'OP_AND'
 %left 'OP_MEN' 'OP_MENIG' 'OP_MAY' 'OP_MAYIG' 'OP_IGUAL' 'OP_DOBIG' 'OP_DIF'
 %left 'OP_SUMA' 'OP_RESTA' 'OP_AMP'
@@ -334,6 +337,7 @@ opcional_break
 declaracion_bloque
     : tiposVar nombreVars PUNTCOMA              {$$ = new Declaracion($2,$1,@1.first_line,@1.first_column,null);}
     | tiposVar nombreVars asignacion PUNTCOMA   {$$ = new Declaracion($2,$1,@1.first_line,@1.first_column,$3);}
+    | ID_VAR ID_VAR asignacion PUNTCOMA         {$$ =  new DeclaracionStruct($2,$1,@1.first_line,@1.first_column,$3);}
     | declaracion_arreglo                       {$$ = $1;}
 ;
 
@@ -343,7 +347,7 @@ declaracion_arreglo
 ;
 
 asignacion_bloque
-    : nombreVars asignacion PUNTCOMA {$$ = new Asignacion($1,@1.first_line,@1.first_column,$2);}
+    : nombreAtributos asignacion PUNTCOMA        {$$ = new Asignacion($1,@1.first_line,@1.first_column,$2);}
 ;
 
 print_bloque
@@ -421,6 +425,11 @@ nombreVars
     | nombreVars COMA ID_VAR  { $1.push($3);$$ = $1;}
 ;
 
+nombreAtributos
+    : nombreAtributos OP_CALL ID_VAR       {$1.push($3); $$ = $1;}
+    | ID_VAR                               {$$ = [$1];}
+;
+
 asignacion
     : OP_IGUAL expresion {$$ = $2;}
 ;
@@ -434,10 +443,15 @@ expresion
     | incr_decr             {$$ = $1;}
     | nativas               {$$ = $1;}
     | arr_decl              {$$ = $1;}
+    | expresion_atributos   {$$ = $1;}
+;
+
+expresion_atributos
+    : expresion OP_CALL expresion                           {$$ = new AccesoAtributo($1,$3,@1.first_line, @1.first_column);}
 ;
 
 expresion_ternario
-    : expresion OP_TER expresion DOSPUNT expresion          {}
+    : expresion OP_TER expresion DOSPUNT expresion          {$$ = new Ternario($1,$3,$5,@1.first_line, @1.first_column);}
 ;
 
 logicas
