@@ -463,8 +463,8 @@ operadores
     | expresion OP_ELV expresion    {$$ = new Operacion($1,$3,Operador.ELEVADO, @1.first_line, @1.first_column);}
     | expresion OP_MOD expresion    {$$ = new Operacion($1,$3,Operador.MODULO, @1.first_line, @1.first_column);}
     | PARI expresion PARD           {$$ = $2;}
-    | OP_RESTA expresion %prec UMINUS   {$$ = new Operacion($1,$3,Operador.MENOS_UNARIO, @1.first_line, @1.first_column);}
-    | OP_NEG expresion              {$$ = new Operacion($1,$3,Operador.NOT, @1.first_line, @1.first_column);}
+    | OP_RESTA expresion %prec UMINUS   {$$ = new Operacion($2,null,Operador.MENOS_UNARIO, @1.first_line, @1.first_column);}
+    | OP_NEG expresion              {$$ = new Operacion($2,null,Operador.NOT, @1.first_line, @1.first_column);}
 ;
 
 incr_decr
