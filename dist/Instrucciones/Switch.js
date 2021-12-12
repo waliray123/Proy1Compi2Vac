@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Switch = void 0;
 // print("hola mundo");
 var Switch = /** @class */ (function () {
     function Switch(expresion, lista_intstrucciones, linea, columna) {

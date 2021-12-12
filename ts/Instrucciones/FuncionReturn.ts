@@ -2,6 +2,7 @@ import { AST } from "../AST/AST";
 import { Entorno } from "../AST/Entorno";
 import { Instruccion } from "../Interfaces/Instruccion";
 import { Parametro } from "../Instrucciones/Parametro";
+import { Funcion } from "../Instrucciones/Funcion";
 
 export class FuncionReturn implements Instruccion{
     linea: number;
@@ -21,7 +22,13 @@ export class FuncionReturn implements Instruccion{
     }
 
     ejecutar(ent: Entorno, arbol: AST) {
-        console.log('ejecutado funcion retorno ...'+ this.nombrefuncion);
+        const funciones = arbol.funciones;
+        funciones.forEach((element:Funcion) => {
+            if(this.nombrefuncion == element.nombrefuncion){
+                element.ejecutar(ent,arbol);
+                return ; // Retornar el valor que retorna la funcion ejecutar
+            }
+        })
     }
 
 }

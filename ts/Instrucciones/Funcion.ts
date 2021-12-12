@@ -25,16 +25,20 @@ export class Funcion implements Instruccion{
         throw new Error("Method not implemented.");
     }
 
-    ejecutar(ent: Entorno, arbol: AST) {
-        console.log('ejecutado funcion ...'+ this.nombrefuncion);
+    ejecutar(ent: Entorno, arbol: AST) {        
 
-        const ast:AST = new AST(this.instrucciones);
-        const entornoGlobal:Entorno = new Entorno(null);
+        
+        const entornoGlobal:Entorno = new Entorno(ent);
+        
         //recorro todas las raices  RECURSIVA
         this.instrucciones.forEach((element:Instruccion) => {
-            element.ejecutar(entornoGlobal,ast);
+            element.ejecutar(entornoGlobal,arbol);
         })
         // console.log(this.instrucciones);
+    }
+
+    getTipo(){
+        return "funcion";
     }
 
 }

@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Objeto = void 0;
 var Entorno_1 = require("../AST/Entorno");
 var Objeto = /** @class */ (function () {
     function Objeto(id, texto, linea, columna, listaAtributos, listaO) {

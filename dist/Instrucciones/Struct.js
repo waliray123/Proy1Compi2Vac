@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Struct = void 0;
 // print("hola mundo");
 var Struct = /** @class */ (function () {
     function Struct(id, lista_atributos, linea, columna) {
@@ -14,6 +13,9 @@ var Struct = /** @class */ (function () {
     };
     Struct.prototype.ejecutar = function (ent, arbol) {
         console.log('ejecutado...' + this.id);
+    };
+    Struct.prototype.getTipo = function () {
+        return "struct";
     };
     return Struct;
 }());

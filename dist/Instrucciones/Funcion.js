@@ -1,7 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Funcion = void 0;
-var AST_1 = require("../AST/AST");
 var Entorno_1 = require("../AST/Entorno");
 var Funcion = /** @class */ (function () {
     function Funcion(nombrefuncion, tipoFuncion, linea, columna, instrucciones, parametros) {
@@ -17,14 +15,15 @@ var Funcion = /** @class */ (function () {
         throw new Error("Method not implemented.");
     };
     Funcion.prototype.ejecutar = function (ent, arbol) {
-        console.log('ejecutado funcion ...' + this.nombrefuncion);
-        var ast = new AST_1.AST(this.instrucciones);
-        var entornoGlobal = new Entorno_1.Entorno(null);
+        var entornoGlobal = new Entorno_1.Entorno(ent);
         //recorro todas las raices  RECURSIVA
         this.instrucciones.forEach(function (element) {
-            element.ejecutar(entornoGlobal, ast);
+            element.ejecutar(entornoGlobal, arbol);
         });
         // console.log(this.instrucciones);
+    };
+    Funcion.prototype.getTipo = function () {
+        return "funcion";
     };
     return Funcion;
 }());

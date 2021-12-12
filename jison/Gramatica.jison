@@ -207,8 +207,7 @@ instrucciones
 ;
 
 instruccion 
-    : declaracion_bloque    {$$ = $1;}
-    | asignacion_bloque     {$$ = $1;}    
+    : declaracion_bloque    {$$ = $1;}        
     | asignacion_funcion    {$$ = $1;}
     | struct_declaracion    {$$ = $1;}
     | error                 {}
@@ -502,6 +501,7 @@ primitivas
     | STRINGL               {$$ = new Primitivo($1, @1.first_line, @1.first_column);}
     | CHARL                 {$$ = new Primitivo($1, @1.first_line, @1.first_column);}
     | ID_VAR                {$$ = new AccesoVariable($1, @1.first_line, @1.first_column);}
+    | ID_VAR PARI parametros_funcion PARD       {$$ = new FuncionReturn($1,@1.first_line,@1.first_column,$3);}
 ;
 
 

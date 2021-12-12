@@ -63,5 +63,8 @@ export class Declaracion implements Instruccion{
             return null;
         }
     }
+    getTipo(){
+        return "declaracion";
+    }
 
 }
