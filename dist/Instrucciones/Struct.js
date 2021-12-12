@@ -14,6 +14,9 @@ var Struct = /** @class */ (function () {
     Struct.prototype.ejecutar = function (ent, arbol) {
         console.log('ejecutado...' + this.id);
     };
+    Struct.prototype.getTipo = function () {
+        return "struct";
+    };
     return Struct;
 }());
 exports.Struct = Struct;

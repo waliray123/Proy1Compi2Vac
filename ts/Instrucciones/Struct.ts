@@ -27,4 +27,8 @@ export class Struct implements Instruccion{
         console.log('ejecutado...'+ this.id);
     }
 
+    getTipo(){
+        return "struct";
+    }
+
 }

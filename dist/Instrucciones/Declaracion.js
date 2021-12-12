@@ -59,6 +59,9 @@ var Declaracion = /** @class */ (function () {
             return null;
         }
     };
+    Declaracion.prototype.getTipo = function () {
+        return "declaracion";
+    };
     return Declaracion;
 }());
 exports.Declaracion = Declaracion;

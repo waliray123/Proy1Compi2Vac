@@ -12,7 +12,14 @@ var FuncionReturn = /** @class */ (function () {
         throw new Error("Method not implemented.");
     };
     FuncionReturn.prototype.ejecutar = function (ent, arbol) {
-        console.log('ejecutado funcion retorno ...' + this.nombrefuncion);
+        var _this = this;
+        var funciones = arbol.funciones;
+        funciones.forEach(function (element) {
+            if (_this.nombrefuncion == element.nombrefuncion) {
+                element.ejecutar(ent, arbol);
+                return; // Retornar el valor que retorna la funcion ejecutar
+            }
+        });
     };
     return FuncionReturn;
 }());
