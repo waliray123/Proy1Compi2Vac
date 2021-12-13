@@ -159,6 +159,7 @@ BSL               "\\".
     const {Continue} = require("../dist/Instrucciones/Continue");
     const {FuncionReturn} = require("../dist/Instrucciones/FuncionReturn");
     const {Parametro} = require("../dist/Instrucciones/Parametro");
+    const {ParametroReturn} = require("../dist/Instrucciones/ParametroReturn");
     const {For} = require("../dist/Instrucciones/For");
     const {Forin} = require("../dist/Instrucciones/Forin");
     const {Primitivo} = require("../dist/Expresiones/Primitivo");
@@ -238,7 +239,7 @@ asignacion_funcion
 ;
 
 parametros_funcion
-    :   parametro_funcion COMA parametros_funcion   {$3.push($1);$$ = $3;}
+    :   parametros_funcion COMA parametro_funcion   {$1.push($3);$$ = $1;}
     |   parametro_funcion                           {$$ = [$1];}
     |   {$$ = [];}
 ;
@@ -246,6 +247,16 @@ parametros_funcion
 parametro_funcion
     : tiposVar ID_VAR {$$ = new Parametro($2,$1,@1.first_line,@1.first_column);}
 ;
+
+parametros_funcion_return
+    : parametros_funcion_return COMA parametro_funcion_return   {$1.push($3);$$ = $1;}
+    | parametro_funcion_return                                  {$$ = [$1];}
+    |                                                           {$$ = [];}
+;
+
+parametro_funcion_return
+    : expresion {$$ = new ParametroReturn($1,@1.first_line,@1.first_column);}
+; 
 
 cuerpoFuncion
     : BRACKI instrucciones_funciones BRACKD {$$ = $2;}
@@ -276,7 +287,7 @@ instruccion_funcion
 ;
 
 funcion_return
-    : ID_VAR PARI parametros_funcion PARD PUNTCOMA      {$$ = new FuncionReturn($1,@1.first_line,@1.first_column,$3);}
+    : ID_VAR PARI parametros_funcion_return PARD PUNTCOMA      {$$ = new FuncionReturn($1,@1.first_line,@1.first_column,$3);}
 ;
 
 switch_bloque
@@ -501,7 +512,7 @@ primitivas
     | STRINGL               {$$ = new Primitivo($1, @1.first_line, @1.first_column);}
     | CHARL                 {$$ = new Primitivo($1, @1.first_line, @1.first_column);}
     | ID_VAR                {$$ = new AccesoVariable($1, @1.first_line, @1.first_column);}
-    | ID_VAR PARI parametros_funcion PARD       {$$ = new FuncionReturn($1,@1.first_line,@1.first_column,$3);}
+    | ID_VAR PARI parametros_funcion_return PARD       {$$ = new FuncionReturn($1,@1.first_line,@1.first_column,$3);}
 ;
 
 

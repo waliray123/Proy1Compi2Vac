@@ -3,14 +3,15 @@ import { Entorno } from "../AST/Entorno";
 import { Instruccion } from "../Interfaces/Instruccion";
 import { Parametro } from "../Instrucciones/Parametro";
 import { Funcion } from "../Instrucciones/Funcion";
+import { ParametroReturn } from "./ParametroReturn";
 
 export class FuncionReturn implements Instruccion{
     linea: number;
     columna: number;
     public nombrefuncion:String;
-    public parametros:Array<Parametro>;
+    public parametros:Array<ParametroReturn>;
 
-    constructor(nombrefuncion:String,linea:number, columna:number,parametros:Array<Parametro>=[]){
+    constructor(nombrefuncion:String,linea:number, columna:number,parametros:Array<ParametroReturn>=[]){
         this.nombrefuncion = nombrefuncion;
         this.linea = linea;
         this.columna = columna;

@@ -4,6 +4,10 @@ import { Simbolo } from "../AST/Simbolo";
 import { Tipo } from "../AST/Tipo";
 import { Expresion } from "../Interfaces/Expresion";
 import { Instruccion } from "../Interfaces/Instruccion";
+import { Declaracion } from "./Declaracion";
+import { FuncionReturn } from "./FuncionReturn";
+import { Parametro } from "./Parametro";
+import { ParametroReturn } from "./ParametroReturn";
 
 // print("hola mundo");
 
@@ -27,25 +31,21 @@ export class DeclaracionStruct implements Instruccion{
     }
 
     ejecutar(ent: Entorno, arbol: AST) {
-        // console.log('ejecutado...'+ this.id);
-        // this.id.forEach((id:string)=>{
-        //     if (ent.existe(id) ){
-        //         console.log('Id '+ id +' ya existe');
-        //     }else{
-        //         if(this.expresion == null){
-        //             let simbol = new Simbolo(this.tipo,id,this.linea,this.columna,this.getValDefault());
-        //             ent.agregar(id,simbol);
-        //         }else{
-        //             let tipoExpr:Tipo = this.expresion.getTipo(ent,arbol);
-        //             if(tipoExpr == this.tipo){
-        //                 let simbol = new Simbolo(this.tipo,id,this.linea,this.columna,this.expresion.getValorImplicito(ent,arbol));
-        //                 ent.agregar(id,simbol);
-        //             }else{
-        //                 console.log('Error semantico, El tipo declarado (' + this.tipo +') no concuerda con el tipo asignado (' + tipoExpr + ') en la linea '+ this.linea + ' y columna ' + this.columna);
-        //             }                    
-        //         }
-        //     }
-        // })
+        if (ent.existe(this.tipo)) {
+            if (this.expresion instanceof FuncionReturn) { //evalua que se este haciendo una instancia de la estructura
+                //verificar que tengan la misma cantidad de parametros
+                let struct:Simbolo = ent.getSimbolo(this.tipo);
+                let structVars:Array<Declaracion> = struct.getValorImplicito(ent, arbol);
+                console.log(structVars.length);
+                let parametros:Array<ParametroReturn> = this.expresion.parametros;
+                console.log(parametros);
+                console.log(parametros.length);
+            }else{
+                console.log('Error semantico, no se esta inicializando la estructura en la linea '+ this.linea + ' y columna ' + this.columna);
+            }
+        }else{
+            console.log('Error semantico, no exite la Estructura '+ this.tipo+' en la linea '+ this.linea + ' y columna ' + this.columna);
+        }
     }
 
     getValDefault():any {

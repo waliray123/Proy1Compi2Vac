@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.DeclaracionStruct = void 0;
+var FuncionReturn_1 = require("./FuncionReturn");
 // print("hola mundo");
 var DeclaracionStruct = /** @class */ (function () {
     function DeclaracionStruct(id, tipo, linea, columna, expresion) {
@@ -14,25 +15,23 @@ var DeclaracionStruct = /** @class */ (function () {
         throw new Error("Method not implemented.");
     };
     DeclaracionStruct.prototype.ejecutar = function (ent, arbol) {
-        // console.log('ejecutado...'+ this.id);
-        // this.id.forEach((id:string)=>{
-        //     if (ent.existe(id) ){
-        //         console.log('Id '+ id +' ya existe');
-        //     }else{
-        //         if(this.expresion == null){
-        //             let simbol = new Simbolo(this.tipo,id,this.linea,this.columna,this.getValDefault());
-        //             ent.agregar(id,simbol);
-        //         }else{
-        //             let tipoExpr:Tipo = this.expresion.getTipo(ent,arbol);
-        //             if(tipoExpr == this.tipo){
-        //                 let simbol = new Simbolo(this.tipo,id,this.linea,this.columna,this.expresion.getValorImplicito(ent,arbol));
-        //                 ent.agregar(id,simbol);
-        //             }else{
-        //                 console.log('Error semantico, El tipo declarado (' + this.tipo +') no concuerda con el tipo asignado (' + tipoExpr + ') en la linea '+ this.linea + ' y columna ' + this.columna);
-        //             }                    
-        //         }
-        //     }
-        // })
+        if (ent.existe(this.tipo)) {
+            if (this.expresion instanceof FuncionReturn_1.FuncionReturn) { //evalua que se este haciendo una instancia de la estructura
+                //verificar que tengan la misma cantidad de parametros
+                var struct = ent.getSimbolo(this.tipo);
+                var structVars = struct.getValorImplicito(ent, arbol);
+                console.log(structVars.length);
+                var parametros = this.expresion.parametros;
+                console.log(parametros);
+                console.log(parametros.length);
+            }
+            else {
+                console.log('Error semantico, no se esta inicializando la estructura en la linea ' + this.linea + ' y columna ' + this.columna);
+            }
+        }
+        else {
+            console.log('Error semantico, no exite la Estructura ' + this.tipo + ' en la linea ' + this.linea + ' y columna ' + this.columna);
+        }
     };
     DeclaracionStruct.prototype.getValDefault = function () {
         // if (this.tipo == Tipo.STRING) {

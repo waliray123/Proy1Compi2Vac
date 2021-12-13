@@ -13,7 +13,7 @@ window.ejecutarCodigo = function (entrada) {
     var funcionesG = revisarFuncionesGlobales(instrucciones);
     var structsG = revisarStructsGlobales(instrucciones);
     var ast = new AST_1.AST(instrucciones, structsG, funcionesG);
-    var entornoGlobal = generarEntornoGlobal(ast);
+    var entornoGlobal = generarEntornoGlobal(ast, structsG);
     console.log(entornoGlobal);
     //Buscar la funcion main    
     funcionesG.forEach(function (element) {
@@ -45,7 +45,7 @@ function revisarStructsGlobales(instrucciones) {
     });
     return structs;
 }
-function generarEntornoGlobal(ast) {
+function generarEntornoGlobal(ast, structs) {
     var entornoGlobal = new Entorno_1.Entorno(null);
     var instrucciones = ast.instrucciones;
     var declaracionesG = Array();
@@ -55,6 +55,9 @@ function generarEntornoGlobal(ast) {
         }
     });
     declaracionesG.forEach(function (element) {
+        element.ejecutar(entornoGlobal, ast);
+    });
+    structs.forEach(function (element) {
         element.ejecutar(entornoGlobal, ast);
     });
     return entornoGlobal;
