@@ -24,7 +24,7 @@ window.ejecutarCodigo = function (entrada:string){
 
 
     const ast:AST = new AST(instrucciones,structsG,funcionesG);
-    const entornoGlobal:Entorno = generarEntornoGlobal(ast);   
+    const entornoGlobal:Entorno = generarEntornoGlobal(ast,structsG);   
     console.log(entornoGlobal); 
     
     //Buscar la funcion main    
@@ -64,7 +64,7 @@ function revisarStructsGlobales(instrucciones:Array<any>){
 }
 
 
-function generarEntornoGlobal(ast:AST){
+function generarEntornoGlobal(ast:AST,structs:Array<Struct>){
     const entornoGlobal:Entorno = new Entorno(null);
     let instrucciones = ast.instrucciones;
     let declaracionesG = Array<Declaracion>();
@@ -77,6 +77,11 @@ function generarEntornoGlobal(ast:AST){
     declaracionesG.forEach((element:Declaracion) => {
         element.ejecutar(entornoGlobal, ast);
     });
+
+    structs.forEach((element:Instruccion)=>{
+        element.ejecutar(entornoGlobal, ast);
+    })
+
     return entornoGlobal;
 }
 // ejecutarCodigo(`int id12;
