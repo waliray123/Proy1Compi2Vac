@@ -1,5 +1,7 @@
 import { AST } from "../AST/AST";
 import { Entorno } from "../AST/Entorno";
+import { Simbolo } from "../AST/Simbolo";
+import { Tipo } from "../AST/Tipo";
 import { Expresion } from "../Interfaces/Expresion";
 import { Instruccion } from "../Interfaces/Instruccion";
 import { Declaracion } from "./Declaracion";
@@ -9,10 +11,10 @@ import { Declaracion } from "./Declaracion";
 export class Struct implements Instruccion{
     linea: number;
     columna: number;
-    public id:String;
+    public id:string;
     public lista_atributos: Array<Declaracion>;
 
-    constructor(id:String,lista_atributos:Array<Declaracion>, linea:number, columna:number){
+    constructor(id:string,lista_atributos:Array<Declaracion>, linea:number, columna:number){
         this.id = id;
         this.lista_atributos = lista_atributos;
         this.linea = linea;
@@ -24,7 +26,12 @@ export class Struct implements Instruccion{
     }
 
     ejecutar(ent: Entorno, arbol: AST) {
-        console.log('ejecutado...'+ this.id);
+        if (!ent.existe(this.id)) {
+            let simbol = new Simbolo(Tipo.STRUCT,this.id,this.linea,this.columna,this.lista_atributos);
+            ent.agregar(this.id,simbol);
+        }else{
+            console.log('error semantico, Ya existe el nombre de la estructura declarada en la linea '+ this.linea + ' y columna ' + this.columna);
+        }
     }
 
     getTipo(){
