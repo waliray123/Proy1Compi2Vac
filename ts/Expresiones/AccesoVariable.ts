@@ -37,5 +37,9 @@ export class AccesoVariable implements Expresion {
             console.log('No existe el id ' + this.id);
         }
     }
+
+    getId(){
+        return this.id;
+    }
     
 }

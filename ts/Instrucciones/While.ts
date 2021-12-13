@@ -22,7 +22,20 @@ export class While implements Instruccion{
     }
 
     ejecutar(ent: Entorno, arbol: AST) {
-        console.log('ejecutado...fornormal');
+        const entornolocal:Entorno = new Entorno(ent);
+        let realizar = this.expresion.getValorImplicito(entornolocal,arbol);
+        let contSalir = 0;
+        while(realizar){            
+            this.instrucciones.forEach((element:Instruccion) => {
+                element.ejecutar(entornolocal,arbol);
+            });
+            realizar = this.expresion.getValorImplicito(entornolocal,arbol);            
+            if(contSalir == 5000){
+                realizar = false;
+            }
+            contSalir++;
+        }
+                   
     }
 
 }

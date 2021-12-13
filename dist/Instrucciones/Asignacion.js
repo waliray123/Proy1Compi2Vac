@@ -28,6 +28,9 @@ var Asignacion = /** @class */ (function () {
             }
         });
     };
+    Asignacion.prototype.getTipo = function () {
+        return "asignacion";
+    };
     return Asignacion;
 }());
 exports.Asignacion = Asignacion;

@@ -29,6 +29,9 @@ var AccesoVariable = /** @class */ (function () {
             console.log('No existe el id ' + this.id);
         }
     };
+    AccesoVariable.prototype.getId = function () {
+        return this.id;
+    };
     return AccesoVariable;
 }());
 exports.AccesoVariable = AccesoVariable;

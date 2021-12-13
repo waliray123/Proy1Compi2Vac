@@ -1,5 +1,7 @@
 import { AST } from "../AST/AST";
 import { Entorno } from "../AST/Entorno";
+import { Simbolo } from "../AST/Simbolo";
+import { Tipo } from "../AST/Tipo";
 import { Expresion } from "../Interfaces/Expresion";
 import { Instruccion } from "../Interfaces/Instruccion";
 
@@ -9,10 +11,10 @@ export class For implements Instruccion{
     public instrucciones:Array<Instruccion>;    
     public declAsign:any;
     public expresion1: Expresion;
-    public expresion2: Expresion;
+    public expresion2: any;
 
 
-    constructor(linea:number, columna:number,instrucciones:Array<Instruccion>,declAsign:any,expresion1:Expresion,expresion2:Expresion){        
+    constructor(linea:number, columna:number,instrucciones:Array<Instruccion>,declAsign:any,expresion1:Expresion,expresion2:any){        
         this.linea = linea;
         this.columna = columna;        
         this.instrucciones = instrucciones;        
@@ -22,11 +24,47 @@ export class For implements Instruccion{
     }
 
     traducir(ent: Entorno, arbol: AST) {
-        throw new Error("Method not implemented.");
+              
+
+
     }
 
     ejecutar(ent: Entorno, arbol: AST) {
         console.log('ejecutado...fornormal');
-    }
+        const entornolocal:Entorno = new Entorno(ent);        
+        this.declAsign.ejecutar(entornolocal,arbol);
 
+        //expresion 1 es la que hay que validar 
+        console.log("empezando el while  en for");
+
+        
+        
+        while(this.expresion1.getValorImplicito(entornolocal,arbol) == true){
+            
+            //Realizar instrucciones
+            this.instrucciones.forEach((element:Instruccion) => {
+                element.ejecutar(entornolocal,arbol);
+            });
+            //Sumar o realizar la expresion2            
+            //Primero se obtiene la operacion;
+            console.log("Obteniendo la operacion  en for");
+            console.log(this.expresion2);
+            const valAsig = this.expresion2.getValorImplicito(entornolocal,arbol);
+            console.log("Valor asignar" + valAsig);
+            //Luego se obtiene el id de la operacion y se asigna el valor de la operacion; 
+            console.log("Obteniendo el id  en for");
+            const id = this.expresion2.op_izquierda.getId();
+            console.log(id);
+            if (entornolocal.existe(id)) {
+                let simbol: Simbolo = entornolocal.getSimbolo(id);
+                console.log(simbol);
+                simbol.valor = valAsig;
+            }else{
+                console.log('Error semantico, no existe la variable ' + id +'en la linea '+ this.linea + ' y columna ' + this.columna);
+            }
+                
+            
+        }  
+        
+    }
 }

@@ -269,7 +269,7 @@ instruccion_funcion
     | for_bloque            {$$ = $1;}
     | while_bloque          {$$ = $1;}
     | switch_bloque         {$$ = $1;}
-    | funcion_return        {$$ = $1;}
+    | funcion_return        {$$ = $1;}        
 ;
 
 funcion_return
@@ -467,8 +467,8 @@ operadores
 ;
 
 incr_decr
-    : expresion OP_INCR         {$$ = new Operacion($1,null,Operador.INCREMENTO, @1.first_line, @1.first_column);}
-    | expresion OP_DECR         {$$ = new Operacion($1,null,Operador.DECREMENTO, @1.first_line, @1.first_column);}
+    : primitivas OP_INCR         {$$ = new Operacion($1,null,Operador.INCREMENTO, @1.first_line, @1.first_column);}
+    | primitivas OP_DECR         {$$ = new Operacion($1,null,Operador.DECREMENTO, @1.first_line, @1.first_column);}
 ;
 
 nativas

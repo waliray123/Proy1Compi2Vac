@@ -1,29 +1,21 @@
-import { AST } from "../AST/AST";
-import { Entorno } from "../AST/Entorno";
-import { Simbolo } from "../AST/Simbolo";
-import { Tipo } from "../AST/Tipo";
-import { Expresion } from "../Interfaces/Expresion";
-import { Instruccion } from "../Interfaces/Instruccion";
-
-export class Asignacion implements Instruccion{
-    linea: number;
-    columna: number;
-    public id:Array<string>;
-    public expresion:Expresion;
-
-    constructor(id:Array<string>, linea:number, columna:number,expresion:Expresion){
-        this.id = id;
-        this.expresion = expresion;
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+// print("hola mundo");
+var IncrDecr = /** @class */ (function () {
+    function IncrDecr(operacion, linea, columna) {
+        this.operacion = operacion;
         this.linea = linea;
         this.columna = columna;
     }
-
-    traducir(ent: Entorno, arbol: AST) {
+    IncrDecr.prototype.traducir = function (ent, arbol) {
         throw new Error("Method not implemented.");
-    }
-
-    ejecutar(ent: Entorno, arbol: AST) {
-        this.id.forEach((id:string)=>{
+    };
+    IncrDecr.prototype.ejecutar = function (ent, arbol) {
+        var valor = this.operacion.getValorImplicito(ent, arbol);
+        if (valor !== null) {
+            var id = this.operacion.op_izquierda;
+            console.log(id);
+            /*
             if (ent.existe(id)) {
                 let simbol: Simbolo = ent.getSimbolo(id);
                 let tipo: Tipo = simbol.getTipo(ent,arbol);
@@ -35,10 +27,12 @@ export class Asignacion implements Instruccion{
             }else{
                 console.log('Error semantico, no existe la variable ' + id +'en la linea '+ this.linea + ' y columna ' + this.columna);
             }
-        })
-    }
-    getTipo(){
-        return "asignacion";
-    }
-
-}
+*/
+        }
+        else {
+            console.log("Ocurrio un error al realizar la operacion " + this.operacion.op_izquierda);
+        }
+    };
+    return IncrDecr;
+}());
+exports.IncrDecr = IncrDecr;

@@ -62,7 +62,7 @@ var Operacion = /** @class */ (function () {
     Operacion.prototype.getValorImplicito = function (ent, arbol) {
         if (this.operador !== Operador.MENOS_UNARIO && this.operador !== Operador.NOT
             && this.operador != Operador.SQRT && this.operador != Operador.SIN && this.operador != Operador.COS
-            && this.operador != Operador.TAN) {
+            && this.operador != Operador.TAN && this.operador != Operador.INCREMENTO && this.operador != Operador.DECREMENTO) {
             var op1 = this.op_izquierda.getValorImplicito(ent, arbol);
             var op2 = this.op_derecha.getValorImplicito(ent, arbol);
             //suma
@@ -236,6 +236,13 @@ var Operacion = /** @class */ (function () {
                     else {
                         console.log("Error de tipos de datos no permitidos realizando una raiz");
                     }
+                }
+                //incremento
+                else if (this.operador == Operador.INCREMENTO) {
+                    return op1 + 1;
+                }
+                else if (this.operador == Operador.DECREMENTO) {
+                    return op1 - 1;
                 }
             }
             catch (e) {
