@@ -24,18 +24,12 @@ var For = /** @class */ (function () {
                 element.ejecutar(entornolocal, arbol);
             });
             //Sumar o realizar la expresion2            
-            //Primero se obtiene la operacion;
-            console.log("Obteniendo la operacion  en for");
-            console.log(this.expresion2);
+            //Primero se obtiene la operacion;            
             var valAsig = this.expresion2.getValorImplicito(entornolocal, arbol);
-            console.log("Valor asignar" + valAsig);
             //Luego se obtiene el id de la operacion y se asigna el valor de la operacion; 
-            console.log("Obteniendo el id  en for");
             var id = this.expresion2.op_izquierda.getId();
-            console.log(id);
             if (entornolocal.existe(id)) {
                 var simbol = entornolocal.getSimbolo(id);
-                console.log(simbol);
                 simbol.valor = valAsig;
             }
             else {

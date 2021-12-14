@@ -46,18 +46,12 @@ export class For implements Instruccion{
                 element.ejecutar(entornolocal,arbol);
             });
             //Sumar o realizar la expresion2            
-            //Primero se obtiene la operacion;
-            console.log("Obteniendo la operacion  en for");
-            console.log(this.expresion2);
+            //Primero se obtiene la operacion;            
             const valAsig = this.expresion2.getValorImplicito(entornolocal,arbol);
-            console.log("Valor asignar" + valAsig);
             //Luego se obtiene el id de la operacion y se asigna el valor de la operacion; 
-            console.log("Obteniendo el id  en for");
-            const id = this.expresion2.op_izquierda.getId();
-            console.log(id);
+            const id = this.expresion2.op_izquierda.getId();            
             if (entornolocal.existe(id)) {
-                let simbol: Simbolo = entornolocal.getSimbolo(id);
-                console.log(simbol);
+                let simbol: Simbolo = entornolocal.getSimbolo(id);                
                 simbol.valor = valAsig;
             }else{
                 console.log('Error semantico, no existe la variable ' + id +'en la linea '+ this.linea + ' y columna ' + this.columna);

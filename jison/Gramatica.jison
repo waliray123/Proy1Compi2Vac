@@ -168,6 +168,7 @@ BSL               "\\".
     const {Operacion, Operador} = require("../dist/Expresiones/Operacion");
     const {Objeto} = require("../dist/Expresiones/Objeto");
     const {Atributo} = require("../dist/Expresiones/Atributo");
+    const {IncrDecr} = require("../dist/Instrucciones/IncrDecr");
 
     /*---CODIGO INCRUSTADO---*/
     var errores = [
@@ -283,7 +284,21 @@ instruccion_funcion
     | for_bloque            {$$ = $1;}
     | while_bloque          {$$ = $1;}
     | switch_bloque         {$$ = $1;}
-    | funcion_return        {$$ = $1;}        
+    | funcion_return        {$$ = $1;}  
+    | incremento_decremento {$$ = $1;}
+;
+
+incremento_decremento
+    : ID_VAR OP_INCR PUNTCOMA   
+        {   let accVar = new AccesoVariable($1, @1.first_line, @1.first_column);
+            let operInDec = new Operacion(accVar,null,Operador.INCREMENTO, @1.first_line, @1.first_column);
+            $$ = new IncrDecr(operInDec,@1.first_line,@1.first_column,$1);
+        }
+    | ID_VAR OP_DECR PUNTCOMA
+        {   let accVar1 = new AccesoVariable($1, @1.first_line, @1.first_column);
+            let operInDec1 = new Operacion(accVar1,null,Operador.DECREMENTO, @1.first_line, @1.first_column);
+            $$ = new IncrDecr(operInDec1,@1.first_line,@1.first_column,$1);
+        }
 ;
 
 funcion_return
