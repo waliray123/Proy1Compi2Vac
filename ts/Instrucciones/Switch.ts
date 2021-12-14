@@ -1,6 +1,7 @@
 import exp from "constants";
 import { AST } from "../AST/AST";
 import { Entorno } from "../AST/Entorno";
+import { Tipo } from "../AST/Tipo";
 import { Expresion } from "../Interfaces/Expresion";
 import { Instruccion } from "../Interfaces/Instruccion";
 import { Declaracion } from "./Declaracion";
@@ -26,14 +27,14 @@ export class Switch implements Instruccion{
     }
 
     ejecutar(ent: Entorno, arbol: AST) {
-        // console.log('ejecutado...'+ this.id);
-        // const ast:AST = new AST(this.lista_instrucciones);
-        // const entornoGlobal:Entorno = new Entorno(null);
-        // //recorro todas las raices  RECURSIVA
-        // this.lista_instrucciones.forEach((element:Instruccion) => {
-        //     element.ejecutar(entornoGlobal,ast);
-        // })
-        console.log(this.lista_instrucciones);
+        for(var caso of this.lista_instrucciones){
+            if (this.expresion.getValorImplicito(ent,arbol) == caso.id.getValorImplicito(ent, arbol) || caso.id.getTipo(ent,arbol) == Tipo.NULL) {
+                caso.ejecutar(ent,arbol);
+                if (caso.getIsBreak()) {
+                    break;
+                }
+            }
+        }
     }
 
 }
