@@ -1,11 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.AccesoVariable = void 0;
 var Tipo_1 = require("../AST/Tipo");
 var AccesoVariable = /** @class */ (function () {
     function AccesoVariable(id, linea, columna) {
         this.id = id;
         this.linea = linea;
         this.columna = columna;
+        this.isAlone = true;
     }
     AccesoVariable.prototype.traducir = function (ent, arbol) {
         throw new Error("Method not implemented.");
@@ -23,7 +25,25 @@ var AccesoVariable = /** @class */ (function () {
     AccesoVariable.prototype.getValorImplicito = function (ent, arbol) {
         if (ent.existe(this.id)) {
             var simbol = ent.getSimbolo(this.id);
-            return simbol.valor;
+            if (simbol.getTipo(ent, arbol) == Tipo_1.Tipo.TIPO_STRUCT && this.isAlone) {
+                var sendResultado_1 = simbol.getTipoStruct(ent, arbol) + '(';
+                var atributos_1 = simbol.getValorImplicito(ent, arbol);
+                var i_1 = 0;
+                atributos_1.forEach(function (atributo) {
+                    sendResultado_1 += atributo.expresion.getValorImplicito(ent, arbol);
+                    if (i_1 == atributos_1.length - 1) {
+                        sendResultado_1 += ')';
+                    }
+                    else {
+                        sendResultado_1 += ' , ';
+                    }
+                    i_1++;
+                });
+                return sendResultado_1;
+            }
+            else {
+                return simbol.valor;
+            }
         }
         else {
             console.log('No existe el id ' + this.id);

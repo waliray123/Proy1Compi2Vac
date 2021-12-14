@@ -2,17 +2,20 @@ import { AST } from "../AST/AST";
 import { Entorno } from "../AST/Entorno";
 import { Simbolo } from "../AST/Simbolo";
 import { Tipo } from "../AST/Tipo";
+import { Declaracion } from "../Instrucciones/Declaracion";
 import { Expresion } from "../Interfaces/Expresion";
 
 export class AccesoVariable implements Expresion {
     linea: number;
     columna: number;
-    id:string;
+    public id:string;
+    public isAlone: boolean;
 
     constructor(id:string, linea:number, columna:number){
         this.id = id
         this.linea = linea;
         this.columna = columna;
+        this.isAlone = true;
     }
     
     traducir(ent: Entorno, arbol: AST) {
@@ -32,7 +35,23 @@ export class AccesoVariable implements Expresion {
     getValorImplicito(ent: Entorno, arbol: AST) {
         if (ent.existe(this.id)) {
             let simbol:Simbolo = ent.getSimbolo(this.id);
-            return simbol.valor;
+            if (simbol.getTipo(ent,arbol) == Tipo.TIPO_STRUCT && this.isAlone) {
+                let sendResultado = simbol.getTipoStruct(ent,arbol) + '(';
+                let atributos:Array<Declaracion> = simbol.getValorImplicito(ent, arbol);
+                let i = 0;
+                atributos.forEach((atributo:Declaracion) =>{
+                    sendResultado += atributo.expresion.getValorImplicito(ent, arbol)
+                    if (i == atributos.length - 1) {
+                        sendResultado +=  ')';
+                    }else{
+                        sendResultado +=  ' , ';
+                    }
+                    i++;                 
+                })
+                return sendResultado;
+            }else{
+                return simbol.valor;
+            }            
         }else{
             console.log('No existe el id ' + this.id);
         }

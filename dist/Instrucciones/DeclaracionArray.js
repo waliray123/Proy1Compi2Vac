@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.DeclaracionArray = void 0;
 var Tipo_1 = require("../AST/Tipo");
 // print("hola mundo");
 var DeclaracionArray = /** @class */ (function () {

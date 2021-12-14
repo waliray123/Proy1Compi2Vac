@@ -7,6 +7,7 @@ export class Simbolo implements Expresion {
     public indentificador: string;
     public valor: any;
     private tipo: Tipo;
+    private tipoStruct:string;
     linea: number;
     columna: number;
 
@@ -16,6 +17,7 @@ export class Simbolo implements Expresion {
         this.columna = columna;
         this.tipo = tipo;
         this.valor = valor;
+        this.tipoStruct = '';
     }
     
     traducir(ent: Entorno, arbol: AST) {
@@ -27,6 +29,16 @@ export class Simbolo implements Expresion {
     }
     getValorImplicito(ent: Entorno, arbol: AST) {
         return this.valor;
+    }
+    getTipoStruct(ent: Entorno, arbol: AST){
+        if (this.tipo == Tipo.TIPO_STRUCT) {
+            return this.tipoStruct;
+        }else{
+            return null;
+        }
+    }
+    setTipoStruct(tipo:string){
+        this.tipoStruct = tipo;
     }
     
 }

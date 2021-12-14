@@ -1,5 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.DeclaracionStruct = void 0;
+var Simbolo_1 = require("../AST/Simbolo");
+var Tipo_1 = require("../AST/Tipo");
 var FuncionReturn_1 = require("./FuncionReturn");
 // print("hola mundo");
 var DeclaracionStruct = /** @class */ (function () {
@@ -14,15 +17,53 @@ var DeclaracionStruct = /** @class */ (function () {
         throw new Error("Method not implemented.");
     };
     DeclaracionStruct.prototype.ejecutar = function (ent, arbol) {
+        var _this = this;
         if (ent.existe(this.tipo)) {
             if (this.expresion instanceof FuncionReturn_1.FuncionReturn) { //evalua que se este haciendo una instancia de la estructura
                 //verificar que tengan la misma cantidad de parametros
                 var struct = ent.getSimbolo(this.tipo);
-                var structVars = struct.getValorImplicito(ent, arbol);
-                console.log(structVars.length);
-                var parametros = this.expresion.parametros;
-                console.log(parametros);
-                console.log(parametros.length);
+                if (struct.getTipo(ent, arbol) === Tipo_1.Tipo.STRUCT) {
+                    var structVars = struct.getValorImplicito(ent, arbol);
+                    var parametros_1 = this.expresion.parametros;
+                    //verificar
+                    if (!ent.existe(this.id)) {
+                        if (structVars.length == parametros_1.length) {
+                            var error_1 = false;
+                            structVars.forEach(function (declaracion, index, array) {
+                                var param = parametros_1[index];
+                                // console.log("--index---------" + index);
+                                // console.log(declaracion.tipo);
+                                // console.log(param.getTipo(ent,arbol));
+                                if (declaracion.tipo === param.getTipo(ent, arbol) || param.getTipo(ent, arbol) === Tipo_1.Tipo.NULL) {
+                                    // console.log("Si son compatibles");
+                                    declaracion.expresion = param;
+                                }
+                                else {
+                                    console.log('Error semantico, El parametro ' + param.getValorImplicito(ent, arbol) + ' no coincide con el tipo del atributo de la estructura en la linea ' + _this.linea + ' y columna ' + _this.columna);
+                                    error_1 = true;
+                                }
+                            });
+                            if (!error_1) { //ingresamos la variable
+                                //let entorno: Entorno = new Entorno(ent);//puede que no necesite esto
+                                var simbol = new Simbolo_1.Simbolo(Tipo_1.Tipo.TIPO_STRUCT, this.id, this.linea, this.columna, structVars);
+                                simbol.setTipoStruct(this.tipo);
+                                ent.agregar(this.id, simbol);
+                            }
+                            else {
+                                // console.log('No se ingreso la variable');
+                            }
+                        }
+                        else {
+                            console.log('Error semantico, La cantidad de parametros no concuerdan con la estructura en la linea ' + this.linea + ' y columna ' + this.columna);
+                        }
+                    }
+                    else {
+                        console.log('Error semantico, La variable ' + this.id + ' ya existe en el entorno, en la linea ' + this.linea + ' y columna ' + this.columna);
+                    }
+                }
+                else {
+                    console.log('Error semantico, El tipo declarado no es un struct en la linea ' + this.linea + ' y columna ' + this.columna);
+                }
             }
             else {
                 console.log('Error semantico, no se esta inicializando la estructura en la linea ' + this.linea + ' y columna ' + this.columna);

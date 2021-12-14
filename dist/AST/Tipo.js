@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Tipo = void 0;
 var Tipo;
 (function (Tipo) {
     Tipo[Tipo["STRING"] = 0] = "STRING";
@@ -12,4 +13,5 @@ var Tipo;
     Tipo[Tipo["ATRIBUTO"] = 7] = "ATRIBUTO";
     Tipo[Tipo["CHAR"] = 8] = "CHAR";
     Tipo[Tipo["ARRAY"] = 9] = "ARRAY";
+    Tipo[Tipo["TIPO_STRUCT"] = 10] = "TIPO_STRUCT";
 })(Tipo = exports.Tipo || (exports.Tipo = {}));

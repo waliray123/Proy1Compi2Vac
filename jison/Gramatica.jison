@@ -159,7 +159,7 @@ BSL               "\\".
     const {Continue} = require("../dist/Instrucciones/Continue");
     const {FuncionReturn} = require("../dist/Instrucciones/FuncionReturn");
     const {Parametro} = require("../dist/Instrucciones/Parametro");
-    const {ParametroReturn} = require("../dist/Instrucciones/ParametroReturn");
+    const {ParametroReturn} = require("../dist/Expresiones/ParametroReturn");
     const {For} = require("../dist/Instrucciones/For");
     const {Forin} = require("../dist/Instrucciones/Forin");
     const {Primitivo} = require("../dist/Expresiones/Primitivo");
@@ -183,7 +183,7 @@ BSL               "\\".
 
 /*---DEFINICION DE PRESEDENCIA DE OPERADORES---*/
 
-%left 'OP_OR' 'COMA' 'OP_CALL' 'OP_TER'
+%left 'OP_OR' 'COMA' 'OP_TER'
 %left 'OP_AND'
 %left 'OP_MEN' 'OP_MENIG' 'OP_MAY' 'OP_MAYIG' 'OP_IGUAL' 'OP_DOBIG' 'OP_DIF'
 %left 'OP_SUMA' 'OP_RESTA' 'OP_AMP'
@@ -192,7 +192,7 @@ BSL               "\\".
 %left 'OP_NEG'
 %left  UMINUS
 
-%left 'PARI' 'PARD' 'CORCHI' 'CORCHD'
+%left 'PARI' 'PARD' 'CORCHI' 'CORCHD' 'OP_CALL'
 %right 'OP_INCR' 'OP_DECR'
 
 %% /* Definición de la gramática */
@@ -226,12 +226,12 @@ cuerpo_struct
 
 contenido_struct 
     : declaracion_struct                            {$$ = [$1];}
-    | declaracion_struct COMA contenido_struct      {$3.push($1); $$= $3; }
+    | contenido_struct COMA declaracion_struct     {$1.push($3); $$= $1; }
 ;
 
 declaracion_struct
-    : tiposVar ID_VAR       {$$ = new Declaracion($2,$1,@1.first_line,@1.first_column);}
-    | ID_VAR ID_VAR         {$$ = new Declaracion($2,$1,@1.first_line,@1.first_column);}
+    : tiposVar ID_VAR       {$$ = new Declaracion($2,$1,@1.first_line,@1.first_column,null);}
+    | ID_VAR ID_VAR         {$$ = new Declaracion($2,$1,@1.first_line,@1.first_column,null);}
 ;
 
 asignacion_funcion
@@ -411,7 +411,7 @@ while_bloque
 
 decl_asign
     : tiposVar nombreVars asignacion    {$$ = new Declaracion($2,$1,@1.first_line,@1.first_column,$3);}
-    | nombreVars asignacion             {$$ = new Asignacion($1,@1.first_line,@1.first_column,$2);}
+    | nombreAtributos asignacion             {$$ = new Asignacion($1,@1.first_line,@1.first_column,$2);}
 ;
 
 
@@ -472,7 +472,7 @@ expresion
 ;
 
 expresion_atributos
-    : expresion OP_CALL expresion                           {$$ = new AccesoAtributo($1,$3,@1.first_line, @1.first_column);}
+    : expresion OP_CALL ID_VAR                           {$$ = new AccesoAtributo($1,$3,@1.first_line, @1.first_column);}
 ;
 
 expresion_ternario
@@ -528,6 +528,7 @@ primitivas
     | CHARL                 {$$ = new Primitivo($1, @1.first_line, @1.first_column);}
     | ID_VAR                {$$ = new AccesoVariable($1, @1.first_line, @1.first_column);}
     | ID_VAR PARI parametros_funcion_return PARD       {$$ = new FuncionReturn($1,@1.first_line,@1.first_column,$3);}
+    | STR_NULL              {$$ = new Primitivo(null, @1.first_line, @1.first_column);}
 ;
 
 
