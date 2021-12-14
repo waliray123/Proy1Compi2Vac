@@ -40,7 +40,7 @@ p {
     color: #f3f3f3;
 }
 
-#consola {
+.consola {
     width: 80%;
     background-color: #202428;
     height: 100%;

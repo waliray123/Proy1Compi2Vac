@@ -64,15 +64,33 @@
     <br>
     <div class="container">
       <button style=" margin-left: auto; padding: 0 4rem; text-align: center; width: auto;" onclick="compilar()">Ejecutar Codigo</button>
+      <button style=" margin-left: auto; padding: 0 4rem; text-align: center; width: auto;" onclick="traducir()">Ejecutar Codigo</button>
     </div>
     
     <p>Consola</p>
     <div id="contenedor-consola">
-        <textarea name="consola" id="consola" cols="30" rows="10"> Prueba </textarea>
+        <textarea name="consola" id="consola" cols="30" rows="10" class="consola"> </textarea>
     </div>
 
     <div id="contenedor-reportes">
-
+      <p>Traduccion</p>
+      <div id="contenedor-traduccion">
+          <textarea name="traduccion" id="traduccion" cols="30" rows="20" class="consola"> </textarea>
+      </div>
+      <div>
+        <table>
+          <tr>
+            <th>Funcion o variable</th>
+            <th>Id</th>
+            <th>Tipo</th>
+            <th>Linea</th>
+            <th>Columna</th>
+            <th>Posicion</th>
+            <th>Entorno</th>
+            <th>Dimensiones</th>
+          </tr>          
+        </table>
+      </div>
     </div>
         
     <script src="plugins/codemirror-5.64.0/lib/codemirror.js"></script>    

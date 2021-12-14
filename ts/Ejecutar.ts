@@ -9,9 +9,37 @@ const gramatica = require('../jison/Gramatica');
 
 declare global {
     interface Window { ejecutarCodigo: any; }
+    interface Window { traducirCodigo: any; }
 }
 
 window.ejecutarCodigo = function (entrada:string){
+    //Reiniciar consola
+    reiniciarConsola();
+    //traigo todas las raices    
+    const instrucciones = gramatica.parse(entrada);
+    console.log(instrucciones);
+    
+    //Obtengo las funciones y strucs globales y se los asigno al ast
+    let funcionesG = revisarFuncionesGlobales(instrucciones);
+    let structsG = revisarStructsGlobales(instrucciones);
+
+
+    const ast:AST = new AST(instrucciones,structsG,funcionesG);
+    const entornoGlobal:Entorno = generarEntornoGlobal(ast,structsG);   
+    console.log(entornoGlobal); 
+    
+    //Buscar la funcion main    
+
+    funcionesG.forEach((element:Funcion) => {
+        if(element.nombrefuncion == "main"){
+            console.log("Se ejecutara");
+            element.ejecutar(entornoGlobal,ast);
+            
+        }
+    })
+}
+
+window.traducirCodigo = function (entrada:string){
     //Reiniciar consola
     reiniciarConsola();
     //traigo todas las raices    
