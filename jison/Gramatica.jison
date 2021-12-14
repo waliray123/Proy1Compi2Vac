@@ -159,7 +159,7 @@ BSL               "\\".
     const {Continue} = require("../dist/Instrucciones/Continue");
     const {FuncionReturn} = require("../dist/Instrucciones/FuncionReturn");
     const {Parametro} = require("../dist/Instrucciones/Parametro");
-    const {ParametroReturn} = require("../dist/Instrucciones/ParametroReturn");
+    const {ParametroReturn} = require("../dist/Expresiones/ParametroReturn");
     const {For} = require("../dist/Instrucciones/For");
     const {Forin} = require("../dist/Instrucciones/Forin");
     const {Primitivo} = require("../dist/Expresiones/Primitivo");
@@ -226,12 +226,12 @@ cuerpo_struct
 
 contenido_struct 
     : declaracion_struct                            {$$ = [$1];}
-    | declaracion_struct COMA contenido_struct      {$3.push($1); $$= $3; }
+    | contenido_struct COMA declaracion_struct     {$1.push($3); $$= $1; }
 ;
 
 declaracion_struct
-    : tiposVar ID_VAR       {$$ = new Declaracion($2,$1,@1.first_line,@1.first_column);}
-    | ID_VAR ID_VAR         {$$ = new Declaracion($2,$1,@1.first_line,@1.first_column);}
+    : tiposVar ID_VAR       {$$ = new Declaracion($2,$1,@1.first_line,@1.first_column,null);}
+    | ID_VAR ID_VAR         {$$ = new Declaracion($2,$1,@1.first_line,@1.first_column,null);}
 ;
 
 asignacion_funcion
@@ -528,6 +528,7 @@ primitivas
     | CHARL                 {$$ = new Primitivo($1, @1.first_line, @1.first_column);}
     | ID_VAR                {$$ = new AccesoVariable($1, @1.first_line, @1.first_column);}
     | ID_VAR PARI parametros_funcion_return PARD       {$$ = new FuncionReturn($1,@1.first_line,@1.first_column,$3);}
+    | STR_NULL              {$$ = new Primitivo(null, @1.first_line, @1.first_column);}
 ;
 
 

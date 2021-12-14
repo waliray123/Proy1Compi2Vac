@@ -7,7 +7,7 @@ import { Expresion } from "../Interfaces/Expresion";
 export class AccesoVariable implements Expresion {
     linea: number;
     columna: number;
-    id:string;
+    public id:string;
 
     constructor(id:string, linea:number, columna:number){
         this.id = id

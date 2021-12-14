@@ -12,4 +12,5 @@ var Tipo;
     Tipo[Tipo["ATRIBUTO"] = 7] = "ATRIBUTO";
     Tipo[Tipo["CHAR"] = 8] = "CHAR";
     Tipo[Tipo["ARRAY"] = 9] = "ARRAY";
+    Tipo[Tipo["TIPO_STRUCT"] = 10] = "TIPO_STRUCT";
 })(Tipo = exports.Tipo || (exports.Tipo = {}));
