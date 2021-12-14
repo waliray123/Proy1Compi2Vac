@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.IncrDecr = void 0;
 // print("hola mundo");
 var IncrDecr = /** @class */ (function () {
     function IncrDecr(operacion, linea, columna, idVar) {

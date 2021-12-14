@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Asignacion = void 0;
 var Tipo_1 = require("../AST/Tipo");
 var Asignacion = /** @class */ (function () {
     function Asignacion(id, linea, columna, expresion) {

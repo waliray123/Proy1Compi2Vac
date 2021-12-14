@@ -23,6 +23,26 @@ window.ejecutarCodigo = function (entrada) {
         }
     });
 };
+window.traducirCodigo = function (entrada) {
+    //Reiniciar consola
+    reiniciarConsola();
+    //traigo todas las raices    
+    var instrucciones = gramatica.parse(entrada);
+    console.log(instrucciones);
+    //Obtengo las funciones y strucs globales y se los asigno al ast
+    var funcionesG = revisarFuncionesGlobales(instrucciones);
+    var structsG = revisarStructsGlobales(instrucciones);
+    var ast = new AST_1.AST(instrucciones, structsG, funcionesG);
+    var entornoGlobal = generarEntornoGlobal(ast, structsG);
+    console.log(entornoGlobal);
+    //Buscar la funcion main    
+    funcionesG.forEach(function (element) {
+        if (element.nombrefuncion == "main") {
+            console.log("Se ejecutara");
+            element.ejecutar(entornoGlobal, ast);
+        }
+    });
+};
 function reiniciarConsola() {
     var areaConsola = document.getElementById('consola');
     areaConsola.value = "";

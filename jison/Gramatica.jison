@@ -147,6 +147,7 @@ BSL               "\\".
     const {DeclaracionArray} = require("../dist/Instrucciones/DeclaracionArray");
     const {Asignacion} = require("../dist/Instrucciones/Asignacion");
     const {While} = require("../dist/Instrucciones/While");
+    const {If} = require("../dist/Instrucciones/If");
     const {DoWhile} = require("../dist/Instrucciones/DoWhile");
     const {Funcion} = require("../dist/Instrucciones/Funcion");
     const {Struct} = require("../dist/Instrucciones/Struct");
@@ -380,9 +381,8 @@ print_bloque
     | PRINTLN PARI expresion PARD PUNTCOMA      {$$ = new Print($3,@1.first_line,@1.first_column,true);}
 ;
 
-if_bloque
-    : STR_IF PARI expresion PARD cuerpoFuncion sinos_bloque
-    | STR_IF PARI expresion PARD instruccion_funcion 
+if_bloque //linea:number, columna:number,condicion:Expresion,instrucciones:Array<Instruccion>,sinos:Array<If>
+    : STR_IF PARI expresion PARD cuerpoFuncion sinos_bloque {$$ = new If(@1.first_line,@1.first_column,$3,$5,$6,"if");}    
 ;
 
 instruccion_devuelta
@@ -390,11 +390,13 @@ instruccion_devuelta
 ;
 
 sinos_bloque
-    : STR_ELSE cuerpoFuncion
-    | STR_ELSE instruccion_devuelta
-    | STR_ELSEIF PARI expresion PARD cuerpoFuncion sinos_bloque
-    | STR_ELSEIF PARI expresion PARD instruccion_devuelta 
-    |
+    : STR_ELSE cuerpoFuncion                                        {$$ = [new If(@1.first_line,@1.first_column,null,$2,[],"else")];}      
+    | sino_si_bloque sinos_bloque                                   {$2.push($1); $$ = $2}
+    |                                                               {$$ = [];}
+;
+
+sino_si_bloque
+    : STR_ELSEIF PARI expresion PARD cuerpoFuncion     {$$ = new If(@1.first_line,@1.first_column,$3,$5,[],"elseif");}
 ;
 
 for_bloque
