@@ -19,6 +19,7 @@ var AccesoAtributo = /** @class */ (function () {
         var _this = this;
         try {
             var valor_1 = null;
+            this.expr1.isAlone = false;
             var val1 = this.expr1.getValorImplicito(ent, arbol);
             val1.forEach(function (decl) {
                 var nombre = decl.id[0];
@@ -27,6 +28,7 @@ var AccesoAtributo = /** @class */ (function () {
                     valor_1 = decl.expresion.getValorImplicito(ent, arbol);
                 }
             });
+            this.expr1.isAlone = true;
             return valor_1;
         }
         catch (e) {
