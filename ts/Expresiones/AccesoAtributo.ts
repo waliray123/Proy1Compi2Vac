@@ -10,9 +10,9 @@ export class AccesoAtributo implements Expresion {
     linea: number;
     columna: number;
     public expr1: Expresion;
-    public expr2:  AccesoVariable;
+    public expr2:  string;
 
-    constructor(expr1:Expresion,expr2:AccesoVariable, linea:number, columna:number){
+    constructor(expr1:Expresion,expr2:string, linea:number, columna:number){
         this.expr1 = expr1;
         this.expr2 = expr2;
         this.linea = linea;
@@ -32,16 +32,11 @@ export class AccesoAtributo implements Expresion {
             let valor = null;
             let val1:Array<Declaracion> = this.expr1.getValorImplicito(ent, arbol);
             val1.forEach((decl:Declaracion)=>{
-                let nombre = decl.id[0];      
-                console.log( 'nombre '+ nombre);          
-                if (this.expr2 instanceof AccesoVariable) {
-                    let variableAcceder =  this.expr2.id;
-                    console.log( 'variableAcceder ' + variableAcceder)
-                    if (nombre == variableAcceder) {
-                        console.log('valor ' + decl.expresion.getValorImplicito(ent, arbol))
-                        valor =  decl.expresion.getValorImplicito(ent, arbol);
-                    }
-                }                
+                let nombre = decl.id[0];
+                if (nombre == this.expr2) {
+                    // console.log('valor ' + decl.expresion.getValorImplicito(ent, arbol))
+                    valor =  decl.expresion.getValorImplicito(ent, arbol);
+                }             
             })
             return valor;
         }catch(e){
