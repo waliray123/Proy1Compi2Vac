@@ -4,7 +4,7 @@ import { Tipo } from "../AST/Tipo";
 import { Expresion } from "../Interfaces/Expresion";
 import { Instruccion } from "../Interfaces/Instruccion";
 
-export class ParametroReturn implements Instruccion{
+export class ParametroReturn implements Expresion {
     linea: number;
     columna: number;
     public valor:Expresion;
@@ -13,6 +13,12 @@ export class ParametroReturn implements Instruccion{
         this.valor = valor;
         this.linea = linea;
         this.columna = columna;
+    }
+    getTipo(ent: Entorno, arbol: AST): Tipo {
+        return this.valor.getTipo(ent, arbol);
+    }
+    getValorImplicito(ent: Entorno, arbol: AST) {
+        return this.valor.getValorImplicito(ent, arbol);
     }
 
     traducir(ent: Entorno, arbol: AST) {

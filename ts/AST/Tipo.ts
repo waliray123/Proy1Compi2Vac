@@ -8,5 +8,6 @@ export enum Tipo {
     NULL,
     ATRIBUTO,
     CHAR,
-    ARRAY
+    ARRAY,
+    TIPO_STRUCT
 }

@@ -3,7 +3,7 @@ import { Entorno } from "../AST/Entorno";
 import { Instruccion } from "../Interfaces/Instruccion";
 import { Parametro } from "../Instrucciones/Parametro";
 import { Funcion } from "../Instrucciones/Funcion";
-import { ParametroReturn } from "./ParametroReturn";
+import { ParametroReturn } from "../Expresiones/ParametroReturn";
 
 export class FuncionReturn implements Instruccion{
     linea: number;
