@@ -183,7 +183,7 @@ BSL               "\\".
 
 /*---DEFINICION DE PRESEDENCIA DE OPERADORES---*/
 
-%left 'OP_OR' 'COMA' 'OP_CALL' 'OP_TER'
+%left 'OP_OR' 'COMA' 'OP_TER'
 %left 'OP_AND'
 %left 'OP_MEN' 'OP_MENIG' 'OP_MAY' 'OP_MAYIG' 'OP_IGUAL' 'OP_DOBIG' 'OP_DIF'
 %left 'OP_SUMA' 'OP_RESTA' 'OP_AMP'
@@ -192,7 +192,7 @@ BSL               "\\".
 %left 'OP_NEG'
 %left  UMINUS
 
-%left 'PARI' 'PARD' 'CORCHI' 'CORCHD'
+%left 'PARI' 'PARD' 'CORCHI' 'CORCHD' 'OP_CALL'
 %right 'OP_INCR' 'OP_DECR'
 
 %% /* Definición de la gramática */
