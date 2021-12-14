@@ -37,5 +37,8 @@ export class Asignacion implements Instruccion{
             }
         })
     }
+    getTipo(){
+        return "asignacion";
+    }
 
 }

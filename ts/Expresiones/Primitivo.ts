@@ -6,7 +6,7 @@ import { Expresion } from "../Interfaces/Expresion";
 export class Primitivo implements Expresion {
     linea: number;
     columna: number;
-    valor: any;
+    public valor: any;
 
     constructor(valor:any, linea:number, columna:number){
         this.linea = linea;

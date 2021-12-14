@@ -34,8 +34,8 @@ export enum Operador {
 export class Operacion implements Expresion {
     linea: number;
     columna: number;
-    op_izquierda: Expresion;
-    op_derecha: Expresion;
+    public op_izquierda: Expresion;
+    public op_derecha: Expresion;
     operador: Operador;
 
     constructor(op_izquierda:Expresion,op_derecha:Expresion, operacion:Operador, linea:number, columna:number){
@@ -77,7 +77,7 @@ export class Operacion implements Expresion {
     getValorImplicito(ent: Entorno, arbol: AST) {
         if (this.operador !== Operador.MENOS_UNARIO && this.operador !== Operador.NOT
             && this.operador != Operador.SQRT && this.operador != Operador.SIN && this.operador != Operador.COS
-            && this.operador != Operador.TAN){
+            && this.operador != Operador.TAN && this.operador != Operador.INCREMENTO && this.operador != Operador.DECREMENTO){
             let op1 = this.op_izquierda.getValorImplicito(ent, arbol);
             let op2 = this.op_derecha.getValorImplicito(ent, arbol);
             
@@ -215,6 +215,7 @@ export class Operacion implements Expresion {
                         console.log("Error de tipos de datos no permitidos realizando una potencia");
                     }                
                 }
+                
             }
             catch(e){
                 console.log(e);
@@ -265,6 +266,13 @@ export class Operacion implements Expresion {
                     }else{
                         console.log("Error de tipos de datos no permitidos realizando una raiz");
                     }
+                }
+                //incremento
+                else if(this.operador == Operador.INCREMENTO){                                
+                    return op1 + 1;
+                }
+                else if(this.operador == Operador.DECREMENTO){                
+                    return op1 - 1;
                 }
             }
             catch(e){

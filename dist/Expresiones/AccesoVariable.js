@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AccesoVariable = void 0;
 var Tipo_1 = require("../AST/Tipo");
 var AccesoVariable = /** @class */ (function () {
     function AccesoVariable(id, linea, columna) {
@@ -29,6 +28,9 @@ var AccesoVariable = /** @class */ (function () {
         else {
             console.log('No existe el id ' + this.id);
         }
+    };
+    AccesoVariable.prototype.getId = function () {
+        return this.id;
     };
     return AccesoVariable;
 }());

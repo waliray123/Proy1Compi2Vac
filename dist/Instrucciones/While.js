@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.While = void 0;
+var Entorno_1 = require("../AST/Entorno");
 var While = /** @class */ (function () {
     function While(linea, columna, instrucciones, expresion) {
         this.linea = linea;
@@ -12,7 +12,19 @@ var While = /** @class */ (function () {
         throw new Error("Method not implemented.");
     };
     While.prototype.ejecutar = function (ent, arbol) {
-        console.log('ejecutado...fornormal');
+        var entornolocal = new Entorno_1.Entorno(ent);
+        var realizar = this.expresion.getValorImplicito(entornolocal, arbol);
+        var contSalir = 0;
+        while (realizar) {
+            this.instrucciones.forEach(function (element) {
+                element.ejecutar(entornolocal, arbol);
+            });
+            realizar = this.expresion.getValorImplicito(entornolocal, arbol);
+            if (contSalir == 5000) {
+                realizar = false;
+            }
+            contSalir++;
+        }
     };
     return While;
 }());

@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Asignacion = void 0;
 var Asignacion = /** @class */ (function () {
     function Asignacion(id, linea, columna, expresion) {
         this.id = id;
@@ -28,6 +27,9 @@ var Asignacion = /** @class */ (function () {
                 console.log('Error semantico, no existe la variable ' + id + 'en la linea ' + _this.linea + ' y columna ' + _this.columna);
             }
         });
+    };
+    Asignacion.prototype.getTipo = function () {
+        return "asignacion";
     };
     return Asignacion;
 }());
