@@ -411,7 +411,7 @@ while_bloque
 
 decl_asign
     : tiposVar nombreVars asignacion    {$$ = new Declaracion($2,$1,@1.first_line,@1.first_column,$3);}
-    | nombreVars asignacion             {$$ = new Asignacion($1,@1.first_line,@1.first_column,$2);}
+    | nombreAtributos asignacion             {$$ = new Asignacion($1,@1.first_line,@1.first_column,$2);}
 ;
 
 
@@ -472,7 +472,7 @@ expresion
 ;
 
 expresion_atributos
-    : expresion OP_CALL expresion                           {$$ = new AccesoAtributo($1,$3,@1.first_line, @1.first_column);}
+    : expresion OP_CALL ID_VAR                           {$$ = new AccesoAtributo($1,$3,@1.first_line, @1.first_column);}
 ;
 
 expresion_ternario
