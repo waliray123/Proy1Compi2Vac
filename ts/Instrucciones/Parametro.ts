@@ -6,10 +6,10 @@ import { Instruccion } from "../Interfaces/Instruccion";
 export class Parametro implements Instruccion{
     linea: number;
     columna: number;
-    public id:String;
+    public id:string;
     public tipoParametro:Tipo;
 
-    constructor(id:String, tipoParametro:Tipo,linea:number, columna:number){
+    constructor(id:string, tipoParametro:Tipo,linea:number, columna:number){
         this.id = id;
         this.linea = linea;
         this.columna = columna;

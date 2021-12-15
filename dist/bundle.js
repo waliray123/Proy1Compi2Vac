@@ -1100,6 +1100,7 @@ exports.Forin = Forin;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Entorno_1 = require("../AST/Entorno");
+var Declaracion_1 = require("./Declaracion");
 var Funcion = /** @class */ (function () {
     function Funcion(nombrefuncion, tipoFuncion, linea, columna, instrucciones, parametros) {
         if (parametros === void 0) { parametros = []; }
@@ -1109,12 +1110,15 @@ var Funcion = /** @class */ (function () {
         this.instrucciones = instrucciones;
         this.tipoFuncion = tipoFuncion;
         this.parametros = parametros;
+        this.parametrosR = [];
     }
     Funcion.prototype.traducir = function (ent, arbol) {
         throw new Error("Method not implemented.");
     };
     Funcion.prototype.ejecutar = function (ent, arbol) {
         var entornoGlobal = new Entorno_1.Entorno(ent);
+        //Declarar todos los parametros
+        this.declararParametrosReturn(entornoGlobal, arbol);
         //recorro todas las raices  RECURSIVA
         this.instrucciones.forEach(function (element) {
             element.ejecutar(entornoGlobal, arbol);
@@ -1124,11 +1128,30 @@ var Funcion = /** @class */ (function () {
     Funcion.prototype.getTipo = function () {
         return "funcion";
     };
+    Funcion.prototype.setParametrosReturn = function (parametrosR) {
+        this.parametrosR = parametrosR;
+    };
+    Funcion.prototype.declararParametrosReturn = function (ent, arbol) {
+        try {
+            for (var i = 0; i < this.parametros.length; i++) {
+                var parametro = this.parametros[i];
+                var parametroR = this.parametrosR[i];
+                if (parametroR.getTipo(ent, arbol) == parametro.tipoParametro) {
+                    //id:Array<string>,tipo:Tipo, linea:number, columna:number,expresion:Expresion                                        
+                    var declPar = new Declaracion_1.Declaracion([parametro.id], parametro.tipoParametro, this.linea, this.columna, parametroR.valor);
+                    declPar.ejecutar(ent, arbol);
+                }
+            }
+        }
+        catch (error) {
+            console.log("Error al declarar un parametro");
+        }
+    };
     return Funcion;
 }());
 exports.Funcion = Funcion;
 
-},{"../AST/Entorno":1}],23:[function(require,module,exports){
+},{"../AST/Entorno":1,"./Declaracion":16}],23:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var FuncionReturn = /** @class */ (function () {
@@ -1147,6 +1170,7 @@ var FuncionReturn = /** @class */ (function () {
         var funciones = arbol.funciones;
         funciones.forEach(function (element) {
             if (_this.nombrefuncion == element.nombrefuncion) {
+                element.setParametrosReturn(_this.parametros);
                 element.ejecutar(ent, arbol);
                 return; // Retornar el valor que retorna la funcion ejecutar
             }
@@ -1539,7 +1563,7 @@ case 14: case 15:
 this.$ = new Declaracion($$[$0],$$[$0-1],_$[$0-1].first_line,_$[$0-1].first_column,null);
 break;
 case 16:
-this.$ = new Funcion("main","void",_$[$0-4].first_line,_$[$0-4].first_column,$$[$0]);
+this.$ = new Funcion("main","void",_$[$0-4].first_line,_$[$0-4].first_column,$$[$0],[]);
 break;
 case 17:
 this.$ = new Funcion($$[$0-4],$$[$0-5],_$[$0-5].first_line,_$[$0-5].first_column,$$[$0],$$[$0-2]);

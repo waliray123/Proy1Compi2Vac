@@ -16,6 +16,7 @@ var FuncionReturn = /** @class */ (function () {
         var funciones = arbol.funciones;
         funciones.forEach(function (element) {
             if (_this.nombrefuncion == element.nombrefuncion) {
+                element.setParametrosReturn(_this.parametros);
                 element.ejecutar(ent, arbol);
                 return; // Retornar el valor que retorna la funcion ejecutar
             }
