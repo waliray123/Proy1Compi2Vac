@@ -198,7 +198,7 @@ case 50:
         
 break;
 case 51:
-this.$ = new SwitchCaso('DEFAULT',$$[$0],_$[$0-2].first_line,_$[$0-2].first_column);
+let nul = new Primitivo(null, _$[$0-2].first_line, _$[$0-2].first_column);this.$ = new SwitchCaso(nul,$$[$0],_$[$0-2].first_line,_$[$0-2].first_column);
 break;
 case 53:
 this.$ = new Break(_$[$0-1].first_line,_$[$0-1].first_column);

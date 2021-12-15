@@ -10,7 +10,7 @@ var Break = /** @class */ (function () {
         throw new Error("Method not implemented.");
     };
     Break.prototype.ejecutar = function (ent, arbol) {
-        // console.log('ejecutado...'+ this.id);
+        return;
     };
     return Break;
 }());

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var Tipo_1 = require("../AST/Tipo");
 // print("hola mundo");
 var Switch = /** @class */ (function () {
     function Switch(expresion, lista_intstrucciones, linea, columna) {
@@ -12,14 +13,15 @@ var Switch = /** @class */ (function () {
         throw new Error("Method not implemented.");
     };
     Switch.prototype.ejecutar = function (ent, arbol) {
-        // console.log('ejecutado...'+ this.id);
-        // const ast:AST = new AST(this.lista_instrucciones);
-        // const entornoGlobal:Entorno = new Entorno(null);
-        // //recorro todas las raices  RECURSIVA
-        // this.lista_instrucciones.forEach((element:Instruccion) => {
-        //     element.ejecutar(entornoGlobal,ast);
-        // })
-        console.log(this.lista_instrucciones);
+        for (var _i = 0, _a = this.lista_instrucciones; _i < _a.length; _i++) {
+            var caso = _a[_i];
+            if (this.expresion.getValorImplicito(ent, arbol) == caso.id.getValorImplicito(ent, arbol) || caso.id.getTipo(ent, arbol) == Tipo_1.Tipo.NULL) {
+                caso.ejecutar(ent, arbol);
+                if (caso.getIsBreak()) {
+                    break;
+                }
+            }
+        }
     };
     return Switch;
 }());

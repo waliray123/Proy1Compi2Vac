@@ -350,7 +350,7 @@ contenido_caso
 ;
 
 opcional_default
-    : STR_DEFAULT DOSPUNT contenido_caso            {$$ = new SwitchCaso('DEFAULT',$3,@1.first_line,@1.first_column);}
+    : STR_DEFAULT DOSPUNT contenido_caso            {let nul = new Primitivo(null, @1.first_line, @1.first_column);$$ = new SwitchCaso(nul,$3,@1.first_line,@1.first_column);}
     |                                               {$$ = null;}
 ;
 

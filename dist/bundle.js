@@ -747,7 +747,7 @@ var Break = /** @class */ (function () {
         throw new Error("Method not implemented.");
     };
     Break.prototype.ejecutar = function (ent, arbol) {
-        // console.log('ejecutado...'+ this.id);
+        return;
     };
     return Break;
 }());
@@ -1366,6 +1366,7 @@ exports.Struct = Struct;
 },{"../AST/Simbolo":2,"../AST/Tipo":3}],29:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var Tipo_1 = require("../AST/Tipo");
 // print("hola mundo");
 var Switch = /** @class */ (function () {
     function Switch(expresion, lista_intstrucciones, linea, columna) {
@@ -1378,22 +1379,24 @@ var Switch = /** @class */ (function () {
         throw new Error("Method not implemented.");
     };
     Switch.prototype.ejecutar = function (ent, arbol) {
-        // console.log('ejecutado...'+ this.id);
-        // const ast:AST = new AST(this.lista_instrucciones);
-        // const entornoGlobal:Entorno = new Entorno(null);
-        // //recorro todas las raices  RECURSIVA
-        // this.lista_instrucciones.forEach((element:Instruccion) => {
-        //     element.ejecutar(entornoGlobal,ast);
-        // })
-        console.log(this.lista_instrucciones);
+        for (var _i = 0, _a = this.lista_instrucciones; _i < _a.length; _i++) {
+            var caso = _a[_i];
+            if (this.expresion.getValorImplicito(ent, arbol) == caso.id.getValorImplicito(ent, arbol) || caso.id.getTipo(ent, arbol) == Tipo_1.Tipo.NULL) {
+                caso.ejecutar(ent, arbol);
+                if (caso.getIsBreak()) {
+                    break;
+                }
+            }
+        }
     };
     return Switch;
 }());
 exports.Switch = Switch;
 
-},{}],30:[function(require,module,exports){
+},{"../AST/Tipo":3}],30:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var Break_1 = require("./Break");
 // print("hola mundo");
 var SwitchCaso = /** @class */ (function () {
     function SwitchCaso(id, lista_intstrucciones, linea, columna) {
@@ -1401,18 +1404,31 @@ var SwitchCaso = /** @class */ (function () {
         this.lista_instrucciones = lista_intstrucciones;
         this.linea = linea;
         this.columna = columna;
+        this.isBreak = false;
     }
     SwitchCaso.prototype.traducir = function (ent, arbol) {
         throw new Error("Method not implemented.");
     };
     SwitchCaso.prototype.ejecutar = function (ent, arbol) {
-        console.log('ejecutado...' + this.id);
+        for (var _i = 0, _a = this.lista_instrucciones; _i < _a.length; _i++) {
+            var ints = _a[_i];
+            if (ints instanceof Break_1.Break) {
+                this.isBreak = true;
+                break;
+            }
+            else {
+                ints.ejecutar(ent, arbol);
+            }
+        }
+    };
+    SwitchCaso.prototype.getIsBreak = function () {
+        return this.isBreak;
     };
     return SwitchCaso;
 }());
 exports.SwitchCaso = SwitchCaso;
 
-},{}],31:[function(require,module,exports){
+},{"./Break":14}],31:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Entorno_1 = require("../AST/Entorno");
@@ -1647,7 +1663,7 @@ case 50:
         
 break;
 case 51:
-this.$ = new SwitchCaso('DEFAULT',$$[$0],_$[$0-2].first_line,_$[$0-2].first_column);
+let nul = new Primitivo(null, _$[$0-2].first_line, _$[$0-2].first_column);this.$ = new SwitchCaso(nul,$$[$0],_$[$0-2].first_line,_$[$0-2].first_column);
 break;
 case 53:
 this.$ = new Break(_$[$0-1].first_line,_$[$0-1].first_column);

@@ -19,7 +19,7 @@ export class Break implements Instruccion{
     }
 
     ejecutar(ent: Entorno, arbol: AST) {
-        // console.log('ejecutado...'+ this.id);
+        return;
     }
 
 }
