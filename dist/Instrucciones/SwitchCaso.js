@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.SwitchCaso = void 0;
 var Break_1 = require("./Break");
 // print("hola mundo");
 var SwitchCaso = /** @class */ (function () {

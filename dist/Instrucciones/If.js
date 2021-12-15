@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.If = void 0;
 var Entorno_1 = require("../AST/Entorno");
 var If = /** @class */ (function () {
     function If(linea, columna, condicion, instrucciones, sinos, tipo) {

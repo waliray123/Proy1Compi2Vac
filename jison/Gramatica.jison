@@ -239,7 +239,7 @@ declaracion_struct
 ;
 
 asignacion_funcion
-    : VOID MAIN PARI PARD cuerpoFuncion                             {$$ = new Funcion("main","void",@1.first_line,@1.first_column,$5);}
+    : VOID MAIN PARI PARD cuerpoFuncion                             {$$ = new Funcion("main","void",@1.first_line,@1.first_column,$5,[]);}
     | tiposVar ID_VAR PARI parametros_funcion PARD cuerpoFuncion    {$$ = new Funcion($2,$1,@1.first_line,@1.first_column,$6,$4);}
 ;
 

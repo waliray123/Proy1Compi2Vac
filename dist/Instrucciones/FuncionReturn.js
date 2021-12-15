@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.FuncionReturn = void 0;
 var FuncionReturn = /** @class */ (function () {
     function FuncionReturn(nombrefuncion, linea, columna, parametros) {
         if (parametros === void 0) { parametros = []; }
@@ -17,6 +16,7 @@ var FuncionReturn = /** @class */ (function () {
         var funciones = arbol.funciones;
         funciones.forEach(function (element) {
             if (_this.nombrefuncion == element.nombrefuncion) {
+                element.setParametrosReturn(_this.parametros);
                 element.ejecutar(ent, arbol);
                 return; // Retornar el valor que retorna la funcion ejecutar
             }

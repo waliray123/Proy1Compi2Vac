@@ -26,6 +26,7 @@ export class FuncionReturn implements Instruccion{
         const funciones = arbol.funciones;
         funciones.forEach((element:Funcion) => {
             if(this.nombrefuncion == element.nombrefuncion){
+                element.setParametrosReturn(this.parametros);
                 element.ejecutar(ent,arbol);
                 return ; // Retornar el valor que retorna la funcion ejecutar
             }

@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Print = void 0;
 // print("hola mundo");
 var Print = /** @class */ (function () {
     function Print(exp, linea, columna, haysalto) {
