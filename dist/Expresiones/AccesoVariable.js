@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.AccesoVariable = void 0;
 var Tipo_1 = require("../AST/Tipo");
 var AccesoVariable = /** @class */ (function () {
     function AccesoVariable(id, linea, columna) {
@@ -39,6 +40,23 @@ var AccesoVariable = /** @class */ (function () {
                     i_1++;
                 });
                 return sendResultado_1;
+            }
+            else if (simbol.getTipo(ent, arbol) == Tipo_1.Tipo.ARRAY) {
+                var sendResultado_2 = '[';
+                var valor = simbol.getValorImplicito(ent, arbol);
+                var exprs_1 = valor.contenido;
+                var i_2 = 0;
+                exprs_1.forEach(function (expr) {
+                    sendResultado_2 += expr.getValorImplicito(ent, arbol);
+                    if (i_2 == exprs_1.length - 1) {
+                        sendResultado_2 += ']';
+                    }
+                    else {
+                        sendResultado_2 += ',';
+                    }
+                    i_2++;
+                });
+                return sendResultado_2;
             }
             else {
                 return simbol.valor;

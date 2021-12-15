@@ -4,6 +4,7 @@ import { Simbolo } from "../AST/Simbolo";
 import { Tipo } from "../AST/Tipo";
 import { Declaracion } from "../Instrucciones/Declaracion";
 import { Expresion } from "../Interfaces/Expresion";
+import { Arreglo } from "../Objetos/Arreglo";
 
 export class AccesoVariable implements Expresion {
     linea: number;
@@ -49,7 +50,23 @@ export class AccesoVariable implements Expresion {
                     i++;                 
                 })
                 return sendResultado;
-            }else{
+            }else if(simbol.getTipo(ent,arbol) == Tipo.ARRAY){
+                let sendResultado = '[';
+                let valor:Arreglo = simbol.getValorImplicito(ent,arbol);
+                let exprs:Array<Expresion> = valor.contenido;
+                let i = 0;
+                exprs.forEach((expr:Expresion)=>{
+                    sendResultado += expr.getValorImplicito(ent, arbol);
+                    if (i == exprs.length - 1) {
+                        sendResultado += ']';
+                    }else{
+                        sendResultado += ',';
+                    }
+                    i++;
+                })
+                return sendResultado;
+            }
+            else{
                 return simbol.valor;
             }            
         }else{
