@@ -1,6 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.DeclaracionArray = void 0;
+var Simbolo_1 = require("../AST/Simbolo");
 var Tipo_1 = require("../AST/Tipo");
+var AccesoArray_1 = require("../Expresiones/AccesoArray");
+var Arreglo_1 = require("../Objetos/Arreglo");
 // print("hola mundo");
 var DeclaracionArray = /** @class */ (function () {
     function DeclaracionArray(id, tipo, dimensiones, linea, columna, expresion) {
@@ -15,25 +19,74 @@ var DeclaracionArray = /** @class */ (function () {
         throw new Error("Method not implemented.");
     };
     DeclaracionArray.prototype.ejecutar = function (ent, arbol) {
+        var _this = this;
         // console.log('ejecutado...'+ this.id);
         this.id.forEach(function (id) {
-            // if (ent.existe(id) ){
-            //     console.log('Id '+ id +' ya existe');
-            // }else{
-            //     if(this.expresion == null){
-            //         let simbol = new Simbolo(this.tipo,id,this.linea,this.columna,this.getValDefault());
-            //         ent.agregar(id,simbol);
-            //     }else{
-            //         let tipoExpr:Tipo = this.expresion.getTipo(ent,arbol);
-            //         if(tipoExpr == this.tipo){
-            //             let simbol = new Simbolo(this.tipo,id,this.linea,this.columna,this.expresion.getValorImplicito(ent,arbol));
-            //             ent.agregar(id,simbol);
-            //         }else{
-            //             console.log('Error semantico, El tipo declarado (' + this.tipo +') no concuerda con el tipo asignado (' + tipoExpr + ') en la linea '+ this.linea + ' y columna ' + this.columna);
-            //         }                    
-            //     }
-            // }
-            console.log(id + ' array');
+            if (!ent.existe(id)) {
+                if (_this.dimensiones.length == 0) {
+                    if (_this.expresion == null) {
+                        var valor = new Arreglo_1.Arreglo(_this.tipo, 0, 0, [], _this.linea, _this.columna);
+                        var simbol = new Simbolo_1.Simbolo(Tipo_1.Tipo.ARRAY, id, _this.linea, _this.columna, valor);
+                        ent.agregar(id, simbol);
+                    }
+                    else {
+                        if (_this.expresion instanceof AccesoArray_1.AccesoArray) {
+                            var valor = _this.expresion.getValorImplicito(ent, arbol);
+                            if (valor == null) {
+                                valor = [];
+                            }
+                            var valorSimbolo = new Arreglo_1.Arreglo(_this.tipo, valor.length, valor.length, valor, _this.linea, _this.columna);
+                            if (valorSimbolo.comprobarTipo(ent, arbol)) {
+                                var simbol = new Simbolo_1.Simbolo(Tipo_1.Tipo.ARRAY, id, _this.linea, _this.columna, valorSimbolo);
+                                ent.agregar(id, simbol);
+                            }
+                        }
+                        else {
+                            console.log('Error semantico, la asignacion no es un arreglo de datos en la linea ' + _this.linea + ' y columna ' + _this.columna);
+                        }
+                    }
+                }
+                else if (_this.dimensiones.length == 1) {
+                    if (_this.expresion == null) {
+                        var valor = new Arreglo_1.Arreglo(_this.tipo, 0, 0, [], _this.linea, _this.columna);
+                        var simbol = new Simbolo_1.Simbolo(Tipo_1.Tipo.ARRAY, id, _this.linea, _this.columna, valor);
+                        ent.agregar(id, simbol);
+                    }
+                    else {
+                        if (_this.expresion instanceof AccesoArray_1.AccesoArray) {
+                            var valor = _this.expresion.getValorImplicito(ent, arbol);
+                            if (valor == null) {
+                                valor = [];
+                            }
+                            var dim = _this.dimensiones[0].getValorImplicito(ent, arbol);
+                            if (typeof (dim) === 'number') {
+                                if (dim === valor.length) {
+                                    var valorSimbolo = new Arreglo_1.Arreglo(_this.tipo, valor.length, valor.length, valor, _this.linea, _this.columna);
+                                    if (valorSimbolo.comprobarTipo(ent, arbol)) {
+                                        var simbol = new Simbolo_1.Simbolo(Tipo_1.Tipo.ARRAY, id, _this.linea, _this.columna, valorSimbolo);
+                                        ent.agregar(id, simbol);
+                                    }
+                                }
+                                else {
+                                    //no tienen las mismas dimensiones
+                                }
+                            }
+                            else {
+                                //la dimension no es un numero
+                            }
+                        }
+                        else {
+                            console.log('Error semantico, la asignacion no es un arreglo de datos en la linea ' + _this.linea + ' y columna ' + _this.columna);
+                        }
+                    }
+                }
+                else {
+                    console.log('error semantico, dimension de la declaracion del arreglo no conocido, en la linea ' + _this.linea + ' y columna ' + _this.columna);
+                }
+            }
+            else {
+                console.log('Error semantico, ya existe el id: ' + id + ' en la linea ' + _this.linea + ' y columna ' + _this.columna);
+            }
         });
     };
     DeclaracionArray.prototype.getValDefault = function () {
