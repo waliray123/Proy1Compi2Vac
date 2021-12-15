@@ -169,6 +169,8 @@ BSL               "\\".
     const {Operacion, Operador} = require("../dist/Expresiones/Operacion");
     const {Objeto} = require("../dist/Expresiones/Objeto");
     const {Atributo} = require("../dist/Expresiones/Atributo");
+    const {AccesoArray} = require("../dist/Expresiones/AccesoArray");
+    const {AccesoAtribArray} = require("../dist/Expresiones/AccesoAtribArray");
     const {IncrDecr} = require("../dist/Instrucciones/IncrDecr");
 
     /*---CODIGO INCRUSTADO---*/
@@ -424,7 +426,7 @@ arr_decl
 
 parametros_arreglo
     : expresion_arreglo                         {$$ = [$1]}
-    | parametros_arreglo COMA parametros_arreglo  {$1.push($3);$$ = $1;}
+    | parametros_arreglo COMA expresion_arreglo  {$1.push($3);$$ = $1;}
 ;
 
 expresion_arreglo
@@ -462,15 +464,20 @@ asignacion
 ;
 
 expresion
-    : primitivas            {$$ = $1;}
-    | logicas               {$$ = $1;}
-    | operadores            {$$ = $1;}
-    | relacionales          {$$ = $1;}
-    | expresion_ternario    {$$ = $1;}
-    | incr_decr             {$$ = $1;}
-    | nativas               {$$ = $1;}
-    | arr_decl              {$$ = $1;}
-    | expresion_atributos   {$$ = $1;}
+    : primitivas                {$$ = $1;}
+    | logicas                   {$$ = $1;}
+    | operadores                {$$ = $1;}
+    | relacionales              {$$ = $1;}
+    | expresion_ternario        {$$ = $1;}
+    | incr_decr                 {$$ = $1;}
+    | nativas                   {$$ = $1;}
+    | expresion_arr_arreglo     {$$ = $1;}
+    | expresion_atributos       {$$ = $1;}
+;
+
+expresion_arr_arreglo
+    : arr_decl                                          {$$ = new AccesoArray($1,@1.first_line, @1.first_column);}
+    | ID_VAR CORCHI expresion CORCHD                    {$$ = new AccesoAtribArray($1,$3,@1.first_line, @1.first_column);}
 ;
 
 expresion_atributos
