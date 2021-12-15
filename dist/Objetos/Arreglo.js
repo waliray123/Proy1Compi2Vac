@@ -10,9 +10,21 @@ var Arreglo = /** @class */ (function () {
         this.linea = linea;
         this.columna = columna;
     }
-    Arreglo.prototype.push = function (nuevo) {
+    Arreglo.prototype.push = function (ent, arbol, nuevo) {
+        if (nuevo.getTipo(ent, arbol) == this.tipo) {
+            this.contenido.push(nuevo);
+            this.length += 1;
+            this.dimension += 1;
+        }
+        else {
+            //no es del mismo tipo
+        }
     };
     Arreglo.prototype.pop = function () {
+        this.contenido.pop();
+        var valor = this.contenido.length;
+        this.length = valor;
+        this.dimension = valor;
     };
     Arreglo.prototype.comprobarTipo = function (ent, arbol) {
         var _this = this;
