@@ -2,9 +2,11 @@ import { AST } from "../AST/AST";
 import { Entorno } from "../AST/Entorno";
 import { Simbolo } from "../AST/Simbolo";
 import { Tipo } from "../AST/Tipo";
+import { AccesoVariable } from "../Expresiones/AccesoVariable";
 import { Expresion } from "../Interfaces/Expresion";
 import { Instruccion } from "../Interfaces/Instruccion";
 import { Declaracion } from "./Declaracion";
+import { Struct } from "./Struct";
 
 export class Asignacion implements Instruccion{
     linea: number;
@@ -39,30 +41,56 @@ export class Asignacion implements Instruccion{
             }            
         }
         else {
-            for (let i = 0; i < (this.id.length-1); i++){
-                let id = this.id[i];
+            let i  = 0;
+            let id = this.id[i];              
                 if (ent.existe(id)) {
                     let simbol: Simbolo = ent.getSimbolo(id);
                     let tipo: Tipo = simbol.getTipo(ent,arbol);
                     if (tipo == Tipo.TIPO_STRUCT) {
                         let atributos:Array<Declaracion> = simbol.getValorImplicito(ent, arbol);
-                        let idSig = this.id[i+1];
-                        for (var atributo of atributos){
-                            if (atributo.id[0] === idSig ) {
-                                atributo.expresion = this.expresion;
-                                break;
-                            }
-                        }                      
+                        this.asignacionStruct(i,atributos,ent,arbol);                                          
                     }
                 }else{
                     console.log('Error semantico, no existe ' + id +' en la linea '+ this.linea + ' y columna ' + this.columna);
                 }
 
-            }
         }
     }
     getTipo(){
         return "asignacion";
+    }
+
+    asignacionStruct(i:number,atributos:Array<Declaracion>,ent:Entorno, arbol: AST){
+        if ((i + 1) >= this.id.length) {
+            console.log("No se encontro");
+            return;
+        }
+        let idSig = this.id[i+1];
+        for (var atributo of atributos){
+            if (atributo.id[0] === idSig ) {
+                // console.log(atributo.tipo);
+                let isStruct = false;
+                arbol.structs.forEach((struct:Struct) => {
+                    // console.log(struct.id);
+                    if (struct.id === atributo.tipo.toString()) {
+                        isStruct = true;
+                    }
+                })
+                if (isStruct) {
+                    // console.log(atributo.expresion);
+                    if (atributo.expresion instanceof AccesoVariable) {
+                        atributo.expresion.isAlone = false;
+                        // console.log(atributo.expresion.getValorImplicito(ent, arbol));
+                        let val1:Array<Declaracion> = atributo.expresion.getValorImplicito(ent, arbol);
+                        atributo.expresion.isAlone = true;
+                        this.asignacionStruct(i+1,val1,ent,arbol);
+                    }                    
+                }else{
+                    atributo.expresion = this.expresion;
+                }                               
+                return;
+            }
+        }
     }
 
 }
