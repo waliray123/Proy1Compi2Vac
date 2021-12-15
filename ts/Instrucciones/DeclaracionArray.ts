@@ -59,7 +59,34 @@ export class DeclaracionArray implements Instruccion{
                         }
                     }
                 }else if (this.dimensiones.length == 1) {
-
+                    if (this.expresion == null) {
+                        let valor:Arreglo = new Arreglo(this.tipo,0,0,[],this.linea,this.columna);
+                        let simbol:Simbolo = new Simbolo(Tipo.ARRAY,id,this.linea,this.columna,valor);
+                        ent.agregar(id,simbol);
+                    }else{
+                        if (this.expresion instanceof AccesoArray) {
+                            let valor = this.expresion.getValorImplicito(ent, arbol);
+                            if (valor == null) {
+                                valor = [];
+                            }
+                            let dim = this.dimensiones[0].getValorImplicito(ent, arbol);
+                            if (typeof(dim) === 'number') {
+                                if (dim === valor.length) {
+                                    let valorSimbolo:Arreglo = new Arreglo(this.tipo,valor.length,valor.length, valor,this.linea,this.columna);                    
+                                    if (valorSimbolo.comprobarTipo(ent,arbol)) {
+                                        let simbol:Simbolo = new Simbolo(Tipo.ARRAY,id,this.linea,this.columna,valorSimbolo);
+                                        ent.agregar(id,simbol);
+                                    }
+                                }else{
+                                    //no tienen las mismas dimensiones
+                                }
+                            }else{
+                                //la dimension no es un numero
+                            }   
+                        }else{
+                           console.log('Error semantico, la asignacion no es un arreglo de datos en la linea '+ this.linea + ' y columna ' + this.columna); 
+                        }
+                    }
                 }else{
                     console.log('error semantico, dimension de la declaracion del arreglo no conocido, en la linea '+ this.linea + ' y columna ' + this.columna);
                 }

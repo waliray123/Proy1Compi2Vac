@@ -171,6 +171,7 @@ BSL               "\\".
     const {Atributo} = require("../dist/Expresiones/Atributo");
     const {AccesoArray} = require("../dist/Expresiones/AccesoArray");
     const {AccesoAtribArray} = require("../dist/Expresiones/AccesoAtribArray");
+    const {AsignacionArray} = require("../dist/Instrucciones/AsignacionArray");
     const {IncrDecr} = require("../dist/Instrucciones/IncrDecr");
 
     /*---CODIGO INCRUSTADO---*/
@@ -375,7 +376,8 @@ declaracion_arreglo
 ;
 
 asignacion_bloque
-    : nombreAtributos asignacion PUNTCOMA        {$$ = new Asignacion($1,@1.first_line,@1.first_column,$2);}
+    : nombreAtributos asignacion PUNTCOMA                   {$$ = new Asignacion($1,@1.first_line,@1.first_column,$2);}
+    | ID_VAR CORCHI expresion CORCHD asignacion PUNTCOMA    {$$ = new AsignacionArray($1,$3,@1.first_line, @1.first_column,$5);}
 ;
 
 print_bloque
