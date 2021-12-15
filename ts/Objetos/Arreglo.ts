@@ -24,12 +24,21 @@ export class Arreglo{
         this.columna = columna;
     }
 
-    push(nuevo:Expresion){
-
+    push(ent:Entorno, arbol: AST,nuevo:Expresion){
+        if (nuevo.getTipo(ent,arbol) == this.tipo) {
+            this.contenido.push(nuevo);
+            this.length += 1;
+            this.dimension += 1;
+        }else{
+            //no es del mismo tipo
+        }
     }
 
     pop(){
-
+        this.contenido.pop();
+        let valor = this.contenido.length;
+        this.length = valor;
+        this.dimension = valor;
     }
 
     comprobarTipo(ent:Entorno, arbol: AST):boolean{

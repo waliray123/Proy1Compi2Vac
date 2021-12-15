@@ -173,6 +173,8 @@ BSL               "\\".
     const {AccesoAtribArray} = require("../dist/Expresiones/AccesoAtribArray");
     const {AsignacionArray} = require("../dist/Instrucciones/AsignacionArray");
     const {IncrDecr} = require("../dist/Instrucciones/IncrDecr");
+    const {Push} = require("../dist/Instrucciones/Push");
+    const {Pop} = require("../dist/Instrucciones/Pop");
 
     /*---CODIGO INCRUSTADO---*/
     var errores = [
@@ -290,6 +292,12 @@ instruccion_funcion
     | switch_bloque         {$$ = $1;}
     | funcion_return        {$$ = $1;}  
     | incremento_decremento {$$ = $1;}
+    | funciones_arreglo     {$$ = $1;}
+;
+
+funciones_arreglo
+    : ID_VAR OP_CALL STR_PUSH PARI expresion PARD PUNTCOMA           {$$ = new Push($1,$5,@1.first_line, @1.first_column);}
+    | ID_VAR OP_CALL STR_POP PARI PARD PUNTCOMA                      {$$ = new Pop($1,@1.first_line, @1.first_column);}
 ;
 
 incremento_decremento
@@ -457,8 +465,15 @@ nombreVars
 ;
 
 nombreAtributos
-    : nombreAtributos OP_CALL ID_VAR       {$1.push($3); $$ = $1;}
-    | ID_VAR                               {$$ = [$1];}
+    // : nombreAtributos OP_CALL ID_VAR       {$1.push($3); $$ = $1;}
+    // | ID_VAR                               {$$ = [$1];}
+    : ID_VAR nombreAtributos_prima   {$2.unshift($1); $$ = $2;}
+    
+;
+
+nombreAtributos_prima
+    : OP_CALL ID_VAR nombreAtributos_prima  {$3.unshift($2); $$ = $3;}
+    |                                       {$$ = [];}
 ;
 
 asignacion
