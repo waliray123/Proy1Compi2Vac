@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.DeclaracionStruct = void 0;
 var Simbolo_1 = require("../AST/Simbolo");
 var Tipo_1 = require("../AST/Tipo");
 var FuncionReturn_1 = require("./FuncionReturn");
@@ -33,7 +34,11 @@ var DeclaracionStruct = /** @class */ (function () {
                                 // console.log("--index---------" + index);
                                 // console.log(declaracion.tipo);
                                 // console.log(param.getTipo(ent,arbol));
-                                if (declaracion.tipo === param.getTipo(ent, arbol) || param.getTipo(ent, arbol) === Tipo_1.Tipo.NULL) {
+                                var tipoParam = param.getTipo(ent, arbol);
+                                if (tipoParam == Tipo_1.Tipo.TIPO_STRUCT) {
+                                    declaracion.expresion = param.valor;
+                                }
+                                else if (declaracion.tipo === tipoParam || tipoParam === Tipo_1.Tipo.NULL) {
                                     // console.log("Si son compatibles");
                                     declaracion.expresion = param;
                                 }

@@ -8,6 +8,7 @@ import { Declaracion } from "./Declaracion";
 import { FuncionReturn } from "./FuncionReturn";
 import { Parametro } from "./Parametro";
 import { ParametroReturn } from "../Expresiones/ParametroReturn";
+import { AccesoVariable } from "../Expresiones/AccesoVariable";
 
 // print("hola mundo");
 
@@ -48,8 +49,11 @@ export class DeclaracionStruct implements Instruccion{
                                 // console.log("--index---------" + index);
                                 // console.log(declaracion.tipo);
                                 // console.log(param.getTipo(ent,arbol));
-                                
-                                if (declaracion.tipo === param.getTipo(ent,arbol) ||  param.getTipo(ent,arbol) === Tipo.NULL) {
+                                let tipoParam = param.getTipo(ent,arbol);
+                                if(tipoParam == Tipo.TIPO_STRUCT){
+                                    declaracion.expresion = param.valor;
+                                }                           
+                                else if (declaracion.tipo === tipoParam ||  tipoParam === Tipo.NULL) {
                                     // console.log("Si son compatibles");
                                     declaracion.expresion = param;
                                 }else{

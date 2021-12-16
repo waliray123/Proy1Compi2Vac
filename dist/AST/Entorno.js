@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Entorno = void 0;
 var Entorno = /** @class */ (function () {
     function Entorno(anterior) {
         this.tabla = {};
