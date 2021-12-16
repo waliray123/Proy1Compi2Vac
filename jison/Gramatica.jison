@@ -175,6 +175,7 @@ BSL               "\\".
     const {IncrDecr} = require("../dist/Instrucciones/IncrDecr");
     const {Push} = require("../dist/Instrucciones/Push");
     const {Pop} = require("../dist/Instrucciones/Pop");
+    const {OperacionCadena, OperadorCadena} = require("../dist/Expresiones/OperacionCadena");
 
     /*---CODIGO INCRUSTADO---*/
     var errores = [
@@ -499,6 +500,12 @@ expresion_arr_arreglo
 
 expresion_atributos
     : expresion OP_CALL ID_VAR                           {$$ = new AccesoAtributo($1,$3,@1.first_line, @1.first_column);}
+    | expresion OP_CALL LENGTH PARI PARD                 {$$ = new OperacionCadena($1,null,null,OperadorCadena.LENGTH,@1.first_line, @1.first_column);}
+    | expresion OP_CALL STR_POP PARI PARD                {$$ = new OperacionCadena($1,null,null,OperadorCadena.POP,@1.first_line, @1.first_column);}
+    | expresion OP_CALL UPPERCASE PARI PARD              {$$ = new OperacionCadena($1,null,null,OperadorCadena.UPPERCASE,@1.first_line, @1.first_column);}
+    | expresion OP_CALL LOWERCASE PARI PARD              {$$ = new OperacionCadena($1,null,null,OperadorCadena.LOWERCASE,@1.first_line, @1.first_column);}
+    | expresion OP_CALL CHARPOS PARI expresion PARD                             {$$ = new OperacionCadena($1,$5,null,OperadorCadena.CHARPOS,@1.first_line, @1.first_column);}
+    | expresion OP_CALL SUBSTRING PARI expresion COMA expresion PARD            {$$ = new OperacionCadena($1,$5,$7,OperadorCadena.SUBSTRING,@1.first_line, @1.first_column);}
 ;
 
 expresion_ternario

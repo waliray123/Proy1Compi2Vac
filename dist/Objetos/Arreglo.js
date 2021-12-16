@@ -21,10 +21,14 @@ var Arreglo = /** @class */ (function () {
         }
     };
     Arreglo.prototype.pop = function () {
-        this.contenido.pop();
+        var pop = this.contenido.pop();
         var valor = this.contenido.length;
         this.length = valor;
         this.dimension = valor;
+        return pop;
+    };
+    Arreglo.prototype.getLastContenido = function () {
+        return this.contenido[this.length - 1];
     };
     Arreglo.prototype.comprobarTipo = function (ent, arbol) {
         var _this = this;
