@@ -34,15 +34,16 @@ function tabs_click(){
     }
 }
 tabs_click();
+autoRefresh();
 
 
-var indexTab = 1;
+var indexTab = 4;
 function addTab(){
     indexTab += 1;
     var tabs = document.getElementById('tabs');
     tabs.innerHTML += `<li class="tab" data-tab="${indexTab}" id="tab-${indexTab}">${indexTab+1}</li>`
     var tabs_editors = document.getElementById('tab-editors');
-    tabs_editors.innerHTML += `<div class="tab-pane" data-pane="${indexTab}"><textarea class="editor" id="editor-${indexTab}">// here is the ${indexTab+1}</textarea></div>`
+    tabs_editors.innerHTML += `<div class="tab-pane" data-pane="${indexTab}"><textarea class="editor" id="editor-${indexTab}">// Aqui la pestaña ${indexTab+1}</textarea></div>`
     CreateEditor(`editor-${indexTab}`);
     tabs_click();
     autoRefresh();
