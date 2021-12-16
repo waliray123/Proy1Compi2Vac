@@ -1,6 +1,8 @@
 import { AST } from "../AST/AST";
 import { Entorno } from "../AST/Entorno";
+import { Resultado3D } from "../AST/Resultado3D";
 import { Simbolo } from "../AST/Simbolo";
+import { Temporales } from "../AST/Temporales";
 import { Tipo } from "../AST/Tipo";
 import { AccesoVariable } from "../Expresiones/AccesoVariable";
 import { Expresion } from "../Interfaces/Expresion";
@@ -21,8 +23,46 @@ export class Asignacion implements Instruccion{
         this.columna = columna;
     }
 
-    traducir(ent: Entorno, arbol: AST) {
-        throw new Error("Method not implemented.");
+    traducir(ent:Entorno, arbol:AST,resultado3d:Resultado3D,temporales:Temporales) {
+        if (this.id.length == 1) {
+            let id = this.id[0];
+            if (ent.existe(id)) {
+                let simbol: Simbolo = ent.getSimbolo(id);
+                let tipo: Tipo = simbol.getTipo(ent,arbol);
+                if (tipo == this.expresion.getTipo(ent,arbol)) {
+                    //Asignar al stack
+                    let valAsign = this.expresion.traducir(ent,arbol,resultado3d,temporales,0);
+                    resultado3d.codigo3D += '\tstack[(int)'+simbol.valor+'] ='+ valAsign  +';\n';
+                }else{
+                    console.log('Error semantico, El tipo de la variable (' + tipo +') no concuerda con el tipo asignado (' + this.expresion.getTipo(ent,arbol) + ') en la linea '+ this.linea + ' y columna ' + this.columna);
+                }
+            }else{
+                console.log('Error semantico, no existe la variable ' + id +' en la linea '+ this.linea + ' y columna ' + this.columna);
+            }            
+        }
+        //TODO: traducir asignacion de array 
+        else {
+            for (let i = 0; i < (this.id.length-1); i++){
+                let id = this.id[i];
+                if (ent.existe(id)) {
+                    let simbol: Simbolo = ent.getSimbolo(id);
+                    let tipo: Tipo = simbol.getTipo(ent,arbol);
+                    if (tipo == Tipo.TIPO_STRUCT) {
+                        let atributos:Array<Declaracion> = simbol.getValorImplicito(ent, arbol);
+                        let idSig = this.id[i+1];
+                        for (var atributo of atributos){
+                            if (atributo.id[0] === idSig ) {
+                                atributo.expresion = this.expresion;
+                                break;
+                            }
+                        }                      
+                    }
+                }else{
+                    console.log('Error semantico, no existe ' + id +' en la linea '+ this.linea + ' y columna ' + this.columna);
+                }
+
+            }
+        }
     }
 
     ejecutar(ent: Entorno, arbol: AST) {

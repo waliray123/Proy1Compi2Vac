@@ -38,8 +38,43 @@ var Operacion = /** @class */ (function () {
         this.op_derecha = op_derecha;
         this.operador = operacion;
     }
-    Operacion.prototype.traducir = function (ent, arbol) {
-        throw new Error("Method not implemented.");
+    Operacion.prototype.traducir = function (ent, arbol, resultado3d, temporales, recursivo) {
+        console.log("Traduciendo operacion");
+        var resultado = "";
+        var val1 = this.op_izquierda.traducir(ent, arbol, resultado3d, temporales, recursivo + 1);
+        var val2 = this.op_derecha.traducir(ent, arbol, resultado3d, temporales, recursivo + 1);
+        var valor = this.unirResultado(val1, val2);
+        if (recursivo == 0) {
+            return valor;
+        }
+        else {
+            resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
+            var valR = 't' + temporales.ultimoTemp;
+            temporales.ultimoTemp += 1;
+            return valR;
+        }
+    };
+    Operacion.prototype.unirResultado = function (val1, val2) {
+        var resultadoR = '';
+        if (this.operador == Operador.SUMA) {
+            resultadoR = val1 + "+" + val2;
+        }
+        else if (this.operador == Operador.RESTA) {
+            resultadoR = val1 + "-" + val2;
+        }
+        else if (this.operador == Operador.MULTIPLICACION) {
+            resultadoR = val1 + "*" + val2;
+        }
+        else if (this.operador == Operador.DIVISION) {
+            resultadoR = val1 + "/" + val2;
+        }
+        else if (this.operador == Operador.MAYOR_QUE) {
+            resultadoR = val1 + ">" + val2;
+        }
+        else if (this.operador == Operador.MENOR_QUE) {
+            resultadoR = val1 + "<" + val2;
+        }
+        return resultadoR;
     };
     Operacion.prototype.getTipo = function (ent, arbol) {
         var valor = this.getValorImplicito(ent, arbol);
