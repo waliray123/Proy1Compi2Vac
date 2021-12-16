@@ -5,6 +5,8 @@ import { Parametro } from "../Instrucciones/Parametro";
 import { ParametroReturn } from "../Expresiones/ParametroReturn";
 import { Tipo } from "../AST/Tipo";
 import { Declaracion } from "./Declaracion";
+import { Resultado3D } from "../AST/Resultado3D";
+import { Temporales } from "../AST/Temporales";
 
 export class Funcion implements Instruccion{
     linea: number;
@@ -25,8 +27,14 @@ export class Funcion implements Instruccion{
         this.parametrosR = [];
     }
 
-    traducir(ent: Entorno, arbol: AST) {
-        throw new Error("Method not implemented.");
+    traducir(ent: Entorno, arbol: AST,resultado3D:Resultado3D,temporales:Temporales) {
+        const entornoGlobal:Entorno = new Entorno(ent);
+        if(this.nombrefuncion == "main"){
+            this.instrucciones.forEach((element:Instruccion) => {
+                element.traducir(entornoGlobal,arbol,resultado3D,temporales);
+            })
+        }
+
     }
 
     ejecutar(ent: Entorno, arbol: AST) {        

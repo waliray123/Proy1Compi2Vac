@@ -13,8 +13,13 @@ var Funcion = /** @class */ (function () {
         this.parametros = parametros;
         this.parametrosR = [];
     }
-    Funcion.prototype.traducir = function (ent, arbol) {
-        throw new Error("Method not implemented.");
+    Funcion.prototype.traducir = function (ent, arbol, resultado3D, temporales) {
+        var entornoGlobal = new Entorno_1.Entorno(ent);
+        if (this.nombrefuncion == "main") {
+            this.instrucciones.forEach(function (element) {
+                element.traducir(entornoGlobal, arbol, resultado3D, temporales);
+            });
+        }
     };
     Funcion.prototype.ejecutar = function (ent, arbol) {
         var entornoGlobal = new Entorno_1.Entorno(ent);

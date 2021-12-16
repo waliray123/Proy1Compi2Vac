@@ -1,5 +1,7 @@
 import { AST } from "../AST/AST";
 import { Entorno } from "../AST/Entorno";
+import { Resultado3D } from "../AST/Resultado3D";
+import { Temporales } from "../AST/Temporales";
 import { Tipo } from "../AST/Tipo";
 import { Expresion } from "../Interfaces/Expresion";
 
@@ -45,8 +47,44 @@ export class Operacion implements Expresion {
         this.op_derecha = op_derecha;
         this.operador = operacion;
     }
-    traducir(ent: Entorno, arbol: AST) {
-        throw new Error("Method not implemented.");
+    
+    traducir(ent: Entorno, arbol: AST,resultado3d:Resultado3D,temporales:Temporales,recursivo:number) {
+        console.log("Traduciendo operacion");  
+
+        let resultado = "";
+        
+        let val1 = this.op_izquierda.traducir(ent,arbol,resultado3d,temporales,recursivo+1);
+        let val2 = this.op_derecha.traducir(ent,arbol,resultado3d,temporales,recursivo+1);
+
+        let valor = this.unirResultado(val1,val2);
+        if(recursivo == 0){            
+            return valor;
+        }else{            
+            resultado3d.codigo3D += '\tt'+temporales.ultimoTemp + '='+ valor + ';\n';
+            let valR = 't' + temporales.ultimoTemp;
+            temporales.ultimoTemp += 1;
+            return valR;
+        }
+       
+    }
+
+    unirResultado(val1:any,val2:any){
+        let resultadoR = '';
+        if(this.operador == Operador.SUMA){
+            resultadoR = val1 + "+" + val2;
+        }else if(this.operador == Operador.RESTA){
+            resultadoR = val1 + "-" + val2;
+        }else if(this.operador == Operador.MULTIPLICACION){
+            resultadoR = val1 + "*" + val2;
+        }else if(this.operador == Operador.DIVISION){
+            resultadoR = val1 + "/" + val2;
+        }else if(this.operador == Operador.MAYOR_QUE){
+            resultadoR = val1 + ">" + val2;
+        }else if(this.operador == Operador.MENOR_QUE){
+            resultadoR = val1 + "<" + val2;
+        }
+
+        return resultadoR;
     }
 
     getTipo(ent: Entorno, arbol: AST): Tipo {

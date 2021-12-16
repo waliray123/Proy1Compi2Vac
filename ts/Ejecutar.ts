@@ -4,6 +4,8 @@ import { Instruccion } from "./Interfaces/Instruccion";
 import { Funcion } from "./Instrucciones/Funcion";
 import { Struct } from "./Instrucciones/Struct";
 import { Declaracion } from "./Instrucciones/Declaracion";
+import { Resultado3D } from "./AST/Resultado3D";
+import { Temporales } from "./AST/Temporales";
 
 const gramatica = require('../jison/Gramatica');
 
@@ -40,8 +42,11 @@ window.ejecutarCodigo = function (entrada:string){
 }
 
 window.traducirCodigo = function (entrada:string){
-    //Reiniciar consola
-    reiniciarConsola();
+
+    reiniciarTraduccion();
+
+    let resultado3d = new Resultado3D();
+    let temporales = new Temporales();
     //traigo todas las raices    
     const instrucciones = gramatica.parse(entrada);
     console.log(instrucciones);
@@ -52,23 +57,29 @@ window.traducirCodigo = function (entrada:string){
 
 
     const ast:AST = new AST(instrucciones,structsG,funcionesG);
-    const entornoGlobal:Entorno = generarEntornoGlobal(ast,structsG);   
-    console.log(entornoGlobal); 
+    const entornoGlobal:Entorno = generarEntornoGlobalTraducir(ast,structsG,resultado3d,temporales);       
     
     //Buscar la funcion main    
 
     funcionesG.forEach((element:Funcion) => {
         if(element.nombrefuncion == "main"){
             console.log("Se ejecutara");
-            element.ejecutar(entornoGlobal,ast);
-            
+            element.traducir(entornoGlobal,ast,resultado3d,temporales);            
         }
     })
+
+    traducirCompleto(resultado3d,temporales);
+
 }
 
 function reiniciarConsola(){
     const areaConsola = document.getElementById('consola') as HTMLTextAreaElement;
     areaConsola.value = "";
+}
+
+function reiniciarTraduccion(){
+    const areaTraduccion = document.getElementById('traduccion') as HTMLTextAreaElement;
+    areaTraduccion.value = "";
 }
 
 function revisarFuncionesGlobales(instrucciones:Array<Instruccion>){
@@ -112,5 +123,58 @@ function generarEntornoGlobal(ast:AST,structs:Array<Struct>){
 
     return entornoGlobal;
 }
-// ejecutarCodigo(`int id12;
-// int var2;`)
+
+function generarEntornoGlobalTraducir(ast:AST,structs:Array<Struct>,resultado3D:Resultado3D,temporales:Temporales){
+    const entornoGlobal:Entorno = new Entorno(null);
+    let instrucciones = ast.instrucciones;
+    let declaracionesG = Array<Declaracion>();
+    instrucciones.forEach((element:any) => {
+        if(element.getTipo()=="declaracion"){            
+            declaracionesG.push(element);
+        }
+    });
+
+    declaracionesG.forEach((element:Declaracion) => {
+        element.traducir(entornoGlobal, ast,resultado3D,temporales);
+    });
+
+    structs.forEach((element:Instruccion)=>{
+        element.traducir(entornoGlobal, ast,resultado3D,temporales);
+    })
+
+    return entornoGlobal;
+}
+
+
+function traducirCompleto(resultado3D:Resultado3D,temporales:Temporales){
+
+    //Traer el codigo en 3D    
+
+    //Ingresar encabezado
+
+    let encabezado = '#include <stdio.h> \n#include <math.h> \ndouble heap[30101999]; \ndouble stack[30101999]; \ndouble P; \ndouble H;';
+    
+    //Inicializar todos los temporales
+
+    //Generar las funciones nativas
+
+    //Generar el proceso main
+
+    let procMain = '\nvoid main() { \n\tP = 0; \n\tH = 0;\n';
+
+    //Agregar el resultado 3D en el main
+
+    procMain += resultado3D.codigo3D;
+
+    //Cerrar     
+
+    procMain += '\n\treturn; \n }';
+
+    //Mostrar en el text area
+
+    let resultado = encabezado + procMain
+
+    const areaTraduccion = document.getElementById('traduccion') as HTMLTextAreaElement;
+    areaTraduccion.value = resultado;
+
+}

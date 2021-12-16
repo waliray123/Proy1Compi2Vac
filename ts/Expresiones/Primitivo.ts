@@ -1,5 +1,7 @@
 import { AST } from "../AST/AST";
 import { Entorno } from "../AST/Entorno";
+import { Resultado3D } from "../AST/Resultado3D";
+import { Temporales } from "../AST/Temporales";
 import { Tipo } from "../AST/Tipo";
 import { Expresion } from "../Interfaces/Expresion";
 
@@ -14,8 +16,12 @@ export class Primitivo implements Expresion {
         this.valor = valor;
     }
     
-    traducir(ent: Entorno, arbol: AST) {
-        throw new Error("Method not implemented.");
+    traducir(ent: Entorno, arbol: AST,resultado3d:Resultado3D,temporales:Temporales) {
+        console.log("Traduciendo Primitivo");
+        
+
+        //Solo si es numeros      TODO para strings y booleanos  
+        return this.valor;
     }
 
     getTipo(ent: Entorno, arbol: AST): Tipo {

@@ -11,8 +11,38 @@ var Declaracion = /** @class */ (function () {
         this.linea = linea;
         this.columna = columna;
     }
-    Declaracion.prototype.traducir = function (ent, arbol) {
-        throw new Error("Method not implemented.");
+    Declaracion.prototype.traducir = function (ent, arbol, resultado3d, temporales) {
+        var _this = this;
+        this.id.forEach(function (id) {
+            if (ent.existe(id)) {
+                console.log('Id ' + id + ' ya existe');
+            }
+            else {
+                if (_this.expresion == null) {
+                    //Se genera el simbolo y se le asigna un lugar en el stack
+                    var simbol = new Simbolo_1.Simbolo(_this.tipo, id, _this.linea, _this.columna, temporales.ultstack);
+                    temporales.ultstack += 1;
+                    ent.agregar(id, simbol);
+                    resultado3d.codigo3D += 'stack[(int)' + simbol.valor + '];\n';
+                }
+                else {
+                    var tipoExpr = _this.expresion.getTipo(ent, arbol);
+                    if (tipoExpr == _this.tipo) {
+                        //Se genera el simbolo y se le asigna un lugar en el stack
+                        //this.expresion.getValorImplicito(ent,arbol)                        
+                        var simbol = new Simbolo_1.Simbolo(_this.tipo, id, _this.linea, _this.columna, temporales.ultstack);
+                        temporales.ultstack += 1;
+                        ent.agregar(id, simbol);
+                        //Asignar el valor al stack
+                        var valAsign = _this.expresion.traducir(ent, arbol, resultado3d, temporales, 0);
+                        resultado3d.codigo3D += '\tstack[(int)' + simbol.valor + '] =' + valAsign + ';\n';
+                    }
+                    else {
+                        console.log('Error semantico, El tipo declarado (' + _this.tipo + ') no concuerda con el tipo asignado (' + tipoExpr + ') en la linea ' + _this.linea + ' y columna ' + _this.columna);
+                    }
+                }
+            }
+        });
     };
     Declaracion.prototype.ejecutar = function (ent, arbol) {
         var _this = this;

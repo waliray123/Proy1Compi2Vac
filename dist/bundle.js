@@ -332,8 +332,43 @@ var Operacion = /** @class */ (function () {
         this.op_derecha = op_derecha;
         this.operador = operacion;
     }
-    Operacion.prototype.traducir = function (ent, arbol) {
-        throw new Error("Method not implemented.");
+    Operacion.prototype.traducir = function (ent, arbol, resultado3d, temporales, recursivo) {
+        console.log("Traduciendo operacion");
+        var resultado = "";
+        var val1 = this.op_izquierda.traducir(ent, arbol, resultado3d, temporales, recursivo + 1);
+        var val2 = this.op_derecha.traducir(ent, arbol, resultado3d, temporales, recursivo + 1);
+        var valor = this.unirResultado(val1, val2);
+        if (recursivo == 0) {
+            return valor;
+        }
+        else {
+            resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
+            var valR = 't' + temporales.ultimoTemp;
+            temporales.ultimoTemp += 1;
+            return valR;
+        }
+    };
+    Operacion.prototype.unirResultado = function (val1, val2) {
+        var resultadoR = '';
+        if (this.operador == Operador.SUMA) {
+            resultadoR = val1 + "+" + val2;
+        }
+        else if (this.operador == Operador.RESTA) {
+            resultadoR = val1 + "-" + val2;
+        }
+        else if (this.operador == Operador.MULTIPLICACION) {
+            resultadoR = val1 + "*" + val2;
+        }
+        else if (this.operador == Operador.DIVISION) {
+            resultadoR = val1 + "/" + val2;
+        }
+        else if (this.operador == Operador.MAYOR_QUE) {
+            resultadoR = val1 + ">" + val2;
+        }
+        else if (this.operador == Operador.MENOR_QUE) {
+            resultadoR = val1 + "<" + val2;
+        }
+        return resultadoR;
     };
     Operacion.prototype.getTipo = function (ent, arbol) {
         var valor = this.getValorImplicito(ent, arbol);
@@ -590,8 +625,10 @@ var Primitivo = /** @class */ (function () {
         this.columna = columna;
         this.valor = valor;
     }
-    Primitivo.prototype.traducir = function (ent, arbol) {
-        throw new Error("Method not implemented.");
+    Primitivo.prototype.traducir = function (ent, arbol, resultado3d, temporales) {
+        console.log("Traduciendo Primitivo");
+        //Solo si es numeros      TODO para strings y booleanos  
+        return this.valor;
     };
     Primitivo.prototype.getTipo = function (ent, arbol) {
         var valor = this.getValorImplicito(ent, arbol);
@@ -683,8 +720,48 @@ var Asignacion = /** @class */ (function () {
         this.linea = linea;
         this.columna = columna;
     }
-    Asignacion.prototype.traducir = function (ent, arbol) {
-        throw new Error("Method not implemented.");
+    Asignacion.prototype.traducir = function (ent, arbol, resultado3d, temporales) {
+        if (this.id.length == 1) {
+            var id = this.id[0];
+            if (ent.existe(id)) {
+                var simbol = ent.getSimbolo(id);
+                var tipo = simbol.getTipo(ent, arbol);
+                if (tipo == this.expresion.getTipo(ent, arbol)) {
+                    //Asignar al stack
+                    var valAsign = this.expresion.traducir(ent, arbol, resultado3d, temporales, 0);
+                    resultado3d.codigo3D += '\tstack[(int)' + simbol.valor + '] =' + valAsign + ';\n';
+                }
+                else {
+                    console.log('Error semantico, El tipo de la variable (' + tipo + ') no concuerda con el tipo asignado (' + this.expresion.getTipo(ent, arbol) + ') en la linea ' + this.linea + ' y columna ' + this.columna);
+                }
+            }
+            else {
+                console.log('Error semantico, no existe la variable ' + id + ' en la linea ' + this.linea + ' y columna ' + this.columna);
+            }
+        }
+        else {
+            for (var i = 0; i < (this.id.length - 1); i++) {
+                var id = this.id[i];
+                if (ent.existe(id)) {
+                    var simbol = ent.getSimbolo(id);
+                    var tipo = simbol.getTipo(ent, arbol);
+                    if (tipo == Tipo_1.Tipo.TIPO_STRUCT) {
+                        var atributos = simbol.getValorImplicito(ent, arbol);
+                        var idSig = this.id[i + 1];
+                        for (var _i = 0, atributos_1 = atributos; _i < atributos_1.length; _i++) {
+                            var atributo = atributos_1[_i];
+                            if (atributo.id[0] === idSig) {
+                                atributo.expresion = this.expresion;
+                                break;
+                            }
+                        }
+                    }
+                }
+                else {
+                    console.log('Error semantico, no existe ' + id + ' en la linea ' + this.linea + ' y columna ' + this.columna);
+                }
+            }
+        }
     };
     Asignacion.prototype.ejecutar = function (ent, arbol) {
         if (this.id.length == 1) {
@@ -712,8 +789,8 @@ var Asignacion = /** @class */ (function () {
                     if (tipo == Tipo_1.Tipo.TIPO_STRUCT) {
                         var atributos = simbol.getValorImplicito(ent, arbol);
                         var idSig = this.id[i + 1];
-                        for (var _i = 0, atributos_1 = atributos; _i < atributos_1.length; _i++) {
-                            var atributo = atributos_1[_i];
+                        for (var _i = 0, atributos_2 = atributos; _i < atributos_2.length; _i++) {
+                            var atributo = atributos_2[_i];
                             if (atributo.id[0] === idSig) {
                                 atributo.expresion = this.expresion;
                                 break;
@@ -786,8 +863,38 @@ var Declaracion = /** @class */ (function () {
         this.linea = linea;
         this.columna = columna;
     }
-    Declaracion.prototype.traducir = function (ent, arbol) {
-        throw new Error("Method not implemented.");
+    Declaracion.prototype.traducir = function (ent, arbol, resultado3d, temporales) {
+        var _this = this;
+        this.id.forEach(function (id) {
+            if (ent.existe(id)) {
+                console.log('Id ' + id + ' ya existe');
+            }
+            else {
+                if (_this.expresion == null) {
+                    //Se genera el simbolo y se le asigna un lugar en el stack
+                    var simbol = new Simbolo_1.Simbolo(_this.tipo, id, _this.linea, _this.columna, temporales.ultstack);
+                    temporales.ultstack += 1;
+                    ent.agregar(id, simbol);
+                    resultado3d.codigo3D += 'stack[(int)' + simbol.valor + '];\n';
+                }
+                else {
+                    var tipoExpr = _this.expresion.getTipo(ent, arbol);
+                    if (tipoExpr == _this.tipo) {
+                        //Se genera el simbolo y se le asigna un lugar en el stack
+                        //this.expresion.getValorImplicito(ent,arbol)                        
+                        var simbol = new Simbolo_1.Simbolo(_this.tipo, id, _this.linea, _this.columna, temporales.ultstack);
+                        temporales.ultstack += 1;
+                        ent.agregar(id, simbol);
+                        //Asignar el valor al stack
+                        var valAsign = _this.expresion.traducir(ent, arbol, resultado3d, temporales, 0);
+                        resultado3d.codigo3D += '\tstack[(int)' + simbol.valor + '] =' + valAsign + ';\n';
+                    }
+                    else {
+                        console.log('Error semantico, El tipo declarado (' + _this.tipo + ') no concuerda con el tipo asignado (' + tipoExpr + ') en la linea ' + _this.linea + ' y columna ' + _this.columna);
+                    }
+                }
+            }
+        });
     };
     Declaracion.prototype.ejecutar = function (ent, arbol) {
         var _this = this;
@@ -1112,8 +1219,13 @@ var Funcion = /** @class */ (function () {
         this.parametros = parametros;
         this.parametrosR = [];
     }
-    Funcion.prototype.traducir = function (ent, arbol) {
-        throw new Error("Method not implemented.");
+    Funcion.prototype.traducir = function (ent, arbol, resultado3D, temporales) {
+        var entornoGlobal = new Entorno_1.Entorno(ent);
+        if (this.nombrefuncion == "main") {
+            this.instrucciones.forEach(function (element) {
+                element.traducir(entornoGlobal, arbol, resultado3D, temporales);
+            });
+        }
     };
     Funcion.prototype.ejecutar = function (ent, arbol) {
         var entornoGlobal = new Entorno_1.Entorno(ent);
@@ -2711,7 +2823,7 @@ if (typeof module !== 'undefined' && require.main === module) {
 }
 }
 }).call(this)}).call(this,require('_process'))
-},{"../dist/AST/Tipo":3,"../dist/Expresiones/AccesoAtributo":4,"../dist/Expresiones/AccesoVariable":5,"../dist/Expresiones/ArrbegEnd":6,"../dist/Expresiones/Atributo":7,"../dist/Expresiones/Objeto":8,"../dist/Expresiones/Operacion":9,"../dist/Expresiones/ParametroReturn":10,"../dist/Expresiones/Primitivo":11,"../dist/Expresiones/Ternario":12,"../dist/Instrucciones/Asignacion":13,"../dist/Instrucciones/Break":14,"../dist/Instrucciones/Continue":15,"../dist/Instrucciones/Declaracion":16,"../dist/Instrucciones/DeclaracionArray":17,"../dist/Instrucciones/DeclaracionStruct":18,"../dist/Instrucciones/DoWhile":19,"../dist/Instrucciones/For":20,"../dist/Instrucciones/Forin":21,"../dist/Instrucciones/Funcion":22,"../dist/Instrucciones/FuncionReturn":23,"../dist/Instrucciones/If":24,"../dist/Instrucciones/IncrDecr":25,"../dist/Instrucciones/Parametro":26,"../dist/Instrucciones/Print":27,"../dist/Instrucciones/Struct":28,"../dist/Instrucciones/Switch":29,"../dist/Instrucciones/SwitchCaso":30,"../dist/Instrucciones/While":31,"_process":38,"fs":36,"path":37}],33:[function(require,module,exports){
+},{"../dist/AST/Tipo":3,"../dist/Expresiones/AccesoAtributo":4,"../dist/Expresiones/AccesoVariable":5,"../dist/Expresiones/ArrbegEnd":6,"../dist/Expresiones/Atributo":7,"../dist/Expresiones/Objeto":8,"../dist/Expresiones/Operacion":9,"../dist/Expresiones/ParametroReturn":10,"../dist/Expresiones/Primitivo":11,"../dist/Expresiones/Ternario":12,"../dist/Instrucciones/Asignacion":13,"../dist/Instrucciones/Break":14,"../dist/Instrucciones/Continue":15,"../dist/Instrucciones/Declaracion":16,"../dist/Instrucciones/DeclaracionArray":17,"../dist/Instrucciones/DeclaracionStruct":18,"../dist/Instrucciones/DoWhile":19,"../dist/Instrucciones/For":20,"../dist/Instrucciones/Forin":21,"../dist/Instrucciones/Funcion":22,"../dist/Instrucciones/FuncionReturn":23,"../dist/Instrucciones/If":24,"../dist/Instrucciones/IncrDecr":25,"../dist/Instrucciones/Parametro":26,"../dist/Instrucciones/Print":27,"../dist/Instrucciones/Struct":28,"../dist/Instrucciones/Switch":29,"../dist/Instrucciones/SwitchCaso":30,"../dist/Instrucciones/While":31,"_process":40,"fs":38,"path":39}],33:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AST = void 0;
@@ -2792,8 +2904,39 @@ exports.Entorno = Entorno;
 },{}],35:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Resultado3D = void 0;
+var Resultado3D = /** @class */ (function () {
+    function Resultado3D() {
+        this.codigo3D = "";
+    }
+    Resultado3D.prototype.setTemporal = function (temporal) {
+        this.temporal = temporal;
+    };
+    return Resultado3D;
+}());
+exports.Resultado3D = Resultado3D;
+
+},{}],36:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.Temporales = void 0;
+var Temporales = /** @class */ (function () {
+    function Temporales() {
+        this.ultimoTemp = 0;
+        this.ultstack = 0;
+        this.ultheap = 0;
+    }
+    return Temporales;
+}());
+exports.Temporales = Temporales;
+
+},{}],37:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var AST_1 = require("./AST/AST");
 var Entorno_1 = require("./AST/Entorno");
+var Resultado3D_1 = require("./AST/Resultado3D");
+var Temporales_1 = require("./AST/Temporales");
 var gramatica = require('../jison/Gramatica');
 window.ejecutarCodigo = function (entrada) {
     //Reiniciar consola
@@ -2816,8 +2959,9 @@ window.ejecutarCodigo = function (entrada) {
     });
 };
 window.traducirCodigo = function (entrada) {
-    //Reiniciar consola
-    reiniciarConsola();
+    reiniciarTraduccion();
+    var resultado3d = new Resultado3D_1.Resultado3D();
+    var temporales = new Temporales_1.Temporales();
     //traigo todas las raices    
     var instrucciones = gramatica.parse(entrada);
     console.log(instrucciones);
@@ -2825,19 +2969,23 @@ window.traducirCodigo = function (entrada) {
     var funcionesG = revisarFuncionesGlobales(instrucciones);
     var structsG = revisarStructsGlobales(instrucciones);
     var ast = new AST_1.AST(instrucciones, structsG, funcionesG);
-    var entornoGlobal = generarEntornoGlobal(ast, structsG);
-    console.log(entornoGlobal);
+    var entornoGlobal = generarEntornoGlobalTraducir(ast, structsG, resultado3d, temporales);
     //Buscar la funcion main    
     funcionesG.forEach(function (element) {
         if (element.nombrefuncion == "main") {
             console.log("Se ejecutara");
-            element.ejecutar(entornoGlobal, ast);
+            element.traducir(entornoGlobal, ast, resultado3d, temporales);
         }
     });
+    traducirCompleto(resultado3d, temporales);
 };
 function reiniciarConsola() {
     var areaConsola = document.getElementById('consola');
     areaConsola.value = "";
+}
+function reiniciarTraduccion() {
+    var areaTraduccion = document.getElementById('traduccion');
+    areaTraduccion.value = "";
 }
 function revisarFuncionesGlobales(instrucciones) {
     var funciones = Array();
@@ -2874,12 +3022,44 @@ function generarEntornoGlobal(ast, structs) {
     });
     return entornoGlobal;
 }
-// ejecutarCodigo(`int id12;
-// int var2;`)
+function generarEntornoGlobalTraducir(ast, structs, resultado3D, temporales) {
+    var entornoGlobal = new Entorno_1.Entorno(null);
+    var instrucciones = ast.instrucciones;
+    var declaracionesG = Array();
+    instrucciones.forEach(function (element) {
+        if (element.getTipo() == "declaracion") {
+            declaracionesG.push(element);
+        }
+    });
+    declaracionesG.forEach(function (element) {
+        element.traducir(entornoGlobal, ast, resultado3D, temporales);
+    });
+    structs.forEach(function (element) {
+        element.traducir(entornoGlobal, ast, resultado3D, temporales);
+    });
+    return entornoGlobal;
+}
+function traducirCompleto(resultado3D, temporales) {
+    //Traer el codigo en 3D    
+    //Ingresar encabezado
+    var encabezado = '#include <stdio.h> \n#include <math.h> \ndouble heap[30101999]; \ndouble stack[30101999]; \ndouble P; \ndouble H;';
+    //Inicializar todos los temporales
+    //Generar las funciones nativas
+    //Generar el proceso main
+    var procMain = '\nvoid main() { \n\tP = 0; \n\tH = 0;\n';
+    //Agregar el resultado 3D en el main
+    procMain += resultado3D.codigo3D;
+    //Cerrar     
+    procMain += '\n\treturn; \n }';
+    //Mostrar en el text area
+    var resultado = encabezado + procMain;
+    var areaTraduccion = document.getElementById('traduccion');
+    areaTraduccion.value = resultado;
+}
 
-},{"../jison/Gramatica":32,"./AST/AST":33,"./AST/Entorno":34}],36:[function(require,module,exports){
+},{"../jison/Gramatica":32,"./AST/AST":33,"./AST/Entorno":34,"./AST/Resultado3D":35,"./AST/Temporales":36}],38:[function(require,module,exports){
 
-},{}],37:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 (function (process){(function (){
 // 'path' module extracted from Node.js v8.11.1 (only the posix part)
 // transplited with Babel
@@ -3412,7 +3592,7 @@ posix.posix = posix;
 module.exports = posix;
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":38}],38:[function(require,module,exports){
+},{"_process":40}],40:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -3598,4 +3778,4 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}]},{},[35]);
+},{}]},{},[37]);

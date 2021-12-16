@@ -7,8 +7,10 @@ var Primitivo = /** @class */ (function () {
         this.columna = columna;
         this.valor = valor;
     }
-    Primitivo.prototype.traducir = function (ent, arbol) {
-        throw new Error("Method not implemented.");
+    Primitivo.prototype.traducir = function (ent, arbol, resultado3d, temporales) {
+        console.log("Traduciendo Primitivo");
+        //Solo si es numeros      TODO para strings y booleanos  
+        return this.valor;
     };
     Primitivo.prototype.getTipo = function (ent, arbol) {
         var valor = this.getValorImplicito(ent, arbol);
