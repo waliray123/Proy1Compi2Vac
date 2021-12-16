@@ -41,7 +41,7 @@ var AccesoVariable = /** @class */ (function () {
                 });
                 return sendResultado_1;
             }
-            else if (simbol.getTipo(ent, arbol) == Tipo_1.Tipo.ARRAY) {
+            else if (simbol.getTipo(ent, arbol) == Tipo_1.Tipo.ARRAY && this.isAlone) {
                 var sendResultado_2 = '[';
                 var valor = simbol.getValorImplicito(ent, arbol);
                 var exprs_1 = valor.contenido;

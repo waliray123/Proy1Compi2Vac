@@ -72,27 +72,6 @@ var Asignacion = /** @class */ (function () {
             }
         }
         else {
-<<<<<<< HEAD
-            for (var i = 0; i < (this.id.length - 1); i++) {
-                var id = this.id[i];
-                if (ent.existe(id)) {
-                    var simbol = ent.getSimbolo(id);
-                    var tipo = simbol.getTipo(ent, arbol);
-                    if (tipo == Tipo_1.Tipo.TIPO_STRUCT) {
-                        var atributos = simbol.getValorImplicito(ent, arbol);
-                        var idSig = this.id[i + 1];
-                        for (var _i = 0, atributos_2 = atributos; _i < atributos_2.length; _i++) {
-                            var atributo = atributos_2[_i];
-                            if (atributo.id[0] === idSig) {
-                                atributo.expresion = this.expresion;
-                                break;
-                            }
-                        }
-                    }
-                }
-                else {
-                    console.log('Error semantico, no existe ' + id + ' en la linea ' + this.linea + ' y columna ' + this.columna);
-=======
             var i = 0;
             var id = this.id[i];
             if (ent.existe(id)) {
@@ -101,7 +80,6 @@ var Asignacion = /** @class */ (function () {
                 if (tipo == Tipo_1.Tipo.TIPO_STRUCT) {
                     var atributos = simbol.getValorImplicito(ent, arbol);
                     this.asignacionStruct(i, atributos, ent, arbol);
->>>>>>> ed7971aea1f1a8fccc72408a92558380c3e744ae
                 }
             }
             else {
@@ -145,8 +123,8 @@ var Asignacion = /** @class */ (function () {
             }
         };
         var this_1 = this;
-        for (var _i = 0, atributos_1 = atributos; _i < atributos_1.length; _i++) {
-            var atributo = atributos_1[_i];
+        for (var _i = 0, atributos_2 = atributos; _i < atributos_2.length; _i++) {
+            var atributo = atributos_2[_i];
             var state_1 = _loop_1();
             if (typeof state_1 === "object")
                 return state_1.value;

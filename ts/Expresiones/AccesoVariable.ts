@@ -50,7 +50,7 @@ export class AccesoVariable implements Expresion {
                     i++;                 
                 })
                 return sendResultado;
-            }else if(simbol.getTipo(ent,arbol) == Tipo.ARRAY){
+            }else if(simbol.getTipo(ent,arbol) == Tipo.ARRAY && this.isAlone){
                 let sendResultado = '[';
                 let valor:Arreglo = simbol.getValorImplicito(ent,arbol);
                 let exprs:Array<Expresion> = valor.contenido;

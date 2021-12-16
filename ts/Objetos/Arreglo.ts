@@ -35,10 +35,15 @@ export class Arreglo{
     }
 
     pop(){
-        this.contenido.pop();
+        let pop = this.contenido.pop();
         let valor = this.contenido.length;
         this.length = valor;
         this.dimension = valor;
+        return pop;
+    }
+
+    getLastContenido(){
+        return this.contenido[this.length-1];
     }
 
     comprobarTipo(ent:Entorno, arbol: AST):boolean{

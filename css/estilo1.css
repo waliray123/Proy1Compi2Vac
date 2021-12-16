@@ -4,7 +4,7 @@
 /*Titillium Web: font-family: 'Titillium Web', sans-serif;*/
 
 body {
-    background-color: #201c1c;
+    background-color: #19171b;
 }
 
 h1 {
@@ -23,7 +23,7 @@ button , .label-nav {
     font-family: "Ubuntu Mono", monospace;
     font-weight: bold;
     color: #f3f3f3;
-    background-color: #202428;
+    background-color: #30373d;
 }
 
 button:hover, .label-nav:hover {
