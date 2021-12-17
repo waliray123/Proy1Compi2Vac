@@ -24,6 +24,7 @@ export class Asignacion implements Instruccion{
     }
 
     traducir(ent:Entorno, arbol:AST,resultado3d:Resultado3D,temporales:Temporales) {
+        
         if (this.id.length == 1) {
             let id = this.id[0];
             if (ent.existe(id)) {

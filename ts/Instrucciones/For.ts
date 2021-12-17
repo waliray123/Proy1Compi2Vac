@@ -30,15 +30,20 @@ export class For implements Instruccion{
 
         if(temporales.ultLiteral == 0){
             resultado3D.codigo3D += '\tL'+temporales.ultLiteral + ":\n";    
+            temporales.ultLitEscr = 0;
         }         
         
         this.declAsign.traducir(entornolocal,arbol,resultado3D,temporales);
-        let valAsign = this.expresion1.traducir(entornolocal,arbol,resultado3D,temporales,0);
-        temporales.ultLiteral += 2;
-        let ulLit = temporales.ultLiteral-1;
-        resultado3D.codigo3D += '\tif('+valAsign+') goto L'+ulLit+';\n';
-        resultado3D.codigo3D += '\tgoto L'+(ulLit+1)+';\n';
+
+        temporales.ultLiteral += 3; //Cuantos literales va a utilizar        
+        let ulLit = temporales.ultLiteral-2;
         resultado3D.codigo3D += '\tL'+(ulLit)+':\n';
+
+        let valAsign = this.expresion1.traducir(entornolocal,arbol,resultado3D,temporales,0); 
+
+        resultado3D.codigo3D += '\tif('+valAsign+') goto L'+(ulLit+1)+';\n';
+        resultado3D.codigo3D += '\tgoto L'+(ulLit+2)+';\n';
+        resultado3D.codigo3D += '\tL'+(ulLit+1)+':\n';
         //Traducir instrucciones
         this.instrucciones.forEach((element:Instruccion) => {
             element.traducir(entornolocal,arbol,resultado3D,temporales);
@@ -58,8 +63,10 @@ export class For implements Instruccion{
         }
 
         //Traducir el regreso
-        resultado3D.codigo3D += '\tgoto L'+(ulLit-1)+';\n';
+        resultado3D.codigo3D += '\tgoto L'+(ulLit)+';\n';
 
+        resultado3D.codigo3D += '\tL'+(ulLit+2)+':\n';
+        temporales.ultLitEscr = ulLit+2;
 
 
 

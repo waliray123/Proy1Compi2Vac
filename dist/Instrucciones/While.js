@@ -13,7 +13,9 @@ var While = /** @class */ (function () {
         var entornolocal = new Entorno_1.Entorno(ent);
         if (temporales.ultLiteral == 0) {
             resultado3D.codigo3D += '\tL' + temporales.ultLiteral + ":\n";
+            temporales.ultLitEscr = 0;
         }
+        var ultEscrito = temporales.ultLitEscr;
         temporales.ultLiteral += 2;
         var ulLit = temporales.ultLiteral - 1;
         var valAsign = this.expresion.traducir(entornolocal, arbol, resultado3D, temporales, 0);
@@ -24,8 +26,9 @@ var While = /** @class */ (function () {
         this.instrucciones.forEach(function (element) {
             element.traducir(entornolocal, arbol, resultado3D, temporales);
         });
-        resultado3D.codigo3D += '\tgoto L' + (ulLit - 1) + ';\n';
+        resultado3D.codigo3D += '\tgoto L' + (ultEscrito) + ';\n';
         resultado3D.codigo3D += '\tL' + (ulLit + 1) + ':\n';
+        temporales.ultLitEscr = ulLit + 1;
     };
     While.prototype.ejecutar = function (ent, arbol) {
         var entornolocal = new Entorno_1.Entorno(ent);

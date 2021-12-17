@@ -27,23 +27,28 @@ export class If implements Instruccion {
     traducir(ent: Entorno, arbol: AST,resultado3D:Resultado3D,temporales:Temporales) {
         const entornolocal: Entorno = new Entorno(ent);
         let valAsign = this.condicion.traducir(entornolocal,arbol,resultado3D,temporales,0);
-        let ultLit = temporales.ultLiteral;        
+
+        let ultLit = temporales.ultLiteral+1;   
         let cantidadSinos = this.sinos.length;
-        temporales.ultLiteral += cantidadSinos+1;
+
+        temporales.ultLiteral += cantidadSinos+2;
+
         resultado3D.codigo3D += '\tif('+valAsign+') goto L'+ultLit+';\n';
         resultado3D.codigo3D += '\tgoto L'+(ultLit+1)+';\n';
         resultado3D.codigo3D += '\tL'+ultLit+':\n';
         this.instrucciones.forEach((element: Instruccion) => {
             element.traducir(entornolocal, arbol,resultado3D,temporales);
         });
-        resultado3D.codigo3D += '\tgoto L'+(cantidadSinos+1)+';\n';
+        resultado3D.codigo3D += '\tgoto L'+(ultLit+1+cantidadSinos)+';\n';
+        
         let cont = ultLit+1;
         for(let i = cantidadSinos-1; i >= 0; i--){
             let sino = this.sinos[i];
             sino.traducirSinos(ent,arbol,resultado3D,temporales,cont,(cantidadSinos+1));
             cont +=1;
         }        
-        resultado3D.codigo3D += '\tL'+(cantidadSinos+1)+':\n';
+        resultado3D.codigo3D += '\tL'+(ultLit+cantidadSinos+1)+':\n';
+        temporales.ultLitEscr = ultLit+cantidadSinos+1;
     }
 
     traducirSinos(ent: Entorno, arbol: AST,resultado3D:Resultado3D,temporales:Temporales,literalAsign:number,ultAsign:number){

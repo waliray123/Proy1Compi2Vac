@@ -23,7 +23,7 @@ export class DoWhile implements Instruccion{
         const entornolocal:Entorno = new Entorno(ent);              
         if(temporales.ultLiteral == 0){
             resultado3D.codigo3D += '\tL'+temporales.ultLiteral + ":\n";    
-        }
+        }        
         let ulLit = temporales.ultLiteral;
         temporales.ultLiteral += 1;
 

@@ -22,9 +22,11 @@ export class While implements Instruccion{
     traducir(ent: Entorno, arbol: AST,resultado3D:Resultado3D,temporales:Temporales) {
         const entornolocal:Entorno = new Entorno(ent);    
         if(temporales.ultLiteral == 0){
-            resultado3D.codigo3D += '\tL'+temporales.ultLiteral + ":\n";    
-        }          
-        temporales.ultLiteral += 2;        
+            resultado3D.codigo3D += '\tL'+temporales.ultLiteral + ":\n";  
+            temporales.ultLitEscr = 0;  
+        }
+        let ultEscrito = temporales.ultLitEscr;
+        temporales.ultLiteral += 2;
         let ulLit = temporales.ultLiteral-1;
         let valAsign = this.expresion.traducir(entornolocal,arbol,resultado3D,temporales,0);
         resultado3D.codigo3D += '\tif('+valAsign+') goto L' + ulLit + ';\n';
@@ -34,8 +36,9 @@ export class While implements Instruccion{
         this.instrucciones.forEach((element:Instruccion) => {
             element.traducir(entornolocal,arbol,resultado3D,temporales);
         });
-        resultado3D.codigo3D += '\tgoto L'+(ulLit-1)+';\n';
-        resultado3D.codigo3D += '\tL'+(ulLit+1)+':\n';
+        resultado3D.codigo3D += '\tgoto L'+(ultEscrito)+';\n';
+        resultado3D.codigo3D += '\tL'+(ulLit+1)+':\n';        
+        temporales.ultLitEscr = ulLit+1;
 
     }
 

@@ -14,23 +14,24 @@ var If = /** @class */ (function () {
     If.prototype.traducir = function (ent, arbol, resultado3D, temporales) {
         var entornolocal = new Entorno_1.Entorno(ent);
         var valAsign = this.condicion.traducir(entornolocal, arbol, resultado3D, temporales, 0);
-        var ultLit = temporales.ultLiteral;
+        var ultLit = temporales.ultLiteral + 1;
         var cantidadSinos = this.sinos.length;
-        temporales.ultLiteral += cantidadSinos + 1;
+        temporales.ultLiteral += cantidadSinos + 2;
         resultado3D.codigo3D += '\tif(' + valAsign + ') goto L' + ultLit + ';\n';
         resultado3D.codigo3D += '\tgoto L' + (ultLit + 1) + ';\n';
         resultado3D.codigo3D += '\tL' + ultLit + ':\n';
         this.instrucciones.forEach(function (element) {
             element.traducir(entornolocal, arbol, resultado3D, temporales);
         });
-        resultado3D.codigo3D += '\tgoto L' + (cantidadSinos + 1) + ';\n';
+        resultado3D.codigo3D += '\tgoto L' + (ultLit + 1 + cantidadSinos) + ';\n';
         var cont = ultLit + 1;
         for (var i = cantidadSinos - 1; i >= 0; i--) {
             var sino = this.sinos[i];
             sino.traducirSinos(ent, arbol, resultado3D, temporales, cont, (cantidadSinos + 1));
             cont += 1;
         }
-        resultado3D.codigo3D += '\tL' + (cantidadSinos + 1) + ':\n';
+        resultado3D.codigo3D += '\tL' + (ultLit + cantidadSinos + 1) + ':\n';
+        temporales.ultLitEscr = ultLit + cantidadSinos + 1;
     };
     If.prototype.traducirSinos = function (ent, arbol, resultado3D, temporales, literalAsign, ultAsign) {
         if (this.tipo == "elseif") {
