@@ -176,6 +176,7 @@ BSL               "\\".
     const {Push} = require("../dist/Instrucciones/Push");
     const {Pop} = require("../dist/Instrucciones/Pop");
     const {OperacionCadena, OperadorCadena} = require("../dist/Expresiones/OperacionCadena");
+    const {OperadorNativa, OperacionNativa} = require("../dist/Expresiones/OperacionNativa");
 
     /*---CODIGO INCRUSTADO---*/
     var errores = [
@@ -491,6 +492,7 @@ expresion
     | nativas                   {$$ = $1;}
     | expresion_arr_arreglo     {$$ = $1;}
     | expresion_atributos       {$$ = $1;}
+    | otras_nativas             {$$ = $1;}
 ;
 
 expresion_arr_arreglo
@@ -550,6 +552,14 @@ nativas
     | STR_SIN PARI expresion PARD  {$$ = new Operacion($3,null,Operador.SIN, @1.first_line, @1.first_column);}
     | STR_COS PARI expresion PARD  {$$ = new Operacion($3,null,Operador.COS, @1.first_line, @1.first_column);}
     | STR_TAN PARI expresion PARD  {$$ = new Operacion($3,null,Operador.TAN, @1.first_line, @1.first_column);}
+;
+
+otras_nativas
+    : tiposVar OP_CALL STR_PARSE PARI expresion PARD    {$$ = new OperacionNativa(OperadorNativa.PARSE,$1,$5,@1.first_line,@1.first_column);}
+    | STR_TOINT PARI expresion PARD                     {$$ = new OperacionNativa(OperadorNativa.TOINT,Tipo.NULL,$3,@1.first_line,@1.first_column);}
+    | STR_TODOUBLE PARI expresion PARD                  {$$ = new OperacionNativa(OperadorNativa.TODOUBLE,Tipo.NULL,$3,@1.first_line,@1.first_column);}                     
+    | STR_string PARI expresion PARD                    {$$ = new OperacionNativa(OperadorNativa.STRING,Tipo.NULL,$3,@1.first_line,@1.first_column);}
+    | STR_TYPEOF PARI expresion PARD                    {$$ = new OperacionNativa(OperadorNativa.TYPEOF,Tipo.NULL,$3,@1.first_line,@1.first_column);}
 ;
 
 primitivas
