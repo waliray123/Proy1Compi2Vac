@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.AsignacionArray = void 0;
 var Tipo_1 = require("../AST/Tipo");
 var AsignacionArray = /** @class */ (function () {
     function AsignacionArray(id, posicion, linea, columna, expresion) {
