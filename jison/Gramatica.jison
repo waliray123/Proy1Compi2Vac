@@ -175,6 +175,8 @@ BSL               "\\".
     const {IncrDecr} = require("../dist/Instrucciones/IncrDecr");
     const {Push} = require("../dist/Instrucciones/Push");
     const {Pop} = require("../dist/Instrucciones/Pop");
+    const {OperacionCadena, OperadorCadena} = require("../dist/Expresiones/OperacionCadena");
+    const {OperadorNativa, OperacionNativa} = require("../dist/Expresiones/OperacionNativa");
 
     /*---CODIGO INCRUSTADO---*/
     var errores = [
@@ -490,6 +492,7 @@ expresion
     | nativas                   {$$ = $1;}
     | expresion_arr_arreglo     {$$ = $1;}
     | expresion_atributos       {$$ = $1;}
+    | otras_nativas             {$$ = $1;}
 ;
 
 expresion_arr_arreglo
@@ -499,6 +502,12 @@ expresion_arr_arreglo
 
 expresion_atributos
     : expresion OP_CALL ID_VAR                           {$$ = new AccesoAtributo($1,$3,@1.first_line, @1.first_column);}
+    | expresion OP_CALL LENGTH PARI PARD                 {$$ = new OperacionCadena($1,null,null,OperadorCadena.LENGTH,@1.first_line, @1.first_column);}
+    | expresion OP_CALL STR_POP PARI PARD                {$$ = new OperacionCadena($1,null,null,OperadorCadena.POP,@1.first_line, @1.first_column);}
+    | expresion OP_CALL UPPERCASE PARI PARD              {$$ = new OperacionCadena($1,null,null,OperadorCadena.UPPERCASE,@1.first_line, @1.first_column);}
+    | expresion OP_CALL LOWERCASE PARI PARD              {$$ = new OperacionCadena($1,null,null,OperadorCadena.LOWERCASE,@1.first_line, @1.first_column);}
+    | expresion OP_CALL CHARPOS PARI expresion PARD                             {$$ = new OperacionCadena($1,$5,null,OperadorCadena.CHARPOS,@1.first_line, @1.first_column);}
+    | expresion OP_CALL SUBSTRING PARI expresion COMA expresion PARD            {$$ = new OperacionCadena($1,$5,$7,OperadorCadena.SUBSTRING,@1.first_line, @1.first_column);}
 ;
 
 expresion_ternario
@@ -543,6 +552,14 @@ nativas
     | STR_SIN PARI expresion PARD  {$$ = new Operacion($3,null,Operador.SIN, @1.first_line, @1.first_column);}
     | STR_COS PARI expresion PARD  {$$ = new Operacion($3,null,Operador.COS, @1.first_line, @1.first_column);}
     | STR_TAN PARI expresion PARD  {$$ = new Operacion($3,null,Operador.TAN, @1.first_line, @1.first_column);}
+;
+
+otras_nativas
+    : tiposVar OP_CALL STR_PARSE PARI expresion PARD    {$$ = new OperacionNativa(OperadorNativa.PARSE,$1,$5,@1.first_line,@1.first_column);}
+    | STR_TOINT PARI expresion PARD                     {$$ = new OperacionNativa(OperadorNativa.TOINT,Tipo.NULL,$3,@1.first_line,@1.first_column);}
+    | STR_TODOUBLE PARI expresion PARD                  {$$ = new OperacionNativa(OperadorNativa.TODOUBLE,Tipo.NULL,$3,@1.first_line,@1.first_column);}                     
+    | STR_string PARI expresion PARD                    {$$ = new OperacionNativa(OperadorNativa.STRING,Tipo.NULL,$3,@1.first_line,@1.first_column);}
+    | STR_TYPEOF PARI expresion PARD                    {$$ = new OperacionNativa(OperadorNativa.TYPEOF,Tipo.NULL,$3,@1.first_line,@1.first_column);}
 ;
 
 primitivas

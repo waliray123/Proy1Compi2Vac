@@ -48,14 +48,25 @@
             <ul class="tabs" id="tabs">
               <li class="tab active" data-tab="0">1</li>
               <li class="tab" data-tab="1">2</li>
+              <li class="tab" data-tab="2">3</li>
+              <li class="tab" data-tab="3">4</li>
+              <li class="tab" data-tab="4">5</li>
             </ul>
             <div id="tab-editors">
                 <div class="tab-pane active" data-pane="0">
-                    <textarea  id="editor-0" class="editor">// here is the first one</textarea>
+                    <textarea  id="editor-0" class="editor">//Aqui la primera pestaña</textarea>
                   </div>
                   <div class="tab-pane" data-pane="1">
-                    <textarea class="editor" id="editor-1">// here is the second one 
-                  </textarea>
+                    <textarea class="editor" id="editor-1">//Aqui la segunda pestaña</textarea>
+                  </div>
+                  <div class="tab-pane" data-pane="2">
+                    <textarea class="editor" id="editor-2">// Aqui la tercera pestaña</textarea>
+                  </div>
+                  <div class="tab-pane" data-pane="3">
+                    <textarea class="editor" id="editor-3">// Aqui la cuarta pestaña</textarea>
+                  </div>
+                  <div class="tab-pane" data-pane="4">
+                    <textarea class="editor" id="editor-4">// Aqui la quinta pestaña</textarea>
                   </div>
             </div>           
 
@@ -63,8 +74,14 @@
     </div>
     <br>
     <div class="container">
-      <button style=" margin-left: auto; padding: 0 4rem; text-align: center; width: auto;" onclick="compilar()">Ejecutar Codigo</button>
-      <button style=" margin-left: auto; padding: 0 4rem; text-align: center; width: auto;" onclick="traducir()">Ejecutar Codigo</button>
+      <div class="row justify-content-md-center">
+        <div class="col-md">
+          <button style=" margin-right: 0; padding: 0 4rem; text-align: center; width: 70%;" onclick="compilar()">Ejecutar Codigo</button>
+        </div>
+        <div class="col-md">
+          <button style=" margin-left: auto; padding: 0 4rem; text-align: center; width: 70%;" onclick="traducir()">Traducir</button>
+        </div>
+      </div>      
     </div>
     
     <p>Consola</p>
