@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.DeclaracionStruct = void 0;
 var Simbolo_1 = require("../AST/Simbolo");
 var Tipo_1 = require("../AST/Tipo");
 var FuncionReturn_1 = require("./FuncionReturn");

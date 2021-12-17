@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.For = void 0;
 var Entorno_1 = require("../AST/Entorno");
 var For = /** @class */ (function () {
     function For(linea, columna, instrucciones, declAsign, expresion1, expresion2) {

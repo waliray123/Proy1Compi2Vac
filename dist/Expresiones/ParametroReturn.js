@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ParametroReturn = void 0;
 var ParametroReturn = /** @class */ (function () {
     function ParametroReturn(valor, linea, columna) {
         this.valor = valor;
