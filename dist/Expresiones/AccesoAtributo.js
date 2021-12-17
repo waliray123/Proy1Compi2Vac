@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.AccesoAtributo = void 0;
 var Tipo_1 = require("../AST/Tipo");
 var AccesoVariable_1 = require("./AccesoVariable");
 var AccesoAtributo = /** @class */ (function () {

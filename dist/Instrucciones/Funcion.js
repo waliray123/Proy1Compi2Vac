@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Funcion = void 0;
 var Entorno_1 = require("../AST/Entorno");
 var Declaracion_1 = require("./Declaracion");
 var Funcion = /** @class */ (function () {
@@ -16,11 +15,9 @@ var Funcion = /** @class */ (function () {
     }
     Funcion.prototype.traducir = function (ent, arbol, resultado3D, temporales) {
         var entornoGlobal = new Entorno_1.Entorno(ent);
-        if (this.nombrefuncion == "main") {
-            this.instrucciones.forEach(function (element) {
-                element.traducir(entornoGlobal, arbol, resultado3D, temporales);
-            });
-        }
+        this.instrucciones.forEach(function (element) {
+            element.traducir(entornoGlobal, arbol, resultado3D, temporales);
+        });
     };
     Funcion.prototype.ejecutar = function (ent, arbol) {
         var entornoGlobal = new Entorno_1.Entorno(ent);

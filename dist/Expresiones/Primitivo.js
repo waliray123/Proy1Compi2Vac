@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Primitivo = void 0;
 var Tipo_1 = require("../AST/Tipo");
 var Primitivo = /** @class */ (function () {
     function Primitivo(valor, linea, columna) {

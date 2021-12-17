@@ -1,6 +1,8 @@
 import { AST } from "../AST/AST";
 import { Entorno } from "../AST/Entorno";
+import { Resultado3D } from "../AST/Resultado3D";
 import { Simbolo } from "../AST/Simbolo";
+import { Temporales } from "../AST/Temporales";
 import { Tipo } from "../AST/Tipo";
 import { Expresion } from "../Interfaces/Expresion";
 import { Instruccion } from "../Interfaces/Instruccion";
@@ -23,8 +25,42 @@ export class For implements Instruccion{
         this.expresion2 = expresion2;
     }
 
-    traducir(ent: Entorno, arbol: AST) {
-              
+    traducir(ent: Entorno, arbol: AST,resultado3D:Resultado3D,temporales:Temporales) {
+        const entornolocal:Entorno = new Entorno(ent);        
+
+        if(temporales.ultLiteral == 0){
+            resultado3D.codigo3D += '\tL'+temporales.ultLiteral + ":\n";    
+        }         
+        
+        this.declAsign.traducir(entornolocal,arbol,resultado3D,temporales);
+        let valAsign = this.expresion1.traducir(entornolocal,arbol,resultado3D,temporales,0);
+        temporales.ultLiteral += 2;
+        let ulLit = temporales.ultLiteral-1;
+        resultado3D.codigo3D += '\tif('+valAsign+') goto L'+ulLit+';\n';
+        resultado3D.codigo3D += '\tgoto L'+(ulLit+1)+';\n';
+        resultado3D.codigo3D += '\tL'+(ulLit)+':\n';
+        //Traducir instrucciones
+        this.instrucciones.forEach((element:Instruccion) => {
+            element.traducir(entornolocal,arbol,resultado3D,temporales);
+        });
+        //Traducir el incremento o decremento
+        const id = this.expresion2.op_izquierda.getId();      
+
+        if (entornolocal.existe(id)) {
+            let simbol: Simbolo = entornolocal.getSimbolo(id);                
+            resultado3D.codigo3D += '\tt'+temporales.ultimoTemp+'= '+'stack[(int)'+simbol.valor+']'+';\n';
+            temporales.ultimoTemp += 1;
+            resultado3D.codigo3D += '\tt'+(temporales.ultimoTemp-1)+'= '+'t'+(temporales.ultimoTemp-1)+' + 1;\n';
+            resultado3D.codigo3D += '\tstack[(int)'+simbol.valor+'] = t'+ (temporales.ultimoTemp-1)  +';\n';
+            simbol.valor;
+        }else{
+            console.log('Error semantico, no existe la variable ' + id +'en la linea '+ this.linea + ' y columna ' + this.columna);
+        }
+
+        //Traducir el regreso
+        resultado3D.codigo3D += '\tgoto L'+(ulLit-1)+';\n';
+
+
 
 
     }

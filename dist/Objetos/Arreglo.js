@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Arreglo = void 0;
 var Arreglo = /** @class */ (function () {
     function Arreglo(tipo, dimension, length, contenido, linea, columna) {
         this.tipo = tipo;

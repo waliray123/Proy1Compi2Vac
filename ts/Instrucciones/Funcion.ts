@@ -29,11 +29,10 @@ export class Funcion implements Instruccion{
 
     traducir(ent: Entorno, arbol: AST,resultado3D:Resultado3D,temporales:Temporales) {
         const entornoGlobal:Entorno = new Entorno(ent);
-        if(this.nombrefuncion == "main"){
-            this.instrucciones.forEach((element:Instruccion) => {
-                element.traducir(entornoGlobal,arbol,resultado3D,temporales);
-            })
-        }
+
+        this.instrucciones.forEach((element:Instruccion) => {
+            element.traducir(entornoGlobal,arbol,resultado3D,temporales);
+        })
 
     }
 

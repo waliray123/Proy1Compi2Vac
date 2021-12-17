@@ -5,6 +5,7 @@ var Temporales = /** @class */ (function () {
         this.ultimoTemp = 0;
         this.ultstack = 0;
         this.ultheap = 0;
+        this.ultLiteral = 0;
     }
     return Temporales;
 }());

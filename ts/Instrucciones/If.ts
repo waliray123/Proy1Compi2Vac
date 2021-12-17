@@ -1,6 +1,8 @@
 import { AST } from "../AST/AST";
 import { Entorno } from "../AST/Entorno";
+import { Resultado3D } from "../AST/Resultado3D";
 import { Simbolo } from "../AST/Simbolo";
+import { Temporales } from "../AST/Temporales";
 import { Expresion } from "../Interfaces/Expresion";
 import { Instruccion } from "../Interfaces/Instruccion";
 
@@ -22,8 +24,47 @@ export class If implements Instruccion {
         this.tipo = tipo;
     }
 
-    traducir(ent: Entorno, arbol: AST) {
-        console.log('traducir...ifnormal');
+    traducir(ent: Entorno, arbol: AST,resultado3D:Resultado3D,temporales:Temporales) {
+        const entornolocal: Entorno = new Entorno(ent);
+        let valAsign = this.condicion.traducir(entornolocal,arbol,resultado3D,temporales,0);
+        let ultLit = temporales.ultLiteral;        
+        let cantidadSinos = this.sinos.length;
+        temporales.ultLiteral += cantidadSinos+1;
+        resultado3D.codigo3D += '\tif('+valAsign+') goto L'+ultLit+';\n';
+        resultado3D.codigo3D += '\tgoto L'+(ultLit+1)+';\n';
+        resultado3D.codigo3D += '\tL'+ultLit+':\n';
+        this.instrucciones.forEach((element: Instruccion) => {
+            element.traducir(entornolocal, arbol,resultado3D,temporales);
+        });
+        resultado3D.codigo3D += '\tgoto L'+(cantidadSinos+1)+';\n';
+        let cont = ultLit+1;
+        for(let i = cantidadSinos-1; i >= 0; i--){
+            let sino = this.sinos[i];
+            sino.traducirSinos(ent,arbol,resultado3D,temporales,cont,(cantidadSinos+1));
+            cont +=1;
+        }        
+        resultado3D.codigo3D += '\tL'+(cantidadSinos+1)+':\n';
+    }
+
+    traducirSinos(ent: Entorno, arbol: AST,resultado3D:Resultado3D,temporales:Temporales,literalAsign:number,ultAsign:number){
+        if(this.tipo == "elseif"){
+            const entornolocal: Entorno = new Entorno(ent);
+            let valAsign = this.condicion.traducir(entornolocal,arbol,resultado3D,temporales,0);
+            resultado3D.codigo3D += '\tif('+valAsign+') goto L'+literalAsign+';\n';
+            resultado3D.codigo3D += '\tgoto L'+(literalAsign+1)+';\n';
+            resultado3D.codigo3D += '\tL'+literalAsign+':\n';
+            this.instrucciones.forEach((element: Instruccion) => {
+                element.traducir(entornolocal, arbol,resultado3D,temporales);
+            });
+            resultado3D.codigo3D += '\tgoto L'+ultAsign+';\n';
+        }else{
+            const entornolocal: Entorno = new Entorno(ent);       
+            resultado3D.codigo3D += '\tL'+literalAsign+':\n';
+            this.instrucciones.forEach((element: Instruccion) => {
+                element.traducir(entornolocal, arbol,resultado3D,temporales);
+            });
+            resultado3D.codigo3D += '\tgoto L'+ultAsign+';\n';
+        }
     }
 
     ejecutar(ent: Entorno, arbol: AST) {

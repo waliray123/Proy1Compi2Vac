@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.For = void 0;
 var Entorno_1 = require("../AST/Entorno");
 var For = /** @class */ (function () {
     function For(linea, columna, instrucciones, declAsign, expresion1, expresion2) {
@@ -11,7 +10,37 @@ var For = /** @class */ (function () {
         this.expresion1 = expresion1;
         this.expresion2 = expresion2;
     }
-    For.prototype.traducir = function (ent, arbol) {
+    For.prototype.traducir = function (ent, arbol, resultado3D, temporales) {
+        var entornolocal = new Entorno_1.Entorno(ent);
+        if (temporales.ultLiteral == 0) {
+            resultado3D.codigo3D += '\tL' + temporales.ultLiteral + ":\n";
+        }
+        this.declAsign.traducir(entornolocal, arbol, resultado3D, temporales);
+        var valAsign = this.expresion1.traducir(entornolocal, arbol, resultado3D, temporales, 0);
+        temporales.ultLiteral += 2;
+        var ulLit = temporales.ultLiteral - 1;
+        resultado3D.codigo3D += '\tif(' + valAsign + ') goto L' + ulLit + ';\n';
+        resultado3D.codigo3D += '\tgoto L' + (ulLit + 1) + ';\n';
+        resultado3D.codigo3D += '\tL' + (ulLit) + ':\n';
+        //Traducir instrucciones
+        this.instrucciones.forEach(function (element) {
+            element.traducir(entornolocal, arbol, resultado3D, temporales);
+        });
+        //Traducir el incremento o decremento
+        var id = this.expresion2.op_izquierda.getId();
+        if (entornolocal.existe(id)) {
+            var simbol = entornolocal.getSimbolo(id);
+            resultado3D.codigo3D += '\tt' + temporales.ultimoTemp + '= ' + 'stack[(int)' + simbol.valor + ']' + ';\n';
+            temporales.ultimoTemp += 1;
+            resultado3D.codigo3D += '\tt' + (temporales.ultimoTemp - 1) + '= ' + 't' + (temporales.ultimoTemp - 1) + ' + 1;\n';
+            resultado3D.codigo3D += '\tstack[(int)' + simbol.valor + '] = t' + (temporales.ultimoTemp - 1) + ';\n';
+            simbol.valor;
+        }
+        else {
+            console.log('Error semantico, no existe la variable ' + id + 'en la linea ' + this.linea + ' y columna ' + this.columna);
+        }
+        //Traducir el regreso
+        resultado3D.codigo3D += '\tgoto L' + (ulLit - 1) + ';\n';
     };
     For.prototype.ejecutar = function (ent, arbol) {
         console.log('ejecutado...fornormal');

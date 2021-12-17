@@ -152,9 +152,24 @@ function traducirCompleto(resultado3D:Resultado3D,temporales:Temporales){
 
     //Ingresar encabezado
 
-    let encabezado = '#include <stdio.h> \n#include <math.h> \ndouble heap[30101999]; \ndouble stack[30101999]; \ndouble P; \ndouble H;';
+    let encabezado = '#include <stdio.h> \n#include <math.h> \ndouble heap[30101999]; \ndouble stack[30101999]; \ndouble P; \ndouble H;\n';
     
     //Inicializar todos los temporales
+
+    let codTemporales = '';
+    for(let i = 0; i < temporales.ultimoTemp;i++){
+        if(i == 0){
+            codTemporales += 'double t'+i;
+        }else{
+            codTemporales += ',t'+i;
+        }
+        
+        if(i == (temporales.ultimoTemp-1)){
+            codTemporales +=';\n';
+        }
+    }
+
+    encabezado += codTemporales;
 
     //Generar las funciones nativas
 

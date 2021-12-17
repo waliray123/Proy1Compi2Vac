@@ -109,8 +109,21 @@ function generarEntornoGlobalTraducir(ast, structs, resultado3D, temporales) {
 function traducirCompleto(resultado3D, temporales) {
     //Traer el codigo en 3D    
     //Ingresar encabezado
-    var encabezado = '#include <stdio.h> \n#include <math.h> \ndouble heap[30101999]; \ndouble stack[30101999]; \ndouble P; \ndouble H;';
+    var encabezado = '#include <stdio.h> \n#include <math.h> \ndouble heap[30101999]; \ndouble stack[30101999]; \ndouble P; \ndouble H;\n';
     //Inicializar todos los temporales
+    var codTemporales = '';
+    for (var i = 0; i < temporales.ultimoTemp; i++) {
+        if (i == 0) {
+            codTemporales += 'double t' + i;
+        }
+        else {
+            codTemporales += ',t' + i;
+        }
+        if (i == (temporales.ultimoTemp - 1)) {
+            codTemporales += ';\n';
+        }
+    }
+    encabezado += codTemporales;
     //Generar las funciones nativas
     //Generar el proceso main
     var procMain = '\nvoid main() { \n\tP = 0; \n\tH = 0;\n';

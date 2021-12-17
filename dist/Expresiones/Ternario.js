@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Ternario = void 0;
 var Tipo_1 = require("../AST/Tipo");
 var Ternario = /** @class */ (function () {
     function Ternario(expr1, expr2, expr3, linea, columna, expresion) {
