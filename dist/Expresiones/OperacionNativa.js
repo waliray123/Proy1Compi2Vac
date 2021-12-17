@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OperacionNativa = exports.OperadorNativa = void 0;
 var Tipo_1 = require("../AST/Tipo");
+var AccesoArray_1 = require("./AccesoArray");
 var AccesoVariable_1 = require("./AccesoVariable");
 var Operacion_1 = require("./Operacion");
 var OperadorNativa;
@@ -22,9 +23,11 @@ var OperacionNativa = /** @class */ (function () {
         this.columna = columna;
     }
     OperacionNativa.prototype.getTipo = function (ent, arbol) {
-        this.isEjecutar = false;
         var valor = this.getValorImplicito(ent, arbol);
-        this.isEjecutar = true;
+        if (this.isEjecutar === false) {
+            this.isEjecutar = true;
+            return Tipo_1.Tipo.DOUBLE;
+        }
         if (typeof (valor) === 'boolean') {
             return Tipo_1.Tipo.BOOL;
         }
@@ -67,23 +70,40 @@ var OperacionNativa = /** @class */ (function () {
             }
         }
         else if (this.operadorNativa === OperadorNativa.STRING) {
-            var valor = '';
+            var valor_1 = '';
             if (this.expresion instanceof Operacion_1.Operacion) {
-                valor = this.expresion.op_izquierda.getValorImplicito(ent, arbol) + this.getSignoTipo(this.expresion.operador) + this.expresion.op_derecha.getValorImplicito(ent, arbol);
+                valor_1 = this.expresion.op_izquierda.getValorImplicito(ent, arbol) + this.getSignoTipo(this.expresion.operador) + this.expresion.op_derecha.getValorImplicito(ent, arbol);
+            }
+            else if (this.expresion instanceof AccesoArray_1.AccesoArray) {
+                var contenido_1 = this.expresion.contenido;
+                valor_1 = '[';
+                var i_1 = 0;
+                contenido_1.forEach(function (expr) {
+                    valor_1 += expr.getValorImplicito(ent, arbol);
+                    if (i_1 == contenido_1.length - 1) {
+                        valor_1 += ']';
+                    }
+                    else {
+                        valor_1 += ',';
+                    }
+                    i_1++;
+                });
+                return valor_1;
             }
             else {
-                valor = this.expresion.getValorImplicito(ent, arbol);
+                valor_1 = this.expresion.getValorImplicito(ent, arbol);
             }
-            if (valor === null) {
+            if (valor_1 === null) {
                 return null;
             }
             else {
-                return String(valor);
+                return String(valor_1);
             }
         }
         else if (this.operadorNativa === OperadorNativa.TODOUBLE) {
             var valor = this.expresion.getValorImplicito(ent, arbol);
             if (typeof (valor) === 'number') {
+                this.isEjecutar = false;
                 return valor.toFixed(2);
             }
             else {

@@ -5,6 +5,7 @@ import { Temporales } from "../AST/Temporales";
 import { Tipo } from "../AST/Tipo";
 import { Expresion } from "../Interfaces/Expresion";
 import { Arreglo } from "../Objetos/Arreglo";
+import { AccesoArray } from "./AccesoArray";
 import { AccesoVariable } from "./AccesoVariable";
 import { Operacion, Operador } from "./Operacion";
 import { Primitivo } from "./Primitivo";
@@ -34,9 +35,11 @@ export class OperacionNativa implements Expresion {
     }
 
     getTipo(ent: Entorno, arbol: AST): Tipo {
-        this.isEjecutar=false;
         const valor = this.getValorImplicito(ent, arbol);
-        this.isEjecutar = true;
+        if (this.isEjecutar === false) {
+            this.isEjecutar = true;
+            return Tipo.DOUBLE;
+        }
         if (typeof(valor) === 'boolean')
         {
             return Tipo.BOOL;
@@ -81,7 +84,22 @@ export class OperacionNativa implements Expresion {
             let valor = '';
             if (this.expresion instanceof Operacion) {
                 valor = this.expresion.op_izquierda.getValorImplicito(ent, arbol) + this.getSignoTipo(this.expresion.operador) + this.expresion.op_derecha.getValorImplicito(ent, arbol)
-            }else{
+            }else if(this.expresion instanceof AccesoArray){
+                let contenido:Array<Expresion> = this.expresion.contenido;
+                valor = '[';
+                let i = 0;
+                contenido.forEach((expr:Expresion) =>{
+                    valor += expr.getValorImplicito(ent, arbol);
+                    if (i == contenido.length - 1) {
+                        valor += ']';
+                    }else{
+                        valor += ',';
+                    }
+                    i++;
+                })
+                return valor; 
+            }
+            else{
                 valor = this.expresion.getValorImplicito(ent, arbol);
             }            
             if (valor === null) {
@@ -92,6 +110,7 @@ export class OperacionNativa implements Expresion {
         }else if(this.operadorNativa === OperadorNativa.TODOUBLE){
             let valor = this.expresion.getValorImplicito(ent, arbol);
             if (typeof(valor) === 'number') {
+                this.isEjecutar = false;
                 return valor.toFixed(2);
             }else{
                 //no es un numero
