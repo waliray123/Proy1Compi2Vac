@@ -4,6 +4,7 @@ import { Resultado3D } from "../AST/Resultado3D";
 import { Temporales } from "../AST/Temporales";
 import { Expresion } from "../Interfaces/Expresion";
 import { Instruccion } from "../Interfaces/Instruccion";
+import { ErrorG } from "../Objetos/ErrorG";
 
 export class While implements Instruccion{
     linea: number;
@@ -42,13 +43,13 @@ export class While implements Instruccion{
 
     }
 
-    ejecutar(ent: Entorno, arbol: AST) {
+    ejecutar(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
         const entornolocal:Entorno = new Entorno(ent);
         let realizar = this.expresion.getValorImplicito(entornolocal,arbol);
         let contSalir = 0;
         while(realizar){            
             this.instrucciones.forEach((element:Instruccion) => {
-                element.ejecutar(entornolocal,arbol);
+                element.ejecutar(entornolocal,arbol,listaErrores);
             });
             realizar = this.expresion.getValorImplicito(entornolocal,arbol);            
             if(contSalir == 5000){

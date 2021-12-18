@@ -9,6 +9,7 @@ import { FuncionReturn } from "./FuncionReturn";
 import { Parametro } from "./Parametro";
 import { ParametroReturn } from "../Expresiones/ParametroReturn";
 import { AccesoVariable } from "../Expresiones/AccesoVariable";
+import { ErrorG } from "../Objetos/ErrorG";
 
 // print("hola mundo");
 
@@ -31,7 +32,7 @@ export class DeclaracionStruct implements Instruccion{
         throw new Error("Method not implemented.");
     }
 
-    ejecutar(ent: Entorno, arbol: AST) {
+    ejecutar(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
         if (ent.existe(this.tipo)) {
             if (this.expresion instanceof FuncionReturn) { //evalua que se este haciendo una instancia de la estructura
                 //verificar que tengan la misma cantidad de parametros
@@ -57,7 +58,8 @@ export class DeclaracionStruct implements Instruccion{
                                     // console.log("Si son compatibles");
                                     declaracion.expresion = param;
                                 }else{
-                                    console.log('Error semantico, El parametro ' + param.getValorImplicito(ent, arbol)  + ' no coincide con el tipo del atributo de la estructura en la linea '+ this.linea + ' y columna ' + this.columna);
+                                    // console.log('Error semantico, El parametro ' + param.getValorImplicito(ent, arbol)  + ' no coincide con el tipo del atributo de la estructura en la linea '+ this.linea + ' y columna ' + this.columna);
+                                    listaErrores.push(new ErrorG('semantico','El parametro ' + param.getValorImplicito(ent, arbol)  + ' no coincide con el tipo del atributo de la estructura',this.linea,this.columna));
                                     error =  true;
                                 }
                             })
@@ -70,19 +72,24 @@ export class DeclaracionStruct implements Instruccion{
                                 // console.log('No se ingreso la variable');
                             }
                         }else{
-                            console.log('Error semantico, La cantidad de parametros no concuerdan con la estructura en la linea '+ this.linea + ' y columna ' + this.columna);
+                            // console.log('Error semantico, La cantidad de parametros no concuerdan con la estructura en la linea '+ this.linea + ' y columna ' + this.columna);
+                            listaErrores.push(new ErrorG('semantico','La cantidad de parametros no concuerdan con la estructura',this.linea,this.columna));
                         }
                     }else{
-                        console.log('Error semantico, La variable '+ this.id +' ya existe en el entorno, en la linea '+ this.linea + ' y columna ' + this.columna)
+                        // console.log('Error semantico, La variable '+ this.id +' ya existe en el entorno, en la linea '+ this.linea + ' y columna ' + this.columna)
+                        listaErrores.push(new ErrorG('semantico','La variable '+ this.id +' ya existe en el entorno',this.linea,this.columna));
                     }
                 }else{
-                    console.log('Error semantico, El tipo declarado no es un struct en la linea '+ this.linea + ' y columna ' + this.columna);
+                    // console.log('Error semantico, El tipo declarado no es un struct en la linea '+ this.linea + ' y columna ' + this.columna);
+                    listaErrores.push(new ErrorG('semantico','El tipo declarado no es un struct',this.linea,this.columna));
                 }
             }else{
-                console.log('Error semantico, no se esta inicializando la estructura en la linea '+ this.linea + ' y columna ' + this.columna);
+                // console.log('Error semantico, no se esta inicializando la estructura en la linea '+ this.linea + ' y columna ' + this.columna);
+                listaErrores.push(new ErrorG('semantico','no se esta inicializando la estructura',this.linea,this.columna));
             }
         }else{
-            console.log('Error semantico, no exite la Estructura '+ this.tipo+' en la linea '+ this.linea + ' y columna ' + this.columna);
+            // console.log('Error semantico, no exite la Estructura '+ this.tipo+' en la linea '+ this.linea + ' y columna ' + this.columna);
+            listaErrores.push(new ErrorG('semantico','no exite la Estructura '+ this.tipo,this.linea,this.columna));
         }
     }
 

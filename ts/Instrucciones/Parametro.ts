@@ -2,6 +2,7 @@ import { AST } from "../AST/AST";
 import { Entorno } from "../AST/Entorno";
 import { Tipo } from "../AST/Tipo";
 import { Instruccion } from "../Interfaces/Instruccion";
+import { ErrorG } from "../Objetos/ErrorG";
 
 export class Parametro implements Instruccion{
     linea: number;
@@ -20,7 +21,7 @@ export class Parametro implements Instruccion{
         throw new Error("Method not implemented.");
     }
 
-    ejecutar(ent: Entorno, arbol: AST) {
+    ejecutar(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
         console.log('ejecutado...'+ this.id);
     }
 

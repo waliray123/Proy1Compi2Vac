@@ -12,7 +12,7 @@ var Forin = /** @class */ (function () {
     Forin.prototype.traducir = function (ent, arbol) {
         throw new Error("Method not implemented.");
     };
-    Forin.prototype.ejecutar = function (ent, arbol) {
+    Forin.prototype.ejecutar = function (ent, arbol, listaErrores) {
         console.log('ejecutado...fornormal');
     };
     return Forin;

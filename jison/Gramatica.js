@@ -742,14 +742,14 @@ _handle_error:
     const {Pop} = require("../dist/Instrucciones/Pop");
     const {OperacionCadena, OperadorCadena} = require("../dist/Expresiones/OperacionCadena");
     const {OperadorNativa, OperacionNativa} = require("../dist/Expresiones/OperacionNativa");
-    const {Error} = require("../dist/Objetos/Error");
+    const {ErrorG} = require("../dist/Objetos/ErrorG");
 
     /*---CODIGO INCRUSTADO---*/
     var errores = [];
     var elementos = [];
 
     function genError(desc,linea,columna){
-        let erro =  new Error('sintactico',desc,linea,columna);
+        let erro =  new ErrorG('sintactico',desc,linea,columna);
         errores.push(erro);
     }
 

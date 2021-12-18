@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Temporales = void 0;
 var Temporales = /** @class */ (function () {
     function Temporales() {
         this.ultimoTemp = 0;

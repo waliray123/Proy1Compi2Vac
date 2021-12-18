@@ -30,13 +30,13 @@ var While = /** @class */ (function () {
         resultado3D.codigo3D += '\tL' + (ulLit + 1) + ':\n';
         temporales.ultLitEscr = ulLit + 1;
     };
-    While.prototype.ejecutar = function (ent, arbol) {
+    While.prototype.ejecutar = function (ent, arbol, listaErrores) {
         var entornolocal = new Entorno_1.Entorno(ent);
         var realizar = this.expresion.getValorImplicito(entornolocal, arbol);
         var contSalir = 0;
         while (realizar) {
             this.instrucciones.forEach(function (element) {
-                element.ejecutar(entornolocal, arbol);
+                element.ejecutar(entornolocal, arbol, listaErrores);
             });
             realizar = this.expresion.getValorImplicito(entornolocal, arbol);
             if (contSalir == 5000) {

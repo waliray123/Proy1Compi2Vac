@@ -5,6 +5,7 @@ var Simbolo_1 = require("../AST/Simbolo");
 var Tipo_1 = require("../AST/Tipo");
 var AccesoArray_1 = require("../Expresiones/AccesoArray");
 var Arreglo_1 = require("../Objetos/Arreglo");
+var ErrorG_1 = require("../Objetos/ErrorG");
 // print("hola mundo");
 var DeclaracionArray = /** @class */ (function () {
     function DeclaracionArray(id, tipo, dimensiones, linea, columna, expresion) {
@@ -18,7 +19,7 @@ var DeclaracionArray = /** @class */ (function () {
     DeclaracionArray.prototype.traducir = function (ent, arbol) {
         throw new Error("Method not implemented.");
     };
-    DeclaracionArray.prototype.ejecutar = function (ent, arbol) {
+    DeclaracionArray.prototype.ejecutar = function (ent, arbol, listaErrores) {
         var _this = this;
         // console.log('ejecutado...'+ this.id);
         this.id.forEach(function (id) {
@@ -42,7 +43,8 @@ var DeclaracionArray = /** @class */ (function () {
                             }
                         }
                         else {
-                            console.log('Error semantico, la asignacion no es un arreglo de datos en la linea ' + _this.linea + ' y columna ' + _this.columna);
+                            //    console.log('Error semantico, la asignacion no es un arreglo de datos en la linea '+ this.linea + ' y columna ' + this.columna); 
+                            listaErrores.push(new ErrorG_1.ErrorG('semantico', 'la asignacion no es un arreglo de datos', _this.linea, _this.columna));
                         }
                     }
                 }
@@ -69,23 +71,28 @@ var DeclaracionArray = /** @class */ (function () {
                                 }
                                 else {
                                     //no tienen las mismas dimensiones
+                                    listaErrores.push(new ErrorG_1.ErrorG('semantico', 'las dimesiones declaradas no es lo mismo al contenido', _this.linea, _this.columna));
                                 }
                             }
                             else {
                                 //la dimension no es un numero
+                                listaErrores.push(new ErrorG_1.ErrorG('semantico', 'la diemnsion declarada no es un numero', _this.linea, _this.columna));
                             }
                         }
                         else {
-                            console.log('Error semantico, la asignacion no es un arreglo de datos en la linea ' + _this.linea + ' y columna ' + _this.columna);
+                            //    console.log('Error semantico, la asignacion no es un arreglo de datos en la linea '+ this.linea + ' y columna ' + this.columna); 
+                            listaErrores.push(new ErrorG_1.ErrorG('semantico', 'la asignacion no es un arreglo de datos', _this.linea, _this.columna));
                         }
                     }
                 }
                 else {
-                    console.log('error semantico, dimension de la declaracion del arreglo no conocido, en la linea ' + _this.linea + ' y columna ' + _this.columna);
+                    // console.log('error semantico, dimension de la declaracion del arreglo no conocido, en la linea '+ this.linea + ' y columna ' + this.columna);
+                    listaErrores.push(new ErrorG_1.ErrorG('semantico', 'dimension de la declaracion del arreglo no es una expresion conocida', _this.linea, _this.columna));
                 }
             }
             else {
-                console.log('Error semantico, ya existe el id: ' + id + ' en la linea ' + _this.linea + ' y columna ' + _this.columna);
+                // console.log('Error semantico, ya existe el id: '+ id + ' en la linea '+ this.linea + ' y columna ' + this.columna);
+                listaErrores.push(new ErrorG_1.ErrorG('semantico', 'ya existe el id: ' + id, _this.linea, _this.columna));
             }
         });
     };

@@ -6,6 +6,7 @@ import { Temporales } from "../AST/Temporales";
 import { Tipo } from "../AST/Tipo";
 import { Expresion } from "../Interfaces/Expresion";
 import { Instruccion } from "../Interfaces/Instruccion";
+import { ErrorG } from "../Objetos/ErrorG";
 
 export class For implements Instruccion{
     linea: number;
@@ -72,7 +73,7 @@ export class For implements Instruccion{
 
     }
 
-    ejecutar(ent: Entorno, arbol: AST) {
+    ejecutar(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
         console.log('ejecutado...fornormal');
         const entornolocal:Entorno = new Entorno(ent);        
         this.declAsign.ejecutar(entornolocal,arbol);
@@ -86,7 +87,7 @@ export class For implements Instruccion{
             
             //Realizar instrucciones
             this.instrucciones.forEach((element:Instruccion) => {
-                element.ejecutar(entornolocal,arbol);
+                element.ejecutar(entornolocal,arbol,listaErrores);
             });
             //Sumar o realizar la expresion2            
             //Primero se obtiene la operacion;            
@@ -97,7 +98,8 @@ export class For implements Instruccion{
                 let simbol: Simbolo = entornolocal.getSimbolo(id);                
                 simbol.valor = valAsig;
             }else{
-                console.log('Error semantico, no existe la variable ' + id +'en la linea '+ this.linea + ' y columna ' + this.columna);
+                // console.log('Error semantico, no existe la variable ' + id +'en la linea '+ this.linea + ' y columna ' + this.columna);
+                listaErrores.push(new ErrorG('semantico','no existe la variable ' + id,this.linea,this.columna));
             }
                 
             

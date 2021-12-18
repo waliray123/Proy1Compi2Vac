@@ -6,6 +6,7 @@ import { Tipo } from "../AST/Tipo";
 import { Expresion} from "../Interfaces/Expresion";
 import { Instruccion } from "../Interfaces/Instruccion";
 import { Arreglo } from "../Objetos/Arreglo";
+import { ErrorG } from "../Objetos/ErrorG";
 
 // print("hola mundo");
 
@@ -24,7 +25,7 @@ export class Pop implements Instruccion{
         throw new Error("Method not implemented.");
     }
 
-    ejecutar(ent: Entorno, arbol: AST) {
+    ejecutar(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
         if (ent.existe(this.id)) {
             let simbol: Simbolo = ent.getSimbolo(this.id);
             if (simbol.getTipo(ent,arbol) == Tipo.ARRAY) {
@@ -32,9 +33,11 @@ export class Pop implements Instruccion{
                 valor.pop();
             }else{
                 //no es de tipo array
+                listaErrores.push(new ErrorG('semantico','la variable no es del tipo array',this.linea,this.columna));
             }
         }else{
             //no existe el id
+            listaErrores.push(new ErrorG('semantico','no existe la variable ' + this.id,this.linea,this.columna));
         }
     }
 

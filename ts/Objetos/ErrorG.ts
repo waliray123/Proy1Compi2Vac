@@ -1,4 +1,4 @@
-export class Error{
+export class ErrorG{
     linea:number;
     columna:number;
     tipoError:string;
