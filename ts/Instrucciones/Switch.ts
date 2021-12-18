@@ -31,7 +31,12 @@ export class Switch implements Instruccion{
 
             let ultL = temporales.ultLiteral + 1;
             let cantCase = this.lista_instrucciones.length;
-            temporales.ultLiteral += cantCase+2;
+            
+            if (this.lista_instrucciones[this.lista_instrucciones.length - 1].id.getTipo(ent,arbol,listaErrores) == Tipo.NULL) {
+                temporales.ultLiteral += ((cantCase-1)*2) + 1;
+            }else{
+                temporales.ultLiteral += cantCase*2;
+            }
             
             let i = 0;
             for(var caso of this.lista_instrucciones){

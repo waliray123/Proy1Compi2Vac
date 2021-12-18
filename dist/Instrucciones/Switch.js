@@ -15,7 +15,12 @@ var Switch = /** @class */ (function () {
             var valAsign = this.expresion.traducir(ent, arbol, resultado3D, temporales, listaErrores);
             var ultL = temporales.ultLiteral + 1;
             var cantCase = this.lista_instrucciones.length;
-            temporales.ultLiteral += cantCase + 2;
+            if (this.lista_instrucciones[this.lista_instrucciones.length - 1].id.getTipo(ent, arbol, listaErrores) == Tipo_1.Tipo.NULL) {
+                temporales.ultLiteral += ((cantCase - 1) * 2) + 1;
+            }
+            else {
+                temporales.ultLiteral += cantCase * 2;
+            }
             var i = 0;
             for (var _i = 0, _a = this.lista_instrucciones; _i < _a.length; _i++) {
                 var caso = _a[_i];
