@@ -4,6 +4,7 @@ import { Resultado3D } from "../AST/Resultado3D";
 import { Temporales } from "../AST/Temporales";
 import { Tipo } from "../AST/Tipo";
 import { Expresion } from "../Interfaces/Expresion";
+import { ErrorG } from "../Objetos/ErrorG";
 
 export enum Operador {
     SUMA,
@@ -87,8 +88,8 @@ export class Operacion implements Expresion {
         return resultadoR;
     }
 
-    getTipo(ent: Entorno, arbol: AST): Tipo {
-        const valor = this.getValorImplicito(ent, arbol);
+    getTipo(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>): Tipo {
+        const valor = this.getValorImplicito(ent, arbol,listaErrores);
         if (typeof(valor) === 'boolean')
         {
             return Tipo.BOOL;
@@ -112,12 +113,12 @@ export class Operacion implements Expresion {
     }
     
 
-    getValorImplicito(ent: Entorno, arbol: AST) {
+    getValorImplicito(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
         if (this.operador !== Operador.MENOS_UNARIO && this.operador !== Operador.NOT
             && this.operador != Operador.SQRT && this.operador != Operador.SIN && this.operador != Operador.COS
             && this.operador != Operador.TAN && this.operador != Operador.INCREMENTO && this.operador != Operador.DECREMENTO){
-            let op1 = this.op_izquierda.getValorImplicito(ent, arbol);
-            let op2 = this.op_derecha.getValorImplicito(ent, arbol);
+            let op1 = this.op_izquierda.getValorImplicito(ent, arbol,listaErrores);
+            let op2 = this.op_derecha.getValorImplicito(ent, arbol,listaErrores);
             
             //suma
             if (this.operador == Operador.SUMA)
@@ -128,7 +129,8 @@ export class Operacion implements Expresion {
                 }
                 else
                 {
-                    console.log("Error de tipos de datos no permitidos realizando una suma");
+                    // console.log("Error de tipos de datos no permitidos realizando una suma");
+                    listaErrores.push(new ErrorG('semantico','error de tipos de datos no permitidos realizando una suma',this.linea,this.columna));
                     return null;
                 }
             }
@@ -141,7 +143,8 @@ export class Operacion implements Expresion {
                 }
                 else
                 {
-                    console.log("Error de tipos de datos no permitidos realizando una suma");
+                    // console.log("Error de tipos de datos no permitidos realizando una suma");
+                    listaErrores.push(new ErrorG('semantico','error al realizar una resta',this.linea,this.columna));
                     return null;
                 }
             }
@@ -154,7 +157,8 @@ export class Operacion implements Expresion {
                 }
                 else
                 {
-                    console.log("Error de tipos de datos no permitidos realizando una suma");
+                    // console.log("Error de tipos de datos no permitidos realizando una suma");
+                    listaErrores.push(new ErrorG('semantico','error al realizar la multiplicación',this.linea,this.columna));
                     return null;
                 }
             }
@@ -164,14 +168,16 @@ export class Operacion implements Expresion {
                 if (typeof(op1==="number") && typeof(op2==="number"))
                 {
                     if(op2===0){
-                        console.log("Resultado indefinido, no puede ejecutarse operación sobre cero.");
+                        // console.log("Resultado indefinido, no puede ejecutarse operación sobre cero.");
+                        listaErrores.push(new ErrorG('semantico','resultado indefinido, no puede ejecutarse operacion sobre cero',this.linea,this.columna));
                         return null;
                     }
                     return op1 / op2;
                 }
                 else
                 {
-                    console.log("Error de tipos de datos no permitidos realizando una suma");
+                    // console.log("Error de tipos de datos no permitidos realizando una suma");
+                    listaErrores.push(new ErrorG('semantico','error al realizar una division',this.linea,this.columna));
                     return null;
                 }
             }
@@ -181,14 +187,16 @@ export class Operacion implements Expresion {
                 if (typeof(op1==="number") && typeof(op2==="number"))
                 {
                     if(op2===0){
-                        console.log("Resultado indefinido, no puede ejecutarse operación sobre cero.");
+                        // console.log("Resultado indefinido, no puede ejecutarse operación sobre cero.");
+                        listaErrores.push(new ErrorG('semantico','resultado indefinido, no puede ejecutarsre operacion sobre cero',this.linea,this.columna));
                         return null;
                     }
                     return op1 % op2;
                 }
                 else
                 {
-                    console.log("Error de tipos de datos no permitidos realizando una suma");
+                    // console.log("Error de tipos de datos no permitidos realizando una suma");
+                    listaErrores.push(new ErrorG('semantico','error al realizar la operacion de modulo',this.linea,this.columna));
                     return null;
                 }
             }
@@ -199,16 +207,18 @@ export class Operacion implements Expresion {
                     return op1.concat(op2.toString());
                 }
                 else{
-                    console.log('Error semantico, Solo se puede concatenar (&) Strings en la linea '+ this.linea + ' y columna ' + this.columna);
+                    // console.log('Error semantico, Solo se puede concatenar (&) Strings en la linea '+ this.linea + ' y columna ' + this.columna);
+                    listaErrores.push(new ErrorG('semantico','Solo se puede concatenar (&) Strings',this.linea,this.columna));
                     return null;
                 }
             }
             //ELEVADO
             else if (this.operador == Operador.ELEVADO) {
-                if (this.op_izquierda.getTipo(ent,arbol) == Tipo.STRING && this.op_derecha.getTipo(ent,arbol) == Tipo.INT ) {
+                if (this.op_izquierda.getTipo(ent,arbol,listaErrores) == Tipo.STRING && this.op_derecha.getTipo(ent,arbol,listaErrores) == Tipo.INT ) {
                     return op1.repeat(Number(op2));
                 }else{
-                    console.log('Error semantico, No se puede completar la accion ^ en la linea '+ this.linea + ' y columna ' + this.columna);
+                    // console.log('Error semantico, No se puede completar la accion ^ en la linea '+ this.linea + ' y columna ' + this.columna);
+                    listaErrores.push(new ErrorG('semantico','No se puede completar la accion ^',this.linea,this.columna));
                     return null;
                 }
             }
@@ -250,7 +260,8 @@ export class Operacion implements Expresion {
                     if (typeof(op1==="number") && typeof(op2==="number")){
                         return Math.pow(op1, op2);
                     }else{
-                        console.log("Error de tipos de datos no permitidos realizando una potencia");
+                        // console.log("Error de tipos de datos no permitidos realizando una potencia");
+                        listaErrores.push(new ErrorG('semantico','Error de tipos de datos no permitidos realizando una potencia',this.linea,this.columna));
                     }                
                 }
                 
@@ -260,7 +271,7 @@ export class Operacion implements Expresion {
             }
         }else{
             try{
-                let op1 = this.op_izquierda.getValorImplicito(ent, arbol);
+                let op1 = this.op_izquierda.getValorImplicito(ent, arbol,listaErrores);
                 if (this.operador == Operador.MENOS_UNARIO)
                 {
                     if (typeof(op1==="number"))
@@ -269,7 +280,8 @@ export class Operacion implements Expresion {
                     }
                     else
                     {
-                        console.log("Error de tipos de datos no permitidos realizando una operación unaria");
+                        // console.log("Error de tipos de datos no permitidos realizando una operación unaria");
+                        listaErrores.push(new ErrorG('semantico','Error de tipos de datos no permitidos realizando una operación unaria',this.linea,this.columna));
                         return null;
                     }
                 }
@@ -281,28 +293,32 @@ export class Operacion implements Expresion {
                     if (typeof(op1==="number")){
                         return Math.sin(this.gradosRadianes(op1));
                     }else{
-                        console.log("Error de tipos de datos no permitidos realizando una operacion seno");
+                        // console.log("Error de tipos de datos no permitidos realizando una operacion seno");
+                        listaErrores.push(new ErrorG('semantico','Error de tipos de datos no permitidos realizando una operacion seno',this.linea,this.columna));
                     }
                 }
                 else if(this.operador == Operador.COS){
                     if (typeof(op1==="number")){
                         return Math.cos(this.gradosRadianes(op1));
                     }else{
-                        console.log("Error de tipos de datos no permitidos realizando una operacion coseno");
+                        // console.log("Error de tipos de datos no permitidos realizando una operacion coseno");
+                        listaErrores.push(new ErrorG('semantico','Error de tipos de datos no permitidos realizando una operacion coseno',this.linea,this.columna));
                     }
                 }
                 else if(this.operador == Operador.TAN){
                     if (typeof(op1==="number")){
                         return Math.tan(this.gradosRadianes(op1));
                     }else{
-                        console.log("Error de tipos de datos no permitidos realizando una operacion tangente");
+                        // console.log("Error de tipos de datos no permitidos realizando una operacion tangente");
+                        listaErrores.push(new ErrorG('semantico','Error de tipos de datos no permitidos realizando una operacion tangente',this.linea,this.columna));
                     }
                 }
                 else if(this.operador == Operador.SQRT){
                     if (typeof(op1==="number")){
                         return Math.sqrt(op1);
                     }else{
-                        console.log("Error de tipos de datos no permitidos realizando una raiz");
+                        // console.log("Error de tipos de datos no permitidos realizando una raiz");
+                        listaErrores.push(new ErrorG('semantico','Error de tipos de datos no permitidos realizando una raiz',this.linea,this.columna));
                     }
                 }
                 //incremento

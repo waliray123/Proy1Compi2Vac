@@ -28,11 +28,11 @@ export class Funcion implements Instruccion{
         this.parametrosR = [];
     }
 
-    traducir(ent: Entorno, arbol: AST,resultado3D:Resultado3D,temporales:Temporales) {
+    traducir(ent: Entorno, arbol: AST,resultado3D:Resultado3D,temporales:Temporales,listaErrores:Array<ErrorG>) {
         const entornoGlobal:Entorno = new Entorno(ent);
 
         this.instrucciones.forEach((element:Instruccion) => {
-            element.traducir(entornoGlobal,arbol,resultado3D,temporales);
+            element.traducir(entornoGlobal,arbol,resultado3D,temporales,listaErrores);
         })
 
     }
@@ -65,7 +65,7 @@ export class Funcion implements Instruccion{
             for(let i = 0; i < this.parametros.length; i++){
                 let parametro = this.parametros[i];
                 let parametroR = this.parametrosR[i];
-                if(parametroR.getTipo(ent,arbol) == parametro.tipoParametro){
+                if(parametroR.getTipo(ent,arbol,listaErrores) == parametro.tipoParametro){
                     //id:Array<string>,tipo:Tipo, linea:number, columna:number,expresion:Expresion                                        
                     let declPar = new Declaracion([parametro.id],parametro.tipoParametro,this.linea,this.columna,parametroR.valor);
                     declPar.ejecutar(ent,arbol,listaErrores);

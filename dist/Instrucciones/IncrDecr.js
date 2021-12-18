@@ -14,7 +14,7 @@ var IncrDecr = /** @class */ (function () {
         throw new Error("Method not implemented.");
     };
     IncrDecr.prototype.ejecutar = function (ent, arbol, listaErrores) {
-        var valorIns = this.operacion.getValorImplicito(ent, arbol);
+        var valorIns = this.operacion.getValorImplicito(ent, arbol, listaErrores);
         if (valorIns !== null) {
             if (ent.existe(this.idVar)) {
                 var simbol = ent.getSimbolo(this.idVar);

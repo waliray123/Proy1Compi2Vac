@@ -9,5 +9,5 @@ export interface Instruccion{
      columna: number;
     
      ejecutar(ent:Entorno, arbol:AST,listaErrores:Array<ErrorG>):any ;
-     traducir(ent:Entorno, arbol:AST,resultado3d:Resultado3D,temporales:Temporales):any ;
+     traducir(ent:Entorno, arbol:AST,resultado3d:Resultado3D,temporales:Temporales,listaErrores:Array<ErrorG>):any ;
 }

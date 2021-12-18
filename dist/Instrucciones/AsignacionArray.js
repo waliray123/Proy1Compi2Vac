@@ -19,10 +19,10 @@ var AsignacionArray = /** @class */ (function () {
             var simbol = ent.getSimbolo(this.id);
             if (simbol.getTipo(ent, arbol) == Tipo_1.Tipo.ARRAY) {
                 var valor = simbol.getValorImplicito(ent, arbol);
-                var pos = this.posicion.getValorImplicito(ent, arbol);
+                var pos = this.posicion.getValorImplicito(ent, arbol, listaErrores);
                 if (typeof (pos) == 'number') {
                     if (pos >= 0 && pos < valor.length) {
-                        if (this.expresion.getTipo(ent, arbol) == valor.tipo) {
+                        if (this.expresion.getTipo(ent, arbol, listaErrores) == valor.tipo) {
                             valor.contenido[pos] = this.expresion;
                         }
                         else {

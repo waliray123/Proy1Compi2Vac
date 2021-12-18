@@ -13,8 +13,8 @@ var Primitivo = /** @class */ (function () {
         //Solo si es numeros      TODO para strings y booleanos  
         return this.valor;
     };
-    Primitivo.prototype.getTipo = function (ent, arbol) {
-        var valor = this.getValorImplicito(ent, arbol);
+    Primitivo.prototype.getTipo = function (ent, arbol, listaErrores) {
+        var valor = this.getValorImplicito(ent, arbol, listaErrores);
         if (typeof (valor) === 'boolean') {
             return Tipo_1.Tipo.BOOL;
         }
@@ -32,7 +32,7 @@ var Primitivo = /** @class */ (function () {
         }
         return Tipo_1.Tipo.VOID;
     };
-    Primitivo.prototype.getValorImplicito = function (ent, arbol) {
+    Primitivo.prototype.getValorImplicito = function (ent, arbol, listaErrores) {
         return this.valor;
     };
     Primitivo.prototype.isInt = function (n) {

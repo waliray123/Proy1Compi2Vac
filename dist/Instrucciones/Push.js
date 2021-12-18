@@ -19,7 +19,7 @@ var Push = /** @class */ (function () {
             var simbol = ent.getSimbolo(this.id);
             if (simbol.getTipo(ent, arbol) == Tipo_1.Tipo.ARRAY) {
                 var valor = simbol.getValorImplicito(ent, arbol);
-                valor.push(ent, arbol, this.expresion);
+                valor.push(ent, arbol, this.expresion, listaErrores);
             }
             else {
                 //no es de tipo array

@@ -5,6 +5,7 @@ import { Temporales } from "../AST/Temporales";
 import { Tipo } from "../AST/Tipo";
 import { Expresion } from "../Interfaces/Expresion";
 import { Arreglo } from "../Objetos/Arreglo";
+import { ErrorG } from "../Objetos/ErrorG";
 import { AccesoArray } from "./AccesoArray";
 import { AccesoVariable } from "./AccesoVariable";
 import { Operacion, Operador } from "./Operacion";
@@ -34,8 +35,8 @@ export class OperacionNativa implements Expresion {
         this.columna = columna;
     }
 
-    getTipo(ent: Entorno, arbol: AST): Tipo {
-        const valor = this.getValorImplicito(ent, arbol);
+    getTipo(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>): Tipo {
+        const valor = this.getValorImplicito(ent, arbol,listaErrores);
         if (this.isEjecutar === false) {
             this.isEjecutar = true;
             return Tipo.DOUBLE;
@@ -60,10 +61,10 @@ export class OperacionNativa implements Expresion {
         }            
         return Tipo.VOID
     }
-    getValorImplicito(ent: Entorno, arbol: AST) {
+    getValorImplicito(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
 
         if (this.operadorNativa == OperadorNativa.PARSE) {
-            let valor = this.expresion.getValorImplicito(ent, arbol);
+            let valor = this.expresion.getValorImplicito(ent, arbol,listaErrores);
             if (typeof(valor) === 'string') {
                 if (this.tipo == Tipo.INT) {
                     return parseInt(valor);
@@ -75,21 +76,23 @@ export class OperacionNativa implements Expresion {
                     return valor.charCodeAt(0);
                 }else{
                     //es un error
+                    listaErrores.push(new ErrorG('semantico','hay un error, no es de un tipo aceptado',this.linea,this.columna));
                 }
             }else{
                 //no es de tipo string
+                listaErrores.push(new ErrorG('semantico','no es un string',this.linea,this.columna));
             }
             
         }else if(this.operadorNativa === OperadorNativa.STRING){
             let valor = '';
             if (this.expresion instanceof Operacion) {
-                valor = this.expresion.op_izquierda.getValorImplicito(ent, arbol) + this.getSignoTipo(this.expresion.operador) + this.expresion.op_derecha.getValorImplicito(ent, arbol)
+                valor = this.expresion.op_izquierda.getValorImplicito(ent, arbol,listaErrores) + this.getSignoTipo(this.expresion.operador) + this.expresion.op_derecha.getValorImplicito(ent, arbol,listaErrores)
             }else if(this.expresion instanceof AccesoArray){
                 let contenido:Array<Expresion> = this.expresion.contenido;
                 valor = '[';
                 let i = 0;
                 contenido.forEach((expr:Expresion) =>{
-                    valor += expr.getValorImplicito(ent, arbol);
+                    valor += expr.getValorImplicito(ent, arbol,listaErrores);
                     if (i == contenido.length - 1) {
                         valor += ']';
                     }else{
@@ -100,7 +103,7 @@ export class OperacionNativa implements Expresion {
                 return valor; 
             }
             else{
-                valor = this.expresion.getValorImplicito(ent, arbol);
+                valor = this.expresion.getValorImplicito(ent, arbol,listaErrores);
             }            
             if (valor === null) {
                 return null;
@@ -108,30 +111,32 @@ export class OperacionNativa implements Expresion {
                 return String(valor);
             }
         }else if(this.operadorNativa === OperadorNativa.TODOUBLE){
-            let valor = this.expresion.getValorImplicito(ent, arbol);
+            let valor = this.expresion.getValorImplicito(ent, arbol,listaErrores);
             if (typeof(valor) === 'number') {
                 this.isEjecutar = false;
                 return valor.toFixed(2);
             }else{
                 //no es un numero
+                listaErrores.push(new ErrorG('semantico','no es un numero',this.linea,this.columna));
             }
         }else if(this.operadorNativa === OperadorNativa.TOINT){
-            let valor = this.expresion.getValorImplicito(ent, arbol);
+            let valor = this.expresion.getValorImplicito(ent, arbol,listaErrores);
             if (typeof(valor) === 'number') {
                 return Math.floor(valor);
             }else{
                 //no es un numero
+                listaErrores.push(new ErrorG('semantico','no es un numero',this.linea,this.columna));
             }
         }else if(this.operadorNativa === OperadorNativa.TYPEOF){
             if (this.expresion instanceof AccesoVariable) {
-                let tipo = this.expresion.getTipo(ent,arbol);
+                let tipo = this.expresion.getTipo(ent,arbol,listaErrores);
                 if (tipo === Tipo.STRUCT || tipo === Tipo.TIPO_STRUCT) {
                     return "struct";
                 }else if (tipo === Tipo.ARRAY){
                     return "array";
                 }
             }
-            let valor = this.expresion.getValorImplicito(ent, arbol);
+            let valor = this.expresion.getValorImplicito(ent, arbol, listaErrores);
             return typeof(valor);
         }
         return null;

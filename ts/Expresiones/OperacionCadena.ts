@@ -5,6 +5,7 @@ import { Temporales } from "../AST/Temporales";
 import { Tipo } from "../AST/Tipo";
 import { Expresion } from "../Interfaces/Expresion";
 import { Arreglo } from "../Objetos/Arreglo";
+import { ErrorG } from "../Objetos/ErrorG";
 import { AccesoVariable } from "./AccesoVariable";
 import { Primitivo } from "./Primitivo";
 
@@ -35,9 +36,9 @@ export class OperacionCadena implements Expresion {
         this.columna = columna;
     }
 
-    getTipo(ent: Entorno, arbol: AST): Tipo {
+    getTipo(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>): Tipo {
         this.isEjecutar=false;
-        const valor = this.getValorImplicito(ent, arbol);
+        const valor = this.getValorImplicito(ent, arbol,listaErrores);
         this.isEjecutar = true;
         if (typeof(valor) === 'boolean')
         {
@@ -59,12 +60,12 @@ export class OperacionCadena implements Expresion {
         }            
         return Tipo.VOID
     }
-    getValorImplicito(ent: Entorno, arbol: AST) {
+    getValorImplicito(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
 
         if (this.operadorCadena == OperadorCadena.LENGTH) {
             if (this.id instanceof AccesoVariable) {
                 this.id.isAlone = false;
-                let valor = this.id.getValorImplicito(ent, arbol);
+                let valor = this.id.getValorImplicito(ent, arbol,listaErrores);
                 if (valor instanceof Arreglo) {
                     return valor.length;
                 }else {
@@ -72,13 +73,15 @@ export class OperacionCadena implements Expresion {
                         return valor.length;
                     }else{
                         //no es de tipo string
+                        listaErrores.push(new ErrorG('semantico','no es de tipo string',this.linea,this.columna));
                     }
                 }
             }else if(this.id instanceof Primitivo){
-                if (this.id.getTipo(ent,arbol) === Tipo.STRING ) {
-                    return this.id.getValorImplicito(ent, arbol).length
+                if (this.id.getTipo(ent,arbol,listaErrores) === Tipo.STRING ) {
+                    return this.id.getValorImplicito(ent, arbol,listaErrores).length
                 }else{
                     //no es un primitivo de string
+                    listaErrores.push(new ErrorG('semantico','no es de tipo string',this.linea,this.columna));
                 }
             }else{
                 //error
@@ -88,22 +91,24 @@ export class OperacionCadena implements Expresion {
             if (this.id instanceof AccesoVariable) {
                 this.id.isAlone = false;
             }
-            let valor = this.id.getValorImplicito(ent, arbol);
+            let valor = this.id.getValorImplicito(ent, arbol,listaErrores);
             if (typeof(valor)==='string') {
                 return valor.toLocaleLowerCase();
             }else{
                 //no es de tipo string
+                listaErrores.push(new ErrorG('semantico','no tiene un valor del tipo string',this.linea,this.columna));
             }
 
         }else if (this.operadorCadena == OperadorCadena.UPPERCASE){
             if (this.id instanceof AccesoVariable) {
                 this.id.isAlone = false;
             }
-            let valor = this.id.getValorImplicito(ent, arbol);
+            let valor = this.id.getValorImplicito(ent, arbol,listaErrores);
             if (typeof(valor)==='string') {
                 return valor.toLocaleUpperCase();
             }else{
                 //no es de tipo string
+                listaErrores.push(new ErrorG('semantico','no es de tipo string',this.linea,this.columna));
             }
 
         }else if (this.operadorCadena == OperadorCadena.CHARPOS){
@@ -111,55 +116,62 @@ export class OperacionCadena implements Expresion {
             if (this.id instanceof AccesoVariable) {
                 this.id.isAlone = false;
             }
-            let valor = this.id.getValorImplicito(ent, arbol);
+            let valor = this.id.getValorImplicito(ent, arbol,listaErrores);
             if (typeof(valor)==='string') {
-                let posChar = this.expr1.getValorImplicito(ent, arbol);
+                let posChar = this.expr1.getValorImplicito(ent, arbol,listaErrores);
                 if (typeof(posChar) ==='number') {
                     if(this.isInt(Number(posChar))){
                         return valor.charAt(posChar);
                     }else{
                         //no es un int
+                        listaErrores.push(new ErrorG('semantico','no es de tipo int la posicion asignada',this.linea,this.columna));
                     }
                 }else{
                     //no es un numero
+                    listaErrores.push(new ErrorG('semantico','no es un numero en la posicion asignada',this.linea,this.columna));
                 }
             }else{
                 //no es de tipo string
+                listaErrores.push(new ErrorG('semantico','no es de tipo string',this.linea,this.columna));
             }
 
         }else if (this.operadorCadena == OperadorCadena.SUBSTRING){
             if (this.id instanceof AccesoVariable) {
                 this.id.isAlone = false;
             }
-            let valor = this.id.getValorImplicito(ent, arbol);
+            let valor = this.id.getValorImplicito(ent, arbol,listaErrores);
             if (typeof(valor)==='string') {
-                let inicial = this.expr1.getValorImplicito(ent, arbol);
-                let final = this.expr2.getValorImplicito(ent, arbol);
+                let inicial = this.expr1.getValorImplicito(ent, arbol,listaErrores);
+                let final = this.expr2.getValorImplicito(ent, arbol,listaErrores);
                 if (typeof(final) ==='number' && typeof(inicial) ==='number' ) {
                     if(this.isInt(Number(inicial)) && this.isInt(Number(final))){
                         return valor.substring(inicial, final+1);
                     }else{
                         //no es un int
+                        listaErrores.push(new ErrorG('semantico','no es un dato de tipo int',this.linea,this.columna));
                     }
                 }else{
                     //no es un numero
+                    listaErrores.push(new ErrorG('semantico','no es un numero',this.linea,this.columna));
                 }
             }else{
                 //no es de tipo string
+                listaErrores.push(new ErrorG('semantico','no es un string',this.linea,this.columna));
             }
         }else if(this.operadorCadena == OperadorCadena.POP){
             if (this.id instanceof AccesoVariable) {
                 this.id.isAlone = false;
-                let valor = this.id.getValorImplicito(ent, arbol);
+                let valor = this.id.getValorImplicito(ent, arbol,listaErrores);
                 if (valor instanceof Arreglo) {
                     if (this.isEjecutar) {
-                        let val = valor.pop()?.getValorImplicito(ent, arbol);
+                        let val = valor.pop()?.getValorImplicito(ent, arbol,listaErrores);
                         return val;
                     }else{
-                        return valor.getLastContenido().getValorImplicito(ent, arbol);
+                        return valor.getLastContenido().getValorImplicito(ent, arbol,listaErrores);
                     }                    
                 }else {
                     //No es un arreglo
+                    listaErrores.push(new ErrorG('semantico','no se puede realizar la operacion porque no es de tipo array',this.linea,this.columna));
                 }
             }
         }

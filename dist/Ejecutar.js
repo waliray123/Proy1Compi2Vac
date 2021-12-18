@@ -81,12 +81,12 @@ window.traducirCodigo = function (entrada) {
         var funcionesG = revisarFuncionesGlobales(instrucciones);
         var structsG = revisarStructsGlobales(instrucciones);
         var ast_2 = new AST_1.AST(instrucciones, structsG, funcionesG);
-        var entornoGlobal_2 = generarEntornoGlobalTraducir(ast_2, structsG, resultado3d, temporales);
+        var entornoGlobal_2 = generarEntornoGlobalTraducir(ast_2, structsG, resultado3d, temporales, listaErrores);
         //Buscar la funcion main    
         funcionesG.forEach(function (element) {
             if (element.nombrefuncion == "main") {
                 console.log("Se ejecutara");
-                element.traducir(entornoGlobal_2, ast_2, resultado3d, temporales);
+                element.traducir(entornoGlobal_2, ast_2, resultado3d, temporales, listaErrores);
             }
         });
         traducirCompleto(resultado3d, temporales);
@@ -135,7 +135,7 @@ function generarEntornoGlobal(ast, structs, listaErrores) {
     });
     return entornoGlobal;
 }
-function generarEntornoGlobalTraducir(ast, structs, resultado3D, temporales) {
+function generarEntornoGlobalTraducir(ast, structs, resultado3D, temporales, listaErrores) {
     var entornoGlobal = new Entorno_1.Entorno(null);
     var instrucciones = ast.instrucciones;
     var declaracionesG = Array();
@@ -145,10 +145,10 @@ function generarEntornoGlobalTraducir(ast, structs, resultado3D, temporales) {
         }
     });
     declaracionesG.forEach(function (element) {
-        element.traducir(entornoGlobal, ast, resultado3D, temporales);
+        element.traducir(entornoGlobal, ast, resultado3D, temporales, listaErrores);
     });
     structs.forEach(function (element) {
-        element.traducir(entornoGlobal, ast, resultado3D, temporales);
+        element.traducir(entornoGlobal, ast, resultado3D, temporales, listaErrores);
     });
     return entornoGlobal;
 }

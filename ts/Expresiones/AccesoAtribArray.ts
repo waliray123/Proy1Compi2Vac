@@ -5,6 +5,7 @@ import { Tipo } from "../AST/Tipo";
 import { Declaracion } from "../Instrucciones/Declaracion";
 import { Expresion } from "../Interfaces/Expresion";
 import { Arreglo } from "../Objetos/Arreglo";
+import { ErrorG } from "../Objetos/ErrorG";
 import { AccesoVariable } from "./AccesoVariable";
 
 export class AccesoAtribArray implements Expresion {
@@ -24,7 +25,7 @@ export class AccesoAtribArray implements Expresion {
         throw new Error("Method not implemented.");
     }
 
-    getTipo(ent: Entorno, arbol: AST):Tipo {
+    getTipo(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>):Tipo {
         if (ent.existe(this.id)) {
             let simbol:Simbolo = ent.getSimbolo(this.id);
             if (simbol.getTipo(ent,arbol) ==  Tipo.ARRAY) {
@@ -38,24 +39,25 @@ export class AccesoAtribArray implements Expresion {
         }
     }
 
-    getValorImplicito(ent: Entorno, arbol: AST) {
+    getValorImplicito(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
         if (ent.existe(this.id)) {
             let simbol:Simbolo = ent.getSimbolo(this.id);
             if (simbol.getTipo(ent,arbol) ==  Tipo.ARRAY) {
                 let valor:Arreglo = simbol.getValorImplicito(ent,arbol);
-                let pos = this.posicion.getValorImplicito(ent, arbol);
+                let pos = this.posicion.getValorImplicito(ent, arbol,listaErrores);
                 if (typeof(pos) == 'number') {
                     if (pos >= 0 && pos < valor.length) {
-                        return valor.contenido[pos].getValorImplicito(ent, arbol);
+                        return valor.contenido[pos].getValorImplicito(ent, arbol,listaErrores);
                     }else{
+                        listaErrores.push(new ErrorG('semantico','index fuera del limite del arreglo',this.linea,this.columna));
                         return null;
                     }
                 }
             }else{
-
+                listaErrores.push(new ErrorG('semantico','la variable no es del tipo array',this.linea,this.columna));
             }
         }else{
-
+            listaErrores.push(new ErrorG('semantico','no existe la variable ' + this.id,this.linea,this.columna));
         }
     }
     

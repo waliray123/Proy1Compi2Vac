@@ -26,7 +26,7 @@ export class For implements Instruccion{
         this.expresion2 = expresion2;
     }
 
-    traducir(ent: Entorno, arbol: AST,resultado3D:Resultado3D,temporales:Temporales) {
+    traducir(ent: Entorno, arbol: AST,resultado3D:Resultado3D,temporales:Temporales,listaErrores:Array<ErrorG>) {
         const entornolocal:Entorno = new Entorno(ent);        
 
         if(temporales.ultLiteral == 0){
@@ -47,7 +47,7 @@ export class For implements Instruccion{
         resultado3D.codigo3D += '\tL'+(ulLit+1)+':\n';
         //Traducir instrucciones
         this.instrucciones.forEach((element:Instruccion) => {
-            element.traducir(entornolocal,arbol,resultado3D,temporales);
+            element.traducir(entornolocal,arbol,resultado3D,temporales,listaErrores);
         });
         //Traducir el incremento o decremento
         const id = this.expresion2.op_izquierda.getId();      
@@ -83,7 +83,7 @@ export class For implements Instruccion{
 
         
         
-        while(this.expresion1.getValorImplicito(entornolocal,arbol) == true){
+        while(this.expresion1.getValorImplicito(entornolocal,arbol,listaErrores) == true){
             
             //Realizar instrucciones
             this.instrucciones.forEach((element:Instruccion) => {

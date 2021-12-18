@@ -32,12 +32,12 @@ var DeclaracionArray = /** @class */ (function () {
                     }
                     else {
                         if (_this.expresion instanceof AccesoArray_1.AccesoArray) {
-                            var valor = _this.expresion.getValorImplicito(ent, arbol);
+                            var valor = _this.expresion.getValorImplicito(ent, arbol, listaErrores);
                             if (valor == null) {
                                 valor = [];
                             }
                             var valorSimbolo = new Arreglo_1.Arreglo(_this.tipo, valor.length, valor.length, valor, _this.linea, _this.columna);
-                            if (valorSimbolo.comprobarTipo(ent, arbol)) {
+                            if (valorSimbolo.comprobarTipo(ent, arbol, listaErrores)) {
                                 var simbol = new Simbolo_1.Simbolo(Tipo_1.Tipo.ARRAY, id, _this.linea, _this.columna, valorSimbolo);
                                 ent.agregar(id, simbol);
                             }
@@ -56,15 +56,15 @@ var DeclaracionArray = /** @class */ (function () {
                     }
                     else {
                         if (_this.expresion instanceof AccesoArray_1.AccesoArray) {
-                            var valor = _this.expresion.getValorImplicito(ent, arbol);
+                            var valor = _this.expresion.getValorImplicito(ent, arbol, listaErrores);
                             if (valor == null) {
                                 valor = [];
                             }
-                            var dim = _this.dimensiones[0].getValorImplicito(ent, arbol);
+                            var dim = _this.dimensiones[0].getValorImplicito(ent, arbol, listaErrores);
                             if (typeof (dim) === 'number') {
                                 if (dim === valor.length) {
                                     var valorSimbolo = new Arreglo_1.Arreglo(_this.tipo, valor.length, valor.length, valor, _this.linea, _this.columna);
-                                    if (valorSimbolo.comprobarTipo(ent, arbol)) {
+                                    if (valorSimbolo.comprobarTipo(ent, arbol, listaErrores)) {
                                         var simbol = new Simbolo_1.Simbolo(Tipo_1.Tipo.ARRAY, id, _this.linea, _this.columna, valorSimbolo);
                                         ent.agregar(id, simbol);
                                     }

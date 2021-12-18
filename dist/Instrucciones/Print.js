@@ -14,7 +14,7 @@ var Print = /** @class */ (function () {
         throw new Error("Method not implemented.");
     };
     Print.prototype.ejecutar = function (ent, arbol, listaErrores) {
-        var valor = this.expresion.getValorImplicito(ent, arbol);
+        var valor = this.expresion.getValorImplicito(ent, arbol, listaErrores);
         if (valor !== null) {
             console.log('>', valor);
             var area = document.getElementById('consola');

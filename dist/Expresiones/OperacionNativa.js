@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OperacionNativa = exports.OperadorNativa = void 0;
 var Tipo_1 = require("../AST/Tipo");
+var ErrorG_1 = require("../Objetos/ErrorG");
 var AccesoArray_1 = require("./AccesoArray");
 var AccesoVariable_1 = require("./AccesoVariable");
 var Operacion_1 = require("./Operacion");
@@ -22,8 +23,8 @@ var OperacionNativa = /** @class */ (function () {
         this.linea = linea;
         this.columna = columna;
     }
-    OperacionNativa.prototype.getTipo = function (ent, arbol) {
-        var valor = this.getValorImplicito(ent, arbol);
+    OperacionNativa.prototype.getTipo = function (ent, arbol, listaErrores) {
+        var valor = this.getValorImplicito(ent, arbol, listaErrores);
         if (this.isEjecutar === false) {
             this.isEjecutar = true;
             return Tipo_1.Tipo.DOUBLE;
@@ -45,9 +46,9 @@ var OperacionNativa = /** @class */ (function () {
         }
         return Tipo_1.Tipo.VOID;
     };
-    OperacionNativa.prototype.getValorImplicito = function (ent, arbol) {
+    OperacionNativa.prototype.getValorImplicito = function (ent, arbol, listaErrores) {
         if (this.operadorNativa == OperadorNativa.PARSE) {
-            var valor = this.expresion.getValorImplicito(ent, arbol);
+            var valor = this.expresion.getValorImplicito(ent, arbol, listaErrores);
             if (typeof (valor) === 'string') {
                 if (this.tipo == Tipo_1.Tipo.INT) {
                     return parseInt(valor);
@@ -63,23 +64,25 @@ var OperacionNativa = /** @class */ (function () {
                 }
                 else {
                     //es un error
+                    listaErrores.push(new ErrorG_1.ErrorG('semantico', 'hay un error, no es de un tipo aceptado', this.linea, this.columna));
                 }
             }
             else {
                 //no es de tipo string
+                listaErrores.push(new ErrorG_1.ErrorG('semantico', 'no es un string', this.linea, this.columna));
             }
         }
         else if (this.operadorNativa === OperadorNativa.STRING) {
             var valor_1 = '';
             if (this.expresion instanceof Operacion_1.Operacion) {
-                valor_1 = this.expresion.op_izquierda.getValorImplicito(ent, arbol) + this.getSignoTipo(this.expresion.operador) + this.expresion.op_derecha.getValorImplicito(ent, arbol);
+                valor_1 = this.expresion.op_izquierda.getValorImplicito(ent, arbol, listaErrores) + this.getSignoTipo(this.expresion.operador) + this.expresion.op_derecha.getValorImplicito(ent, arbol, listaErrores);
             }
             else if (this.expresion instanceof AccesoArray_1.AccesoArray) {
                 var contenido_1 = this.expresion.contenido;
                 valor_1 = '[';
                 var i_1 = 0;
                 contenido_1.forEach(function (expr) {
-                    valor_1 += expr.getValorImplicito(ent, arbol);
+                    valor_1 += expr.getValorImplicito(ent, arbol, listaErrores);
                     if (i_1 == contenido_1.length - 1) {
                         valor_1 += ']';
                     }
@@ -91,7 +94,7 @@ var OperacionNativa = /** @class */ (function () {
                 return valor_1;
             }
             else {
-                valor_1 = this.expresion.getValorImplicito(ent, arbol);
+                valor_1 = this.expresion.getValorImplicito(ent, arbol, listaErrores);
             }
             if (valor_1 === null) {
                 return null;
@@ -101,27 +104,29 @@ var OperacionNativa = /** @class */ (function () {
             }
         }
         else if (this.operadorNativa === OperadorNativa.TODOUBLE) {
-            var valor = this.expresion.getValorImplicito(ent, arbol);
+            var valor = this.expresion.getValorImplicito(ent, arbol, listaErrores);
             if (typeof (valor) === 'number') {
                 this.isEjecutar = false;
                 return valor.toFixed(2);
             }
             else {
                 //no es un numero
+                listaErrores.push(new ErrorG_1.ErrorG('semantico', 'no es un numero', this.linea, this.columna));
             }
         }
         else if (this.operadorNativa === OperadorNativa.TOINT) {
-            var valor = this.expresion.getValorImplicito(ent, arbol);
+            var valor = this.expresion.getValorImplicito(ent, arbol, listaErrores);
             if (typeof (valor) === 'number') {
                 return Math.floor(valor);
             }
             else {
                 //no es un numero
+                listaErrores.push(new ErrorG_1.ErrorG('semantico', 'no es un numero', this.linea, this.columna));
             }
         }
         else if (this.operadorNativa === OperadorNativa.TYPEOF) {
             if (this.expresion instanceof AccesoVariable_1.AccesoVariable) {
-                var tipo = this.expresion.getTipo(ent, arbol);
+                var tipo = this.expresion.getTipo(ent, arbol, listaErrores);
                 if (tipo === Tipo_1.Tipo.STRUCT || tipo === Tipo_1.Tipo.TIPO_STRUCT) {
                     return "struct";
                 }
@@ -129,7 +134,7 @@ var OperacionNativa = /** @class */ (function () {
                     return "array";
                 }
             }
-            var valor = this.expresion.getValorImplicito(ent, arbol);
+            var valor = this.expresion.getValorImplicito(ent, arbol, listaErrores);
             return typeof (valor);
         }
         return null;

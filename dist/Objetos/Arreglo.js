@@ -10,8 +10,8 @@ var Arreglo = /** @class */ (function () {
         this.linea = linea;
         this.columna = columna;
     }
-    Arreglo.prototype.push = function (ent, arbol, nuevo) {
-        if (nuevo.getTipo(ent, arbol) == this.tipo) {
+    Arreglo.prototype.push = function (ent, arbol, nuevo, listaErrores) {
+        if (nuevo.getTipo(ent, arbol, listaErrores) == this.tipo) {
             this.contenido.push(nuevo);
             this.length += 1;
             this.dimension += 1;
@@ -30,13 +30,13 @@ var Arreglo = /** @class */ (function () {
     Arreglo.prototype.getLastContenido = function () {
         return this.contenido[this.length - 1];
     };
-    Arreglo.prototype.comprobarTipo = function (ent, arbol) {
+    Arreglo.prototype.comprobarTipo = function (ent, arbol, listaErrores) {
         var _this = this;
         var isFine = true;
         this.contenido.forEach(function (cont) {
-            if (!(cont.getTipo(ent, arbol) == _this.tipo)) {
+            if (!(cont.getTipo(ent, arbol, listaErrores) == _this.tipo)) {
                 isFine = false;
-                console.log('Error semantico, el valor: ' + cont.getValorImplicito(ent, arbol) + ' no concuerda con el tipo del arreglo en la linea ' + _this.linea + ' y columna ' + _this.columna);
+                console.log('Error semantico, el valor: ' + cont.getValorImplicito(ent, arbol, listaErrores) + ' no concuerda con el tipo del arreglo en la linea ' + _this.linea + ' y columna ' + _this.columna);
             }
         });
         return isFine;

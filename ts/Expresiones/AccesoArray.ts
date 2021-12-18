@@ -4,6 +4,7 @@ import { Simbolo } from "../AST/Simbolo";
 import { Tipo } from "../AST/Tipo";
 import { Declaracion } from "../Instrucciones/Declaracion";
 import { Expresion } from "../Interfaces/Expresion";
+import { ErrorG } from "../Objetos/ErrorG";
 import { AccesoVariable } from "./AccesoVariable";
 
 export class AccesoArray implements Expresion {
@@ -21,11 +22,11 @@ export class AccesoArray implements Expresion {
         throw new Error("Method not implemented.");
     }
 
-    getTipo(ent: Entorno, arbol: AST):Tipo {
+    getTipo(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>):Tipo {
         return Tipo.ARRAY;
     }
 
-    getValorImplicito(ent: Entorno, arbol: AST) {
+    getValorImplicito(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
         try{
            return this.contenido;
         }catch(e){
