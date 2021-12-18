@@ -45,12 +45,14 @@ export class Declaracion implements Instruccion{
 
                         //this.expresion.getValorImplicito(ent,arbol)                        
                         let simbol = new Simbolo(this.tipo,id,this.linea,this.columna,temporales.ultstack);
-                        temporales.ultstack += 1;
                         ent.agregar(id,simbol);
-
+                        
+                        
+                        temporales.ultstack += 1;                        
                         //Asignar el valor al stack
                         let valAsign = this.expresion.traducir(ent,arbol,resultado3d,temporales,0);
                         resultado3d.codigo3D += '\tstack[(int)'+simbol.valor+'] ='+ valAsign  +';\n';
+                        
                     }else{
                         console.log('Error semantico, El tipo declarado (' + this.tipo +') no concuerda con el tipo asignado (' + tipoExpr + ') en la linea '+ this.linea + ' y columna ' + this.columna);
                     }                    

@@ -19,9 +19,27 @@ export class Primitivo implements Expresion {
     traducir(ent: Entorno, arbol: AST,resultado3d:Resultado3D,temporales:Temporales) {
         console.log("Traduciendo Primitivo");
         
+        let tipo = this.getTipo(ent,arbol);
 
-        //Solo si es numeros      TODO para strings y booleanos  
-        return this.valor;
+        if(tipo != Tipo.STRING){
+            return this.valor;
+        }else{
+            temporales.ultimoTemp += 1;
+            resultado3d.codigo3D += '\tt'+temporales.ultimoTemp + '= H;\n';
+
+            
+            for(let i = 0; i < this.valor.length ;i++){
+                let letra = this.valor.substr(i,1);
+                let valLet = letra.charCodeAt();
+                resultado3d.codigo3D += '\theap[(int)H] = '+valLet+';\n'; 
+                resultado3d.codigo3D += '\tH = H + 1;\n';
+                console.log(valLet);
+            }
+            resultado3d.codigo3D += '\theap[(int)H] = -1\n'; 
+            resultado3d.codigo3D += '\tH = H + 1;\n';
+            return 't'+temporales.ultimoTemp;
+        }
+        
     }
 
     getTipo(ent: Entorno, arbol: AST): Tipo {

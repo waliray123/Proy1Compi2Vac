@@ -31,8 +31,8 @@ var Declaracion = /** @class */ (function () {
                         //Se genera el simbolo y se le asigna un lugar en el stack
                         //this.expresion.getValorImplicito(ent,arbol)                        
                         var simbol = new Simbolo_1.Simbolo(_this.tipo, id, _this.linea, _this.columna, temporales.ultstack);
-                        temporales.ultstack += 1;
                         ent.agregar(id, simbol);
+                        temporales.ultstack += 1;
                         //Asignar el valor al stack
                         var valAsign = _this.expresion.traducir(ent, arbol, resultado3d, temporales, 0);
                         resultado3d.codigo3D += '\tstack[(int)' + simbol.valor + '] =' + valAsign + ';\n';

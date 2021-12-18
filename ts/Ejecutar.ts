@@ -157,14 +157,14 @@ function traducirCompleto(resultado3D:Resultado3D,temporales:Temporales){
     //Inicializar todos los temporales
 
     let codTemporales = '';
-    for(let i = 0; i < temporales.ultimoTemp;i++){
+    for(let i = 0; i <= temporales.ultimoTemp;i++){
         if(i == 0){
             codTemporales += 'double t'+i;
         }else{
             codTemporales += ',t'+i;
         }
         
-        if(i == (temporales.ultimoTemp-1)){
+        if(i == (temporales.ultimoTemp)){
             codTemporales +=';\n';
         }
     }

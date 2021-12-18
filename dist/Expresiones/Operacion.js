@@ -40,17 +40,34 @@ var Operacion = /** @class */ (function () {
     Operacion.prototype.traducir = function (ent, arbol, resultado3d, temporales, recursivo) {
         console.log("Traduciendo operacion");
         var resultado = "";
-        var val1 = this.op_izquierda.traducir(ent, arbol, resultado3d, temporales, recursivo + 1);
-        var val2 = this.op_derecha.traducir(ent, arbol, resultado3d, temporales, recursivo + 1);
-        var valor = this.unirResultado(val1, val2);
-        if (recursivo == 0) {
-            return valor;
+        if (this.operador !== Operador.MENOS_UNARIO && this.operador !== Operador.NOT
+            && this.operador != Operador.SQRT && this.operador != Operador.SIN && this.operador != Operador.COS
+            && this.operador != Operador.TAN && this.operador != Operador.INCREMENTO && this.operador != Operador.DECREMENTO) {
+            var val1 = this.op_izquierda.traducir(ent, arbol, resultado3d, temporales, recursivo + 1);
+            var val2 = this.op_derecha.traducir(ent, arbol, resultado3d, temporales, recursivo + 1);
+            var valor = this.unirResultado(val1, val2);
+            if (recursivo == 0) {
+                return valor;
+            }
+            else {
+                resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
+                var valR = 't' + temporales.ultimoTemp;
+                temporales.ultimoTemp += 1;
+                return valR;
+            }
         }
         else {
-            resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
-            var valR = 't' + temporales.ultimoTemp;
-            temporales.ultimoTemp += 1;
-            return valR;
+            var val1 = this.op_izquierda.traducir(ent, arbol, resultado3d, temporales, recursivo + 1);
+            var valor = this.unirResultadoUnico(val1);
+            if (recursivo == 0) {
+                return valor;
+            }
+            else {
+                resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
+                var valR = 't' + temporales.ultimoTemp;
+                temporales.ultimoTemp += 1;
+                return valR;
+            }
         }
     };
     Operacion.prototype.unirResultado = function (val1, val2) {
@@ -72,6 +89,25 @@ var Operacion = /** @class */ (function () {
         }
         else if (this.operador == Operador.MENOR_QUE) {
             resultadoR = val1 + "<" + val2;
+        }
+        else if (this.operador == Operador.MAYOR_IGUA_QUE) {
+            resultadoR = val1 + ">=" + val2;
+        }
+        else if (this.operador == Operador.MENOR_IGUA_QUE) {
+            resultadoR = val1 + "<=" + val2;
+        }
+        else if (this.operador == Operador.IGUAL_IGUAL) {
+            resultadoR = val1 + "<=" + val2;
+        }
+        else if (this.operador == Operador.MODULO) {
+            resultadoR = 'fmod(' + val1 + ',' + val2 + ')';
+        }
+        return resultadoR;
+    };
+    Operacion.prototype.unirResultadoUnico = function (val1) {
+        var resultadoR = '';
+        if (this.operador == Operador.MENOS_UNARIO) {
+            resultadoR = '-' + val1;
         }
         return resultadoR;
     };

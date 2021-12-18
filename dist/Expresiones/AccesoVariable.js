@@ -8,8 +8,19 @@ var AccesoVariable = /** @class */ (function () {
         this.columna = columna;
         this.isAlone = true;
     }
-    AccesoVariable.prototype.traducir = function (ent, arbol) {
-        throw new Error("Method not implemented.");
+    AccesoVariable.prototype.traducir = function (ent, arbol, resultado3d, temporales) {
+        if (ent.existe(this.id)) {
+            var simbol = ent.getSimbolo(this.id);
+            //TODO: Alv ya me canse de esto mejor hago la declaracion de los strings  AAAAAAAAAAAAAA
+            var valor = '\tstack[(int)' + simbol.valor + ']\n';
+            resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
+            var valR = 't' + temporales.ultimoTemp;
+            temporales.ultimoTemp += 1;
+            return valR;
+        }
+        else {
+            console.log('No existe el id ' + this.id + ' no hay tipo');
+        }
     };
     AccesoVariable.prototype.getTipo = function (ent, arbol) {
         if (ent.existe(this.id)) {

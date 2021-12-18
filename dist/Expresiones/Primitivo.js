@@ -9,8 +9,24 @@ var Primitivo = /** @class */ (function () {
     }
     Primitivo.prototype.traducir = function (ent, arbol, resultado3d, temporales) {
         console.log("Traduciendo Primitivo");
-        //Solo si es numeros      TODO para strings y booleanos  
-        return this.valor;
+        var tipo = this.getTipo(ent, arbol);
+        if (tipo != Tipo_1.Tipo.STRING) {
+            return this.valor;
+        }
+        else {
+            temporales.ultimoTemp += 1;
+            resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '= H;\n';
+            for (var i = 0; i < this.valor.length; i++) {
+                var letra = this.valor.substr(i, 1);
+                var valLet = letra.charCodeAt();
+                resultado3d.codigo3D += '\theap[(int)H] = ' + valLet + ';\n';
+                resultado3d.codigo3D += '\tH = H + 1;\n';
+                console.log(valLet);
+            }
+            resultado3d.codigo3D += '\theap[(int)H] = -1\n';
+            resultado3d.codigo3D += '\tH = H + 1;\n';
+            return 't' + temporales.ultimoTemp;
+        }
     };
     Primitivo.prototype.getTipo = function (ent, arbol) {
         var valor = this.getValorImplicito(ent, arbol);

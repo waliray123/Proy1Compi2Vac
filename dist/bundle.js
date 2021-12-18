@@ -286,8 +286,19 @@ var AccesoVariable = /** @class */ (function () {
         this.columna = columna;
         this.isAlone = true;
     }
-    AccesoVariable.prototype.traducir = function (ent, arbol) {
-        throw new Error("Method not implemented.");
+    AccesoVariable.prototype.traducir = function (ent, arbol, resultado3d, temporales) {
+        if (ent.existe(this.id)) {
+            var simbol = ent.getSimbolo(this.id);
+            //TODO: Alv ya me canse de esto mejor hago la declaracion de los strings  AAAAAAAAAAAAAA
+            var valor = '\tstack[(int)' + simbol.valor + ']\n';
+            resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
+            var valR = 't' + temporales.ultimoTemp;
+            temporales.ultimoTemp += 1;
+            return valR;
+        }
+        else {
+            console.log('No existe el id ' + this.id + ' no hay tipo');
+        }
     };
     AccesoVariable.prototype.getTipo = function (ent, arbol) {
         if (ent.existe(this.id)) {
@@ -469,17 +480,34 @@ var Operacion = /** @class */ (function () {
     Operacion.prototype.traducir = function (ent, arbol, resultado3d, temporales, recursivo) {
         console.log("Traduciendo operacion");
         var resultado = "";
-        var val1 = this.op_izquierda.traducir(ent, arbol, resultado3d, temporales, recursivo + 1);
-        var val2 = this.op_derecha.traducir(ent, arbol, resultado3d, temporales, recursivo + 1);
-        var valor = this.unirResultado(val1, val2);
-        if (recursivo == 0) {
-            return valor;
+        if (this.operador !== Operador.MENOS_UNARIO && this.operador !== Operador.NOT
+            && this.operador != Operador.SQRT && this.operador != Operador.SIN && this.operador != Operador.COS
+            && this.operador != Operador.TAN && this.operador != Operador.INCREMENTO && this.operador != Operador.DECREMENTO) {
+            var val1 = this.op_izquierda.traducir(ent, arbol, resultado3d, temporales, recursivo + 1);
+            var val2 = this.op_derecha.traducir(ent, arbol, resultado3d, temporales, recursivo + 1);
+            var valor = this.unirResultado(val1, val2);
+            if (recursivo == 0) {
+                return valor;
+            }
+            else {
+                resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
+                var valR = 't' + temporales.ultimoTemp;
+                temporales.ultimoTemp += 1;
+                return valR;
+            }
         }
         else {
-            resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
-            var valR = 't' + temporales.ultimoTemp;
-            temporales.ultimoTemp += 1;
-            return valR;
+            var val1 = this.op_izquierda.traducir(ent, arbol, resultado3d, temporales, recursivo + 1);
+            var valor = this.unirResultadoUnico(val1);
+            if (recursivo == 0) {
+                return valor;
+            }
+            else {
+                resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
+                var valR = 't' + temporales.ultimoTemp;
+                temporales.ultimoTemp += 1;
+                return valR;
+            }
         }
     };
     Operacion.prototype.unirResultado = function (val1, val2) {
@@ -501,6 +529,25 @@ var Operacion = /** @class */ (function () {
         }
         else if (this.operador == Operador.MENOR_QUE) {
             resultadoR = val1 + "<" + val2;
+        }
+        else if (this.operador == Operador.MAYOR_IGUA_QUE) {
+            resultadoR = val1 + ">=" + val2;
+        }
+        else if (this.operador == Operador.MENOR_IGUA_QUE) {
+            resultadoR = val1 + "<=" + val2;
+        }
+        else if (this.operador == Operador.IGUAL_IGUAL) {
+            resultadoR = val1 + "<=" + val2;
+        }
+        else if (this.operador == Operador.MODULO) {
+            resultadoR = 'fmod(' + val1 + ',' + val2 + ')';
+        }
+        return resultadoR;
+    };
+    Operacion.prototype.unirResultadoUnico = function (val1) {
+        var resultadoR = '';
+        if (this.operador == Operador.MENOS_UNARIO) {
+            resultadoR = '-' + val1;
         }
         return resultadoR;
     };
@@ -1106,8 +1153,24 @@ var Primitivo = /** @class */ (function () {
     }
     Primitivo.prototype.traducir = function (ent, arbol, resultado3d, temporales) {
         console.log("Traduciendo Primitivo");
-        //Solo si es numeros      TODO para strings y booleanos  
-        return this.valor;
+        var tipo = this.getTipo(ent, arbol);
+        if (tipo != Tipo_1.Tipo.STRING) {
+            return this.valor;
+        }
+        else {
+            temporales.ultimoTemp += 1;
+            resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '= H;\n';
+            for (var i = 0; i < this.valor.length; i++) {
+                var letra = this.valor.substr(i, 1);
+                var valLet = letra.charCodeAt();
+                resultado3d.codigo3D += '\theap[(int)H] = ' + valLet + ';\n';
+                resultado3d.codigo3D += '\tH = H + 1;\n';
+                console.log(valLet);
+            }
+            resultado3d.codigo3D += '\theap[(int)H] = -1\n';
+            resultado3d.codigo3D += '\tH = H + 1;\n';
+            return 't' + temporales.ultimoTemp;
+        }
     };
     Primitivo.prototype.getTipo = function (ent, arbol) {
         var valor = this.getValorImplicito(ent, arbol);
@@ -1442,8 +1505,8 @@ var Declaracion = /** @class */ (function () {
                         //Se genera el simbolo y se le asigna un lugar en el stack
                         //this.expresion.getValorImplicito(ent,arbol)                        
                         var simbol = new Simbolo_1.Simbolo(_this.tipo, id, _this.linea, _this.columna, temporales.ultstack);
-                        temporales.ultstack += 1;
                         ent.agregar(id, simbol);
+                        temporales.ultstack += 1;
                         //Asignar el valor al stack
                         var valAsign = _this.expresion.traducir(ent, arbol, resultado3d, temporales, 0);
                         resultado3d.codigo3D += '\tstack[(int)' + simbol.valor + '] =' + valAsign + ';\n';
@@ -3931,14 +3994,14 @@ function traducirCompleto(resultado3D, temporales) {
     var encabezado = '#include <stdio.h> \n#include <math.h> \ndouble heap[30101999]; \ndouble stack[30101999]; \ndouble P; \ndouble H;\n';
     //Inicializar todos los temporales
     var codTemporales = '';
-    for (var i = 0; i < temporales.ultimoTemp; i++) {
+    for (var i = 0; i <= temporales.ultimoTemp; i++) {
         if (i == 0) {
             codTemporales += 'double t' + i;
         }
         else {
             codTemporales += ',t' + i;
         }
-        if (i == (temporales.ultimoTemp - 1)) {
+        if (i == (temporales.ultimoTemp)) {
             codTemporales += ';\n';
         }
     }

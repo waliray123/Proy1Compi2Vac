@@ -112,14 +112,14 @@ function traducirCompleto(resultado3D, temporales) {
     var encabezado = '#include <stdio.h> \n#include <math.h> \ndouble heap[30101999]; \ndouble stack[30101999]; \ndouble P; \ndouble H;\n';
     //Inicializar todos los temporales
     var codTemporales = '';
-    for (var i = 0; i < temporales.ultimoTemp; i++) {
+    for (var i = 0; i <= temporales.ultimoTemp; i++) {
         if (i == 0) {
             codTemporales += 'double t' + i;
         }
         else {
             codTemporales += ',t' + i;
         }
-        if (i == (temporales.ultimoTemp - 1)) {
+        if (i == (temporales.ultimoTemp)) {
             codTemporales += ';\n';
         }
     }

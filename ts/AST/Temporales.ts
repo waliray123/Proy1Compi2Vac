@@ -7,6 +7,8 @@ export class Temporales{
     public ultheap:number;
     public ultLiteral:number;
     public ultLitEscr:number;
+    public usoConcatStrings:boolean;
+    public usoPrintStrings:boolean;
     
 
     constructor(){
@@ -15,6 +17,8 @@ export class Temporales{
         this.ultheap = 0;
         this.ultLiteral = 0;
         this.ultLitEscr = 0;
+        this.usoConcatStrings = false;
+        this.usoPrintStrings = false;
     }        
 
 }
