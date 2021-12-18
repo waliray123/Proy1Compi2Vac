@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Temporales = void 0;
 var Tipo_1 = require("./Tipo");
 var Temporales = /** @class */ (function () {
     function Temporales() {

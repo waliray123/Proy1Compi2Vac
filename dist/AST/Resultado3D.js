@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Resultado3D = void 0;
 var Resultado3D = /** @class */ (function () {
     function Resultado3D() {
         this.codigo3D = "";

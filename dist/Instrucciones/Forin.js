@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Forin = void 0;
 var Forin = /** @class */ (function () {
     function Forin(linea, columna, instrucciones, expresion1, expresion2) {
         this.linea = linea;

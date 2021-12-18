@@ -22,7 +22,7 @@ export class AccesoVariable implements Expresion {
         this.isAlone = true;
     }
 
-    traducir(ent: Entorno, arbol: AST, resultado3d: Resultado3D, temporales: Temporales) {
+    traducir(ent: Entorno, arbol: AST, resultado3d: Resultado3D, temporales: Temporales,recursivo: number) {
         if (ent.existe(this.id)) {
             let simbol: Simbolo = ent.getSimbolo(this.id);
             

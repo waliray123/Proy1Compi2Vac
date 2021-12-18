@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Switch = void 0;
 var Tipo_1 = require("../AST/Tipo");
 // print("hola mundo");
 var Switch = /** @class */ (function () {
@@ -9,8 +10,36 @@ var Switch = /** @class */ (function () {
         this.linea = linea;
         this.columna = columna;
     }
-    Switch.prototype.traducir = function (ent, arbol) {
-        throw new Error("Method not implemented.");
+    Switch.prototype.traducir = function (ent, arbol, resultado3D, temporales, listaErrores) {
+        if (this.lista_instrucciones.length > 0) {
+            var valAsign = this.expresion.traducir(ent, arbol, resultado3D, temporales, listaErrores);
+            var ultL = temporales.ultLiteral + 1;
+            var cantCase = this.lista_instrucciones.length;
+            temporales.ultLiteral += cantCase + 2;
+            var i = 0;
+            for (var _i = 0, _a = this.lista_instrucciones; _i < _a.length; _i++) {
+                var caso = _a[_i];
+                if (i != 0) {
+                    resultado3D.codigo3D += '\tL' + ultL + ':\n';
+                    ultL += 1;
+                }
+                if (caso.id.getTipo(ent, arbol, listaErrores) != Tipo_1.Tipo.NULL) {
+                    var valorCaso = caso.id.traducir(ent, arbol, resultado3D, temporales, 0);
+                    resultado3D.codigo3D += '\tif(' + valAsign + ' == ' + valorCaso + ') goto L' + ultL + ';\n';
+                    resultado3D.codigo3D += '\tgoto L' + (ultL + 1) + ';\n';
+                    resultado3D.codigo3D += '\tL' + ultL + ':\n';
+                    if (i + 1 == this.lista_instrucciones.length) {
+                        ultL += 1;
+                    }
+                }
+                caso.traducir(ent, arbol, resultado3D, temporales, listaErrores);
+                ultL += 1;
+                i += 1;
+            }
+            ultL -= 1;
+            resultado3D.codigo3D += '\tL' + (ultL) + ':\n';
+            temporales.ultLitEscr = ultL;
+        }
     };
     Switch.prototype.ejecutar = function (ent, arbol, listaErrores) {
         for (var _i = 0, _a = this.lista_instrucciones; _i < _a.length; _i++) {
