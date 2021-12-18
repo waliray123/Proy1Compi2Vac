@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var Tipo_1 = require("./Tipo");
 var Entorno = /** @class */ (function () {
     function Entorno(anterior) {
         this.tabla = {};
@@ -54,6 +55,38 @@ var Entorno = /** @class */ (function () {
             if (value !== undefined) {
                 e.tabla[id] = nuevoValor;
             }
+        }
+    };
+    Entorno.prototype.getNameTipo = function (tipo) {
+        if (tipo == Tipo_1.Tipo.STRING) {
+            return "string";
+        }
+        else if (tipo == Tipo_1.Tipo.BOOL) {
+            return 'boolean';
+        }
+        else if (tipo == Tipo_1.Tipo.INT) {
+            return 'int';
+        }
+        else if (tipo == Tipo_1.Tipo.CHAR) {
+            return 'char';
+        }
+        else if (tipo == Tipo_1.Tipo.DOUBLE) {
+            return 'double';
+        }
+        else if (tipo == Tipo_1.Tipo.VOID) {
+            return 'void';
+        }
+        else if (tipo == Tipo_1.Tipo.STRUCT) {
+            return 'struct';
+        }
+        else if (tipo == Tipo_1.Tipo.ARRAY) {
+            return 'array';
+        }
+        else if (tipo == Tipo_1.Tipo.TIPO_STRUCT) {
+            return 'struct';
+        }
+        else {
+            return 'null';
         }
     };
     return Entorno;

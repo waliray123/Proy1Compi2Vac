@@ -10,10 +10,10 @@ var AccesoArray = /** @class */ (function () {
     AccesoArray.prototype.traducir = function (ent, arbol) {
         throw new Error("Method not implemented.");
     };
-    AccesoArray.prototype.getTipo = function (ent, arbol) {
+    AccesoArray.prototype.getTipo = function (ent, arbol, listaErrores) {
         return Tipo_1.Tipo.ARRAY;
     };
-    AccesoArray.prototype.getValorImplicito = function (ent, arbol) {
+    AccesoArray.prototype.getValorImplicito = function (ent, arbol, listaErrores) {
         try {
             return this.contenido;
         }

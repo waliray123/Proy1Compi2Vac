@@ -13,7 +13,7 @@ var SwitchCaso = /** @class */ (function () {
     SwitchCaso.prototype.traducir = function (ent, arbol) {
         throw new Error("Method not implemented.");
     };
-    SwitchCaso.prototype.ejecutar = function (ent, arbol) {
+    SwitchCaso.prototype.ejecutar = function (ent, arbol, listaErrores) {
         for (var _i = 0, _a = this.lista_instrucciones; _i < _a.length; _i++) {
             var ints = _a[_i];
             if (ints instanceof Break_1.Break) {
@@ -21,7 +21,7 @@ var SwitchCaso = /** @class */ (function () {
                 break;
             }
             else {
-                ints.ejecutar(ent, arbol);
+                ints.ejecutar(ent, arbol, listaErrores);
             }
         }
     };

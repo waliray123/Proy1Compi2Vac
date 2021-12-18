@@ -3,6 +3,7 @@ import { Entorno } from "../AST/Entorno";
 import { Tipo } from "../AST/Tipo";
 import { Expresion } from "../Interfaces/Expresion";
 import { Instruccion } from "../Interfaces/Instruccion";
+import { ErrorG } from "../Objetos/ErrorG";
 
 export class ParametroReturn implements Expresion {
     linea: number;
@@ -14,11 +15,11 @@ export class ParametroReturn implements Expresion {
         this.linea = linea;
         this.columna = columna;
     }
-    getTipo(ent: Entorno, arbol: AST): Tipo {
-        return this.valor.getTipo(ent, arbol);
+    getTipo(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>): Tipo {
+        return this.valor.getTipo(ent, arbol,listaErrores);
     }
-    getValorImplicito(ent: Entorno, arbol: AST) {
-        return this.valor.getValorImplicito(ent, arbol);
+    getValorImplicito(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
+        return this.valor.getValorImplicito(ent, arbol,listaErrores);
     }
 
     traducir(ent: Entorno, arbol: AST) {

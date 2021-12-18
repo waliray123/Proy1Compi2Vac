@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var Simbolo_1 = require("../AST/Simbolo");
 var Tipo_1 = require("../AST/Tipo");
+var ErrorG_1 = require("../Objetos/ErrorG");
 // print("hola mundo");
 var Declaracion = /** @class */ (function () {
     function Declaracion(id, tipo, linea, columna, expresion) {
@@ -11,7 +12,7 @@ var Declaracion = /** @class */ (function () {
         this.linea = linea;
         this.columna = columna;
     }
-    Declaracion.prototype.traducir = function (ent, arbol, resultado3d, temporales) {
+    Declaracion.prototype.traducir = function (ent, arbol, resultado3d, temporales, listaErrores) {
         var _this = this;
         this.id.forEach(function (id) {
             if (ent.existe(id)) {
@@ -26,7 +27,7 @@ var Declaracion = /** @class */ (function () {
                     resultado3d.codigo3D += 'stack[(int)' + simbol.valor + '];\n';
                 }
                 else {
-                    var tipoExpr = _this.expresion.getTipo(ent, arbol);
+                    var tipoExpr = _this.expresion.getTipo(ent, arbol, listaErrores);
                     if (tipoExpr == _this.tipo) {
                         //Se genera el simbolo y se le asigna un lugar en el stack
                         //this.expresion.getValorImplicito(ent,arbol)                        
@@ -44,12 +45,13 @@ var Declaracion = /** @class */ (function () {
             }
         });
     };
-    Declaracion.prototype.ejecutar = function (ent, arbol) {
+    Declaracion.prototype.ejecutar = function (ent, arbol, listaErrores) {
         var _this = this;
         // console.log('ejecutado...'+ this.id);
         this.id.forEach(function (id) {
             if (ent.existe(id)) {
-                console.log('Id ' + id + ' ya existe');
+                // console.log('Id '+ id +' ya existe');
+                listaErrores.push(new ErrorG_1.ErrorG('semantico', 'la variable' + id + ' ya existe', _this.linea, _this.columna));
             }
             else {
                 if (_this.expresion == null) {
@@ -57,13 +59,14 @@ var Declaracion = /** @class */ (function () {
                     ent.agregar(id, simbol);
                 }
                 else {
-                    var tipoExpr = _this.expresion.getTipo(ent, arbol);
+                    var tipoExpr = _this.expresion.getTipo(ent, arbol, listaErrores);
                     if (tipoExpr == _this.tipo) {
-                        var simbol = new Simbolo_1.Simbolo(_this.tipo, id, _this.linea, _this.columna, _this.expresion.getValorImplicito(ent, arbol));
+                        var simbol = new Simbolo_1.Simbolo(_this.tipo, id, _this.linea, _this.columna, _this.expresion.getValorImplicito(ent, arbol, listaErrores));
                         ent.agregar(id, simbol);
                     }
                     else {
-                        console.log('Error semantico, El tipo declarado (' + _this.tipo + ') no concuerda con el tipo asignado (' + tipoExpr + ') en la linea ' + _this.linea + ' y columna ' + _this.columna);
+                        // console.log('Error semantico, El tipo declarado (' + this.tipo +') no concuerda con el tipo asignado (' + tipoExpr + ') en la linea '+ this.linea + ' y columna ' + this.columna);
+                        listaErrores.push(new ErrorG_1.ErrorG('semantico', 'El tipo declarado (' + ent.getNameTipo(_this.tipo) + ') no concuerda con el tipo asignado', _this.linea, _this.columna));
                     }
                 }
             }

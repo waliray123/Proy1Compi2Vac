@@ -4,6 +4,7 @@ import { Simbolo } from "../AST/Simbolo";
 import { Tipo } from "../AST/Tipo";
 import { Expresion } from "../Interfaces/Expresion";
 import { Instruccion } from "../Interfaces/Instruccion";
+import { ErrorG } from "../Objetos/ErrorG";
 import { Declaracion } from "./Declaracion";
 
 // print("hola mundo");
@@ -25,12 +26,13 @@ export class Struct implements Instruccion{
         throw new Error("Method not implemented.");
     }
 
-    ejecutar(ent: Entorno, arbol: AST) {
+    ejecutar(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
         if (!ent.existe(this.id)) {
             let simbol = new Simbolo(Tipo.STRUCT,this.id,this.linea,this.columna,this.lista_atributos);
             ent.agregar(this.id,simbol);
         }else{
-            console.log('error semantico, Ya existe el nombre de la estructura declarada en la linea '+ this.linea + ' y columna ' + this.columna);
+            // console.log('error semantico, Ya existe el nombre de la estructura declarada en la linea '+ this.linea + ' y columna ' + this.columna);
+            listaErrores.push(new ErrorG('semantico','ya existe el nombre del estructura declarada',this.linea,this.columna));
         }
     }
 

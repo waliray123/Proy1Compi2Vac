@@ -7,6 +7,8 @@ var Temporales = /** @class */ (function () {
         this.ultheap = 0;
         this.ultLiteral = 0;
         this.ultLitEscr = 0;
+        this.usoConcatStrings = false;
+        this.usoPrintStrings = false;
     }
     return Temporales;
 }());

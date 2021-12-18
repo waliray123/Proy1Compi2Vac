@@ -7,6 +7,7 @@ import { Tipo } from "../AST/Tipo";
 import { Declaracion } from "./Declaracion";
 import { Resultado3D } from "../AST/Resultado3D";
 import { Temporales } from "../AST/Temporales";
+import { ErrorG } from "../Objetos/ErrorG";
 
 export class Funcion implements Instruccion{
     linea: number;
@@ -27,26 +28,26 @@ export class Funcion implements Instruccion{
         this.parametrosR = [];
     }
 
-    traducir(ent: Entorno, arbol: AST,resultado3D:Resultado3D,temporales:Temporales) {
+    traducir(ent: Entorno, arbol: AST,resultado3D:Resultado3D,temporales:Temporales,listaErrores:Array<ErrorG>) {
         const entornoGlobal:Entorno = new Entorno(ent);
 
         this.instrucciones.forEach((element:Instruccion) => {
-            element.traducir(entornoGlobal,arbol,resultado3D,temporales);
+            element.traducir(entornoGlobal,arbol,resultado3D,temporales,listaErrores);
         })
 
     }
 
-    ejecutar(ent: Entorno, arbol: AST) {        
+    ejecutar(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {        
 
         
         const entornoGlobal:Entorno = new Entorno(ent);
         
         //Declarar todos los parametros
-        this.declararParametrosReturn(entornoGlobal,arbol);
+        this.declararParametrosReturn(entornoGlobal,arbol,listaErrores);
 
         //recorro todas las raices  RECURSIVA
         this.instrucciones.forEach((element:Instruccion) => {
-            element.ejecutar(entornoGlobal,arbol);
+            element.ejecutar(entornoGlobal,arbol,listaErrores);
         })
         // console.log(this.instrucciones);
     }
@@ -59,19 +60,20 @@ export class Funcion implements Instruccion{
         this.parametrosR = parametrosR;        
     }
 
-    declararParametrosReturn(ent: Entorno, arbol: AST){
+    declararParametrosReturn(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>){
         try {
             for(let i = 0; i < this.parametros.length; i++){
                 let parametro = this.parametros[i];
                 let parametroR = this.parametrosR[i];
-                if(parametroR.getTipo(ent,arbol) == parametro.tipoParametro){
+                if(parametroR.getTipo(ent,arbol,listaErrores) == parametro.tipoParametro){
                     //id:Array<string>,tipo:Tipo, linea:number, columna:number,expresion:Expresion                                        
                     let declPar = new Declaracion([parametro.id],parametro.tipoParametro,this.linea,this.columna,parametroR.valor);
-                    declPar.ejecutar(ent,arbol);
+                    declPar.ejecutar(ent,arbol,listaErrores);
                 }
             }    
         } catch (error) {
-            console.log("Error al declarar un parametro");
+            // console.log("Error al declarar un parametro");
+            listaErrores.push(new ErrorG('semantico','Error al declarar un parametro',this.linea,this.columna));
         }
         
     }

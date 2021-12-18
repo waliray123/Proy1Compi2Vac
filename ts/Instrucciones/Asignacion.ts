@@ -7,6 +7,7 @@ import { Tipo } from "../AST/Tipo";
 import { AccesoVariable } from "../Expresiones/AccesoVariable";
 import { Expresion } from "../Interfaces/Expresion";
 import { Instruccion } from "../Interfaces/Instruccion";
+import { ErrorG } from "../Objetos/ErrorG";
 import { Declaracion } from "./Declaracion";
 import { Struct } from "./Struct";
 
@@ -23,19 +24,19 @@ export class Asignacion implements Instruccion{
         this.columna = columna;
     }
 
-    traducir(ent:Entorno, arbol:AST,resultado3d:Resultado3D,temporales:Temporales) {
+    traducir(ent:Entorno, arbol:AST,resultado3d:Resultado3D,temporales:Temporales,listaErrores:Array<ErrorG>) {
         
         if (this.id.length == 1) {
             let id = this.id[0];
             if (ent.existe(id)) {
                 let simbol: Simbolo = ent.getSimbolo(id);
                 let tipo: Tipo = simbol.getTipo(ent,arbol);
-                if (tipo == this.expresion.getTipo(ent,arbol)) {
+                if (tipo == this.expresion.getTipo(ent,arbol,listaErrores)) {
                     //Asignar al stack
                     let valAsign = this.expresion.traducir(ent,arbol,resultado3d,temporales,0);
                     resultado3d.codigo3D += '\tstack[(int)'+simbol.valor+'] ='+ valAsign  +';\n';
                 }else{
-                    console.log('Error semantico, El tipo de la variable (' + tipo +') no concuerda con el tipo asignado (' + this.expresion.getTipo(ent,arbol) + ') en la linea '+ this.linea + ' y columna ' + this.columna);
+                    console.log('Error semantico, El tipo de la variable (' + tipo +') no concuerda con el tipo asignado (' + this.expresion.getTipo(ent,arbol,listaErrores) + ') en la linea '+ this.linea + ' y columna ' + this.columna);
                 }
             }else{
                 console.log('Error semantico, no existe la variable ' + id +' en la linea '+ this.linea + ' y columna ' + this.columna);
@@ -66,19 +67,21 @@ export class Asignacion implements Instruccion{
         }
     }
 
-    ejecutar(ent: Entorno, arbol: AST) {
+    ejecutar(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
         if (this.id.length == 1) {
             let id = this.id[0];
             if (ent.existe(id)) {
                 let simbol: Simbolo = ent.getSimbolo(id);
                 let tipo: Tipo = simbol.getTipo(ent,arbol);
-                if (tipo == this.expresion.getTipo(ent,arbol)) {
-                    simbol.valor = this.expresion.getValorImplicito(ent,arbol);
+                if (tipo == this.expresion.getTipo(ent,arbol,listaErrores)) {
+                    simbol.valor = this.expresion.getValorImplicito(ent,arbol,listaErrores);
                 }else{
-                    console.log('Error semantico, El tipo de la variable (' + tipo +') no concuerda con el tipo asignado (' + this.expresion.getTipo(ent,arbol) + ') en la linea '+ this.linea + ' y columna ' + this.columna);
+                    // console.log('Error semantico, El tipo de la variable (' + tipo +') no concuerda con el tipo asignado (' + this.expresion.getTipo(ent,arbol) + ') en la linea '+ this.linea + ' y columna ' + this.columna);
+                    listaErrores.push(new ErrorG('semantico','El tipo de la variable (' + this.getNameTipo(tipo) +') no concuerda con el tipo asignado',this.linea,this.columna));
                 }
             }else{
-                console.log('Error semantico, no existe la variable ' + id +' en la linea '+ this.linea + ' y columna ' + this.columna);
+                // console.log('Error semantico, no existe la variable ' + id +' en la linea '+ this.linea + ' y columna ' + this.columna);
+                listaErrores.push(new ErrorG('semantico','no existe la variable ' + id,this.linea,this.columna));
             }            
         }
         else {
@@ -89,10 +92,11 @@ export class Asignacion implements Instruccion{
                     let tipo: Tipo = simbol.getTipo(ent,arbol);
                     if (tipo == Tipo.TIPO_STRUCT) {
                         let atributos:Array<Declaracion> = simbol.getValorImplicito(ent, arbol);
-                        this.asignacionStruct(i,atributos,ent,arbol);                                          
+                        this.asignacionStruct(i,atributos,ent,arbol,listaErrores);                                          
                     }
                 }else{
-                    console.log('Error semantico, no existe ' + id +' en la linea '+ this.linea + ' y columna ' + this.columna);
+                    // console.log('Error semantico, no existe ' + id +' en la linea '+ this.linea + ' y columna ' + this.columna);
+                    listaErrores.push(new ErrorG('semantico','no existe la variable ' + id,this.linea,this.columna));
                 }
 
         }
@@ -101,9 +105,10 @@ export class Asignacion implements Instruccion{
         return "asignacion";
     }
 
-    asignacionStruct(i:number,atributos:Array<Declaracion>,ent:Entorno, arbol: AST){
+    asignacionStruct(i:number,atributos:Array<Declaracion>,ent:Entorno, arbol: AST,listaErrores:Array<ErrorG>){
         if ((i + 1) >= this.id.length) {
-            console.log("No se encontro");
+            // console.log("No se encontro");
+            listaErrores.push(new ErrorG('semantico','No se encontro el atributo ' + this.id[i],this.linea,this.columna));
             return;
         }
         let idSig = this.id[i+1];
@@ -122,15 +127,40 @@ export class Asignacion implements Instruccion{
                     if (atributo.expresion instanceof AccesoVariable) {
                         atributo.expresion.isAlone = false;
                         // console.log(atributo.expresion.getValorImplicito(ent, arbol));
-                        let val1:Array<Declaracion> = atributo.expresion.getValorImplicito(ent, arbol);
+                        let val1:Array<Declaracion> = atributo.expresion.getValorImplicito(ent, arbol,listaErrores);
                         atributo.expresion.isAlone = true;
-                        this.asignacionStruct(i+1,val1,ent,arbol);
+                        this.asignacionStruct(i+1,val1,ent,arbol,listaErrores);
                     }                    
                 }else{
                     atributo.expresion = this.expresion;
                 }                               
                 return;
             }
+        }
+    }
+
+    getNameTipo(tipo:Tipo){
+        if (tipo == Tipo.STRING) {
+            return "string";
+        }else if (tipo == Tipo.BOOL){
+            return 'boolean';
+        }else if (tipo == Tipo.INT){
+            return 'int';
+        }else if (tipo == Tipo.CHAR){
+            return 'char';
+        }else if (tipo == Tipo.DOUBLE) {
+            return 'double';
+        }else if (tipo == Tipo.VOID){
+            return 'void';
+        }else if (tipo == Tipo.STRUCT){
+            return 'struct';
+        }else if (tipo == Tipo.ARRAY){
+            return 'array';
+        }else if (tipo == Tipo.TIPO_STRUCT){
+            return 'struct'
+        }
+        else{
+            return 'null';
         }
     }
 

@@ -8,7 +8,7 @@ var While = /** @class */ (function () {
         this.instrucciones = instrucciones;
         this.expresion = expresion;
     }
-    While.prototype.traducir = function (ent, arbol, resultado3D, temporales) {
+    While.prototype.traducir = function (ent, arbol, resultado3D, temporales, listaErrores) {
         var entornolocal = new Entorno_1.Entorno(ent);
         if (temporales.ultLiteral == 0) {
             resultado3D.codigo3D += '\tL' + temporales.ultLiteral + ":\n";
@@ -23,21 +23,21 @@ var While = /** @class */ (function () {
         resultado3D.codigo3D += '\tL' + (ulLit) + ':\n';
         //Traducir instrucciones
         this.instrucciones.forEach(function (element) {
-            element.traducir(entornolocal, arbol, resultado3D, temporales);
+            element.traducir(entornolocal, arbol, resultado3D, temporales, listaErrores);
         });
         resultado3D.codigo3D += '\tgoto L' + (ultEscrito) + ';\n';
         resultado3D.codigo3D += '\tL' + (ulLit + 1) + ':\n';
         temporales.ultLitEscr = ulLit + 1;
     };
-    While.prototype.ejecutar = function (ent, arbol) {
+    While.prototype.ejecutar = function (ent, arbol, listaErrores) {
         var entornolocal = new Entorno_1.Entorno(ent);
-        var realizar = this.expresion.getValorImplicito(entornolocal, arbol);
+        var realizar = this.expresion.getValorImplicito(entornolocal, arbol, listaErrores);
         var contSalir = 0;
         while (realizar) {
             this.instrucciones.forEach(function (element) {
-                element.ejecutar(entornolocal, arbol);
+                element.ejecutar(entornolocal, arbol, listaErrores);
             });
-            realizar = this.expresion.getValorImplicito(entornolocal, arbol);
+            realizar = this.expresion.getValorImplicito(entornolocal, arbol, listaErrores);
             if (contSalir == 5000) {
                 realizar = false;
             }

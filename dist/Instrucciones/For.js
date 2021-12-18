@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Entorno_1 = require("../AST/Entorno");
+var ErrorG_1 = require("../Objetos/ErrorG");
 var For = /** @class */ (function () {
     function For(linea, columna, instrucciones, declAsign, expresion1, expresion2) {
         this.linea = linea;
@@ -10,7 +11,7 @@ var For = /** @class */ (function () {
         this.expresion1 = expresion1;
         this.expresion2 = expresion2;
     }
-    For.prototype.traducir = function (ent, arbol, resultado3D, temporales) {
+    For.prototype.traducir = function (ent, arbol, resultado3D, temporales, listaErrores) {
         var entornolocal = new Entorno_1.Entorno(ent);
         if (temporales.ultLiteral == 0) {
             resultado3D.codigo3D += '\tL' + temporales.ultLiteral + ":\n";
@@ -26,7 +27,7 @@ var For = /** @class */ (function () {
         resultado3D.codigo3D += '\tL' + (ulLit + 1) + ':\n';
         //Traducir instrucciones
         this.instrucciones.forEach(function (element) {
-            element.traducir(entornolocal, arbol, resultado3D, temporales);
+            element.traducir(entornolocal, arbol, resultado3D, temporales, listaErrores);
         });
         //Traducir el incremento o decremento
         var id = this.expresion2.op_izquierda.getId();
@@ -46,16 +47,16 @@ var For = /** @class */ (function () {
         resultado3D.codigo3D += '\tL' + (ulLit + 2) + ':\n';
         temporales.ultLitEscr = ulLit + 2;
     };
-    For.prototype.ejecutar = function (ent, arbol) {
+    For.prototype.ejecutar = function (ent, arbol, listaErrores) {
         console.log('ejecutado...fornormal');
         var entornolocal = new Entorno_1.Entorno(ent);
         this.declAsign.ejecutar(entornolocal, arbol);
         //expresion 1 es la que hay que validar 
         console.log("empezando el while  en for");
-        while (this.expresion1.getValorImplicito(entornolocal, arbol) == true) {
+        while (this.expresion1.getValorImplicito(entornolocal, arbol, listaErrores) == true) {
             //Realizar instrucciones
             this.instrucciones.forEach(function (element) {
-                element.ejecutar(entornolocal, arbol);
+                element.ejecutar(entornolocal, arbol, listaErrores);
             });
             //Sumar o realizar la expresion2            
             //Primero se obtiene la operacion;            
@@ -67,7 +68,8 @@ var For = /** @class */ (function () {
                 simbol.valor = valAsig;
             }
             else {
-                console.log('Error semantico, no existe la variable ' + id + 'en la linea ' + this.linea + ' y columna ' + this.columna);
+                // console.log('Error semantico, no existe la variable ' + id +'en la linea '+ this.linea + ' y columna ' + this.columna);
+                listaErrores.push(new ErrorG_1.ErrorG('semantico', 'no existe la variable ' + id, this.linea, this.columna));
             }
         }
     };

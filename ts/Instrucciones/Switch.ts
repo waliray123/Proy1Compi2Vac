@@ -4,6 +4,7 @@ import { Entorno } from "../AST/Entorno";
 import { Tipo } from "../AST/Tipo";
 import { Expresion } from "../Interfaces/Expresion";
 import { Instruccion } from "../Interfaces/Instruccion";
+import { ErrorG } from "../Objetos/ErrorG";
 import { Declaracion } from "./Declaracion";
 import { SwitchCaso } from "./SwitchCaso";
 
@@ -26,10 +27,10 @@ export class Switch implements Instruccion{
         throw new Error("Method not implemented.");
     }
 
-    ejecutar(ent: Entorno, arbol: AST) {
+    ejecutar(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
         for(var caso of this.lista_instrucciones){
-            if (this.expresion.getValorImplicito(ent,arbol) == caso.id.getValorImplicito(ent, arbol) || caso.id.getTipo(ent,arbol) == Tipo.NULL) {
-                caso.ejecutar(ent,arbol);
+            if (this.expresion.getValorImplicito(ent,arbol) == caso.id.getValorImplicito(ent, arbol,listaErrores) || caso.id.getTipo(ent,arbol,listaErrores) == Tipo.NULL) {
+                caso.ejecutar(ent,arbol,listaErrores);
                 if (caso.getIsBreak()) {
                     break;
                 }

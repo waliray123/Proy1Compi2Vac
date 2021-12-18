@@ -2,6 +2,7 @@ import { AST } from "../AST/AST";
 import { Entorno } from "../AST/Entorno";
 import { Expresion } from "../Interfaces/Expresion";
 import { Instruccion } from "../Interfaces/Instruccion";
+import { ErrorG } from "../Objetos/ErrorG";
 
 // print("hola mundo");
 
@@ -22,8 +23,8 @@ export class Print implements Instruccion{
         throw new Error("Method not implemented.");
     }
 
-    ejecutar(ent: Entorno, arbol: AST) {
-        const valor = this.expresion.getValorImplicito(ent, arbol);
+    ejecutar(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
+        const valor = this.expresion.getValorImplicito(ent, arbol,listaErrores);
         if(valor!==null){
             console.log('>',valor);
             const area = document.getElementById('consola') as HTMLTextAreaElement;
@@ -37,6 +38,7 @@ export class Print implements Instruccion{
             
         }else{
             console.log('>> Error, no se pueden imprimir valores nulos');
+            listaErrores.push(new ErrorG('semantico','>> Error, no se pueden imprimir valores nulos',this.linea,this.columna));
         }
     }
 

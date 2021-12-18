@@ -9,7 +9,7 @@ var Continue = /** @class */ (function () {
     Continue.prototype.traducir = function (ent, arbol) {
         throw new Error("Method not implemented.");
     };
-    Continue.prototype.ejecutar = function (ent, arbol) {
+    Continue.prototype.ejecutar = function (ent, arbol, listaErrores) {
         // console.log('ejecutado...'+ this.id);
     };
     return Continue;

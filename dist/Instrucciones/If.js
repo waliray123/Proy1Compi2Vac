@@ -10,7 +10,7 @@ var If = /** @class */ (function () {
         this.sinos = sinos;
         this.tipo = tipo;
     }
-    If.prototype.traducir = function (ent, arbol, resultado3D, temporales) {
+    If.prototype.traducir = function (ent, arbol, resultado3D, temporales, listaErrores) {
         var entornolocal = new Entorno_1.Entorno(ent);
         var valAsign = this.condicion.traducir(entornolocal, arbol, resultado3D, temporales, 0);
         var ultLit = temporales.ultLiteral + 1;
@@ -20,19 +20,19 @@ var If = /** @class */ (function () {
         resultado3D.codigo3D += '\tgoto L' + (ultLit + 1) + ';\n';
         resultado3D.codigo3D += '\tL' + ultLit + ':\n';
         this.instrucciones.forEach(function (element) {
-            element.traducir(entornolocal, arbol, resultado3D, temporales);
+            element.traducir(entornolocal, arbol, resultado3D, temporales, listaErrores);
         });
         resultado3D.codigo3D += '\tgoto L' + (ultLit + 1 + cantidadSinos) + ';\n';
         var cont = ultLit + 1;
         for (var i = cantidadSinos - 1; i >= 0; i--) {
             var sino = this.sinos[i];
-            sino.traducirSinos(ent, arbol, resultado3D, temporales, cont, (cantidadSinos + 1));
+            sino.traducirSinos(ent, arbol, resultado3D, temporales, cont, (cantidadSinos + 1), listaErrores);
             cont += 1;
         }
         resultado3D.codigo3D += '\tL' + (ultLit + cantidadSinos + 1) + ':\n';
         temporales.ultLitEscr = ultLit + cantidadSinos + 1;
     };
-    If.prototype.traducirSinos = function (ent, arbol, resultado3D, temporales, literalAsign, ultAsign) {
+    If.prototype.traducirSinos = function (ent, arbol, resultado3D, temporales, literalAsign, ultAsign, listaErrores) {
         if (this.tipo == "elseif") {
             var entornolocal_1 = new Entorno_1.Entorno(ent);
             var valAsign = this.condicion.traducir(entornolocal_1, arbol, resultado3D, temporales, 0);
@@ -40,7 +40,7 @@ var If = /** @class */ (function () {
             resultado3D.codigo3D += '\tgoto L' + (literalAsign + 1) + ';\n';
             resultado3D.codigo3D += '\tL' + literalAsign + ':\n';
             this.instrucciones.forEach(function (element) {
-                element.traducir(entornolocal_1, arbol, resultado3D, temporales);
+                element.traducir(entornolocal_1, arbol, resultado3D, temporales, listaErrores);
             });
             resultado3D.codigo3D += '\tgoto L' + ultAsign + ';\n';
         }
@@ -48,19 +48,19 @@ var If = /** @class */ (function () {
             var entornolocal_2 = new Entorno_1.Entorno(ent);
             resultado3D.codigo3D += '\tL' + literalAsign + ':\n';
             this.instrucciones.forEach(function (element) {
-                element.traducir(entornolocal_2, arbol, resultado3D, temporales);
+                element.traducir(entornolocal_2, arbol, resultado3D, temporales, listaErrores);
             });
             resultado3D.codigo3D += '\tgoto L' + ultAsign + ';\n';
         }
     };
-    If.prototype.ejecutar = function (ent, arbol) {
+    If.prototype.ejecutar = function (ent, arbol, listaErrores) {
         console.log('ejecutado...ifnormal');
         //Revisar la condicion del if
         if (this.tipo == "if" || this.tipo == "elseif") {
-            if (this.condicion.getValorImplicito(ent, arbol) == true) {
+            if (this.condicion.getValorImplicito(ent, arbol, listaErrores) == true) {
                 var entornolocal_3 = new Entorno_1.Entorno(ent);
                 this.instrucciones.forEach(function (element) {
-                    element.ejecutar(entornolocal_3, arbol);
+                    element.ejecutar(entornolocal_3, arbol, listaErrores);
                 });
             }
             else {
@@ -68,10 +68,10 @@ var If = /** @class */ (function () {
                 for (var i = 0; i < this.sinos.length; i++) {
                     var element = this.sinos[i];
                     if (element.tipo == "elseif") {
-                        if (element.condicion.getValorImplicito(ent, arbol) == true) {
+                        if (element.condicion.getValorImplicito(ent, arbol, listaErrores) == true) {
                             //Se encontro un elseif que cumple con la condicion
                             var entornolocal = new Entorno_1.Entorno(ent);
-                            element.ejecutar(entornolocal, arbol);
+                            element.ejecutar(entornolocal, arbol, listaErrores);
                             seEncontro = true;
                             break;
                         }
@@ -83,7 +83,7 @@ var If = /** @class */ (function () {
                         if (element.tipo == "else") {
                             //Se encontro un else  
                             var entornolocal = new Entorno_1.Entorno(ent);
-                            element.ejecutar(entornolocal, arbol);
+                            element.ejecutar(entornolocal, arbol, listaErrores);
                             break;
                         }
                     }
@@ -93,7 +93,7 @@ var If = /** @class */ (function () {
         else {
             var entornolocal_4 = new Entorno_1.Entorno(ent);
             this.instrucciones.forEach(function (element) {
-                element.ejecutar(entornolocal_4, arbol);
+                element.ejecutar(entornolocal_4, arbol, listaErrores);
             });
         }
     };

@@ -4,6 +4,7 @@ import { Resultado3D } from "../AST/Resultado3D";
 import { Temporales } from "../AST/Temporales";
 import { Expresion } from "../Interfaces/Expresion";
 import { Instruccion } from "../Interfaces/Instruccion";
+import { ErrorG } from "../Objetos/ErrorG";
 
 export class While implements Instruccion{
     linea: number;
@@ -19,7 +20,7 @@ export class While implements Instruccion{
         this.expresion = expresion;
     }
 
-    traducir(ent: Entorno, arbol: AST,resultado3D:Resultado3D,temporales:Temporales) {
+    traducir(ent: Entorno, arbol: AST,resultado3D:Resultado3D,temporales:Temporales,listaErrores:Array<ErrorG>) {
         const entornolocal:Entorno = new Entorno(ent);    
         if(temporales.ultLiteral == 0){
             resultado3D.codigo3D += '\tL'+temporales.ultLiteral + ":\n";  
@@ -34,7 +35,7 @@ export class While implements Instruccion{
         resultado3D.codigo3D += '\tL'+(ulLit)+':\n';
         //Traducir instrucciones
         this.instrucciones.forEach((element:Instruccion) => {
-            element.traducir(entornolocal,arbol,resultado3D,temporales);
+            element.traducir(entornolocal,arbol,resultado3D,temporales,listaErrores);
         });
         resultado3D.codigo3D += '\tgoto L'+(ultEscrito)+';\n';
         resultado3D.codigo3D += '\tL'+(ulLit+1)+':\n';        
@@ -42,15 +43,15 @@ export class While implements Instruccion{
 
     }
 
-    ejecutar(ent: Entorno, arbol: AST) {
+    ejecutar(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
         const entornolocal:Entorno = new Entorno(ent);
-        let realizar = this.expresion.getValorImplicito(entornolocal,arbol);
+        let realizar = this.expresion.getValorImplicito(entornolocal,arbol,listaErrores);
         let contSalir = 0;
         while(realizar){            
             this.instrucciones.forEach((element:Instruccion) => {
-                element.ejecutar(entornolocal,arbol);
+                element.ejecutar(entornolocal,arbol,listaErrores);
             });
-            realizar = this.expresion.getValorImplicito(entornolocal,arbol);            
+            realizar = this.expresion.getValorImplicito(entornolocal,arbol,listaErrores);            
             if(contSalir == 5000){
                 realizar = false;
             }

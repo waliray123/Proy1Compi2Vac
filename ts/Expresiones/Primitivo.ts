@@ -4,6 +4,7 @@ import { Resultado3D } from "../AST/Resultado3D";
 import { Temporales } from "../AST/Temporales";
 import { Tipo } from "../AST/Tipo";
 import { Expresion } from "../Interfaces/Expresion";
+import { ErrorG } from "../Objetos/ErrorG";
 
 export class Primitivo implements Expresion {
     linea: number;
@@ -19,7 +20,7 @@ export class Primitivo implements Expresion {
     traducir(ent: Entorno, arbol: AST,resultado3d:Resultado3D,temporales:Temporales) {
         console.log("Traduciendo Primitivo");
         
-        let tipo = this.getTipo(ent,arbol);
+        let tipo = this.getTipo(ent,arbol,[]);
 
         if(tipo != Tipo.STRING){
             return this.valor;
@@ -35,15 +36,15 @@ export class Primitivo implements Expresion {
                 resultado3d.codigo3D += '\tH = H + 1;\n';
                 console.log(valLet);
             }
-            resultado3d.codigo3D += '\theap[(int)H] = -1\n'; 
+            resultado3d.codigo3D += '\theap[(int)H] = -1;\n'; 
             resultado3d.codigo3D += '\tH = H + 1;\n';
             return 't'+temporales.ultimoTemp;
         }
         
     }
 
-    getTipo(ent: Entorno, arbol: AST): Tipo {
-        const valor = this.getValorImplicito(ent, arbol);
+    getTipo(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>): Tipo {
+        const valor = this.getValorImplicito(ent, arbol,listaErrores);
         if (typeof(valor) === 'boolean')
         {
             return Tipo.BOOL;
@@ -66,7 +67,7 @@ export class Primitivo implements Expresion {
         return Tipo.VOID;
     }
 
-    getValorImplicito(ent: Entorno, arbol: AST) {
+    getValorImplicito(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
         return this.valor;
     }
 

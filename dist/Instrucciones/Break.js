@@ -9,7 +9,7 @@ var Break = /** @class */ (function () {
     Break.prototype.traducir = function (ent, arbol) {
         throw new Error("Method not implemented.");
     };
-    Break.prototype.ejecutar = function (ent, arbol) {
+    Break.prototype.ejecutar = function (ent, arbol, listaErrores) {
         return;
     };
     return Break;

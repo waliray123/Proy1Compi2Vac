@@ -9,42 +9,88 @@ window.ejecutarCodigo = function (entrada) {
     //Reiniciar consola
     reiniciarConsola();
     //traigo todas las raices    
-    var instrucciones = gramatica.parse(entrada);
-    console.log(instrucciones);
-    //Obtengo las funciones y strucs globales y se los asigno al ast
-    var funcionesG = revisarFuncionesGlobales(instrucciones);
-    var structsG = revisarStructsGlobales(instrucciones);
-    var ast = new AST_1.AST(instrucciones, structsG, funcionesG);
-    var entornoGlobal = generarEntornoGlobal(ast, structsG);
-    console.log(entornoGlobal);
-    //Buscar la funcion main    
-    funcionesG.forEach(function (element) {
-        if (element.nombrefuncion == "main") {
-            console.log("Se ejecutara");
-            element.ejecutar(entornoGlobal, ast);
+    //declaro los array's
+    var array = [];
+    var listaErrores = [];
+    var instrucciones = [];
+    array = gramatica.parse(entrada); //parseamos la gramatica
+    //console.log(array);
+    //llenamos los array's'
+    array.forEach(function (element) {
+        if (element.id == 'instrucciones') {
+            instrucciones = element.cont;
+        }
+        else if (element.id == 'listaErrores') {
+            listaErrores = element.cont;
         }
     });
+    // console.log(listaErrores);
+    // console.log(instrucciones);
+    if (listaErrores.length > 0) {
+        console.log(listaErrores);
+        var areaConsola = document.getElementById('consola');
+        areaConsola.value = "Hay errores, revise la lista";
+    }
+    else {
+        //Obtengo las funciones y strucs globales y se los asigno al ast
+        var funcionesG = revisarFuncionesGlobales(instrucciones);
+        var structsG = revisarStructsGlobales(instrucciones);
+        var ast_1 = new AST_1.AST(instrucciones, structsG, funcionesG);
+        var entornoGlobal_1 = generarEntornoGlobal(ast_1, structsG, listaErrores);
+        console.log(entornoGlobal_1);
+        //Buscar la funcion main    
+        funcionesG.forEach(function (element) {
+            if (element.nombrefuncion == "main") {
+                console.log("Se ejecutara");
+                element.ejecutar(entornoGlobal_1, ast_1, listaErrores);
+            }
+        });
+    }
+    //mostrar los errores semanticos
+    if (listaErrores.length > 0) {
+        console.log(listaErrores);
+    }
 };
 window.traducirCodigo = function (entrada) {
     reiniciarTraduccion();
     var resultado3d = new Resultado3D_1.Resultado3D();
     var temporales = new Temporales_1.Temporales();
     //traigo todas las raices    
-    var instrucciones = gramatica.parse(entrada);
-    console.log(instrucciones);
-    //Obtengo las funciones y strucs globales y se los asigno al ast
-    var funcionesG = revisarFuncionesGlobales(instrucciones);
-    var structsG = revisarStructsGlobales(instrucciones);
-    var ast = new AST_1.AST(instrucciones, structsG, funcionesG);
-    var entornoGlobal = generarEntornoGlobalTraducir(ast, structsG, resultado3d, temporales);
-    //Buscar la funcion main    
-    funcionesG.forEach(function (element) {
-        if (element.nombrefuncion == "main") {
-            console.log("Se ejecutara");
-            element.traducir(entornoGlobal, ast, resultado3d, temporales);
+    //declaro los array's
+    var array = [];
+    var listaErrores = [];
+    var instrucciones = [];
+    array = gramatica.parse(entrada); //parseamos la gramatica
+    //console.log(array);
+    //llenamos los array's'
+    array.forEach(function (element) {
+        if (element.id == 'instrucciones') {
+            instrucciones = element.cont;
+        }
+        else if (element.id == 'listaErrores') {
+            listaErrores = element.cont;
         }
     });
-    traducirCompleto(resultado3d, temporales);
+    if (listaErrores.length > 0) {
+        console.log(listaErrores);
+        var areaConsola = document.getElementById('consola');
+        areaConsola.value = "Hay errores y no se puede traducir, revise la lista";
+    }
+    else {
+        //Obtengo las funciones y strucs globales y se los asigno al ast
+        var funcionesG = revisarFuncionesGlobales(instrucciones);
+        var structsG = revisarStructsGlobales(instrucciones);
+        var ast_2 = new AST_1.AST(instrucciones, structsG, funcionesG);
+        var entornoGlobal_2 = generarEntornoGlobalTraducir(ast_2, structsG, resultado3d, temporales, listaErrores);
+        //Buscar la funcion main    
+        funcionesG.forEach(function (element) {
+            if (element.nombrefuncion == "main") {
+                console.log("Se ejecutara");
+                element.traducir(entornoGlobal_2, ast_2, resultado3d, temporales, listaErrores);
+            }
+        });
+        traducirCompleto(resultado3d, temporales);
+    }
 };
 function reiniciarConsola() {
     var areaConsola = document.getElementById('consola');
@@ -72,7 +118,7 @@ function revisarStructsGlobales(instrucciones) {
     });
     return structs;
 }
-function generarEntornoGlobal(ast, structs) {
+function generarEntornoGlobal(ast, structs, listaErrores) {
     var entornoGlobal = new Entorno_1.Entorno(null);
     var instrucciones = ast.instrucciones;
     var declaracionesG = Array();
@@ -82,14 +128,14 @@ function generarEntornoGlobal(ast, structs) {
         }
     });
     declaracionesG.forEach(function (element) {
-        element.ejecutar(entornoGlobal, ast);
+        element.ejecutar(entornoGlobal, ast, listaErrores);
     });
     structs.forEach(function (element) {
-        element.ejecutar(entornoGlobal, ast);
+        element.ejecutar(entornoGlobal, ast, listaErrores);
     });
     return entornoGlobal;
 }
-function generarEntornoGlobalTraducir(ast, structs, resultado3D, temporales) {
+function generarEntornoGlobalTraducir(ast, structs, resultado3D, temporales, listaErrores) {
     var entornoGlobal = new Entorno_1.Entorno(null);
     var instrucciones = ast.instrucciones;
     var declaracionesG = Array();
@@ -99,10 +145,10 @@ function generarEntornoGlobalTraducir(ast, structs, resultado3D, temporales) {
         }
     });
     declaracionesG.forEach(function (element) {
-        element.traducir(entornoGlobal, ast, resultado3D, temporales);
+        element.traducir(entornoGlobal, ast, resultado3D, temporales, listaErrores);
     });
     structs.forEach(function (element) {
-        element.traducir(entornoGlobal, ast, resultado3D, temporales);
+        element.traducir(entornoGlobal, ast, resultado3D, temporales, listaErrores);
     });
     return entornoGlobal;
 }

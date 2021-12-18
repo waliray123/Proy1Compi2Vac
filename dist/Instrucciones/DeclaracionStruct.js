@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var Simbolo_1 = require("../AST/Simbolo");
 var Tipo_1 = require("../AST/Tipo");
 var FuncionReturn_1 = require("./FuncionReturn");
+var ErrorG_1 = require("../Objetos/ErrorG");
 // print("hola mundo");
 var DeclaracionStruct = /** @class */ (function () {
     function DeclaracionStruct(id, tipo, linea, columna, expresion) {
@@ -15,7 +16,7 @@ var DeclaracionStruct = /** @class */ (function () {
     DeclaracionStruct.prototype.traducir = function (ent, arbol) {
         throw new Error("Method not implemented.");
     };
-    DeclaracionStruct.prototype.ejecutar = function (ent, arbol) {
+    DeclaracionStruct.prototype.ejecutar = function (ent, arbol, listaErrores) {
         var _this = this;
         if (ent.existe(this.tipo)) {
             if (this.expresion instanceof FuncionReturn_1.FuncionReturn) { //evalua que se este haciendo una instancia de la estructura
@@ -33,7 +34,7 @@ var DeclaracionStruct = /** @class */ (function () {
                                 // console.log("--index---------" + index);
                                 // console.log(declaracion.tipo);
                                 // console.log(param.getTipo(ent,arbol));
-                                var tipoParam = param.getTipo(ent, arbol);
+                                var tipoParam = param.getTipo(ent, arbol, listaErrores);
                                 if (tipoParam == Tipo_1.Tipo.TIPO_STRUCT) {
                                     declaracion.expresion = param.valor;
                                 }
@@ -42,7 +43,8 @@ var DeclaracionStruct = /** @class */ (function () {
                                     declaracion.expresion = param;
                                 }
                                 else {
-                                    console.log('Error semantico, El parametro ' + param.getValorImplicito(ent, arbol) + ' no coincide con el tipo del atributo de la estructura en la linea ' + _this.linea + ' y columna ' + _this.columna);
+                                    // console.log('Error semantico, El parametro ' + param.getValorImplicito(ent, arbol)  + ' no coincide con el tipo del atributo de la estructura en la linea '+ this.linea + ' y columna ' + this.columna);
+                                    listaErrores.push(new ErrorG_1.ErrorG('semantico', 'El parametro ' + param.getValorImplicito(ent, arbol, listaErrores) + ' no coincide con el tipo del atributo de la estructura', _this.linea, _this.columna));
                                     error_1 = true;
                                 }
                             });
@@ -57,23 +59,28 @@ var DeclaracionStruct = /** @class */ (function () {
                             }
                         }
                         else {
-                            console.log('Error semantico, La cantidad de parametros no concuerdan con la estructura en la linea ' + this.linea + ' y columna ' + this.columna);
+                            // console.log('Error semantico, La cantidad de parametros no concuerdan con la estructura en la linea '+ this.linea + ' y columna ' + this.columna);
+                            listaErrores.push(new ErrorG_1.ErrorG('semantico', 'La cantidad de parametros no concuerdan con la estructura', this.linea, this.columna));
                         }
                     }
                     else {
-                        console.log('Error semantico, La variable ' + this.id + ' ya existe en el entorno, en la linea ' + this.linea + ' y columna ' + this.columna);
+                        // console.log('Error semantico, La variable '+ this.id +' ya existe en el entorno, en la linea '+ this.linea + ' y columna ' + this.columna)
+                        listaErrores.push(new ErrorG_1.ErrorG('semantico', 'La variable ' + this.id + ' ya existe en el entorno', this.linea, this.columna));
                     }
                 }
                 else {
-                    console.log('Error semantico, El tipo declarado no es un struct en la linea ' + this.linea + ' y columna ' + this.columna);
+                    // console.log('Error semantico, El tipo declarado no es un struct en la linea '+ this.linea + ' y columna ' + this.columna);
+                    listaErrores.push(new ErrorG_1.ErrorG('semantico', 'El tipo declarado no es un struct', this.linea, this.columna));
                 }
             }
             else {
-                console.log('Error semantico, no se esta inicializando la estructura en la linea ' + this.linea + ' y columna ' + this.columna);
+                // console.log('Error semantico, no se esta inicializando la estructura en la linea '+ this.linea + ' y columna ' + this.columna);
+                listaErrores.push(new ErrorG_1.ErrorG('semantico', 'no se esta inicializando la estructura', this.linea, this.columna));
             }
         }
         else {
-            console.log('Error semantico, no exite la Estructura ' + this.tipo + ' en la linea ' + this.linea + ' y columna ' + this.columna);
+            // console.log('Error semantico, no exite la Estructura '+ this.tipo+' en la linea '+ this.linea + ' y columna ' + this.columna);
+            listaErrores.push(new ErrorG_1.ErrorG('semantico', 'no exite la Estructura ' + this.tipo, this.linea, this.columna));
         }
     };
     DeclaracionStruct.prototype.getValDefault = function () {

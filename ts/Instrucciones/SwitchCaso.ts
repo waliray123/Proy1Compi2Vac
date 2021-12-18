@@ -3,6 +3,7 @@ import { AST } from "../AST/AST";
 import { Entorno } from "../AST/Entorno";
 import { Expresion } from "../Interfaces/Expresion";
 import { Instruccion } from "../Interfaces/Instruccion";
+import { ErrorG } from "../Objetos/ErrorG";
 import { Break } from "./Break";
 import { Declaracion } from "./Declaracion";
 
@@ -27,13 +28,13 @@ export class SwitchCaso implements Instruccion{
         throw new Error("Method not implemented.");
     }
 
-    ejecutar(ent: Entorno, arbol: AST) {
+    ejecutar(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
         for (var ints of this.lista_instrucciones){
             if (ints instanceof Break) {
                 this.isBreak = true;
                 break;
             }else{
-                ints.ejecutar(ent, arbol);
+                ints.ejecutar(ent, arbol,listaErrores);
             }            
         }
     }

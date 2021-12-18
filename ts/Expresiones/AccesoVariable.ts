@@ -7,6 +7,7 @@ import { Tipo } from "../AST/Tipo";
 import { Declaracion } from "../Instrucciones/Declaracion";
 import { Expresion } from "../Interfaces/Expresion";
 import { Arreglo } from "../Objetos/Arreglo";
+import { ErrorG } from "../Objetos/ErrorG";
 
 export class AccesoVariable implements Expresion {
     linea: number;
@@ -37,25 +38,26 @@ export class AccesoVariable implements Expresion {
         }
     }
 
-    getTipo(ent: Entorno, arbol: AST): Tipo {
+    getTipo(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>): Tipo {
         if (ent.existe(this.id)) {
-            let simbol: Simbolo = ent.getSimbolo(this.id);
-            return simbol.getTipo(ent, arbol);
-        } else {
-            console.log('No existe el id ' + this.id + ' no hay tipo');
+            let simbol:Simbolo = ent.getSimbolo(this.id);
+            return simbol.getTipo(ent,arbol);
+        }else{
+            // console.log('No existe el id ' + this.id + ' no hay tipo');
+            listaErrores.push(new ErrorG('semantico','no existe la variable ' + this.id,this.linea,this.columna));
         }
         return Tipo.NULL;
     }
 
-    getValorImplicito(ent: Entorno, arbol: AST) {
+    getValorImplicito(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
         if (ent.existe(this.id)) {
             let simbol: Simbolo = ent.getSimbolo(this.id);
             if (simbol.getTipo(ent, arbol) == Tipo.TIPO_STRUCT && this.isAlone) {
                 let sendResultado = simbol.getTipoStruct(ent, arbol) + '(';
                 let atributos: Array<Declaracion> = simbol.getValorImplicito(ent, arbol);
                 let i = 0;
-                atributos.forEach((atributo: Declaracion) => {
-                    sendResultado += atributo.expresion.getValorImplicito(ent, arbol)
+                atributos.forEach((atributo:Declaracion) =>{
+                    sendResultado += atributo.expresion.getValorImplicito(ent, arbol,listaErrores)
                     if (i == atributos.length - 1) {
                         sendResultado += ')';
                     } else {
@@ -69,8 +71,8 @@ export class AccesoVariable implements Expresion {
                 let valor: Arreglo = simbol.getValorImplicito(ent, arbol);
                 let exprs: Array<Expresion> = valor.contenido;
                 let i = 0;
-                exprs.forEach((expr: Expresion) => {
-                    sendResultado += expr.getValorImplicito(ent, arbol);
+                exprs.forEach((expr:Expresion)=>{
+                    sendResultado += expr.getValorImplicito(ent, arbol,listaErrores);
                     if (i == exprs.length - 1) {
                         sendResultado += ']';
                     } else {
@@ -82,9 +84,10 @@ export class AccesoVariable implements Expresion {
             }
             else {
                 return simbol.valor;
-            }
-        } else {
-            console.log('No existe el id ' + this.id);
+            }            
+        }else{
+            // console.log('No existe el id ' + this.id);
+            listaErrores.push(new ErrorG('semantico','no existe la variable ' + this.id,this.linea,this.columna));
         }
     }
 

@@ -5,6 +5,7 @@ import { Simbolo } from "../AST/Simbolo";
 import { Temporales } from "../AST/Temporales";
 import { Expresion } from "../Interfaces/Expresion";
 import { Instruccion } from "../Interfaces/Instruccion";
+import { ErrorG } from "../Objetos/ErrorG";
 
 export class If implements Instruccion {
     linea: number;
@@ -24,7 +25,7 @@ export class If implements Instruccion {
         this.tipo = tipo;
     }
 
-    traducir(ent: Entorno, arbol: AST,resultado3D:Resultado3D,temporales:Temporales) {
+    traducir(ent: Entorno, arbol: AST,resultado3D:Resultado3D,temporales:Temporales,listaErrores:Array<ErrorG>) {
         const entornolocal: Entorno = new Entorno(ent);
         let valAsign = this.condicion.traducir(entornolocal,arbol,resultado3D,temporales,0);
 
@@ -37,21 +38,21 @@ export class If implements Instruccion {
         resultado3D.codigo3D += '\tgoto L'+(ultLit+1)+';\n';
         resultado3D.codigo3D += '\tL'+ultLit+':\n';
         this.instrucciones.forEach((element: Instruccion) => {
-            element.traducir(entornolocal, arbol,resultado3D,temporales);
+            element.traducir(entornolocal, arbol,resultado3D,temporales,listaErrores);
         });
         resultado3D.codigo3D += '\tgoto L'+(ultLit+1+cantidadSinos)+';\n';
         
         let cont = ultLit+1;
         for(let i = cantidadSinos-1; i >= 0; i--){
             let sino = this.sinos[i];
-            sino.traducirSinos(ent,arbol,resultado3D,temporales,cont,(cantidadSinos+1));
+            sino.traducirSinos(ent,arbol,resultado3D,temporales,cont,(cantidadSinos+1),listaErrores);
             cont +=1;
         }        
         resultado3D.codigo3D += '\tL'+(ultLit+cantidadSinos+1)+':\n';
         temporales.ultLitEscr = ultLit+cantidadSinos+1;
     }
 
-    traducirSinos(ent: Entorno, arbol: AST,resultado3D:Resultado3D,temporales:Temporales,literalAsign:number,ultAsign:number){
+    traducirSinos(ent: Entorno, arbol: AST,resultado3D:Resultado3D,temporales:Temporales,literalAsign:number,ultAsign:number,listaErrores:Array<ErrorG>){
         if(this.tipo == "elseif"){
             const entornolocal: Entorno = new Entorno(ent);
             let valAsign = this.condicion.traducir(entornolocal,arbol,resultado3D,temporales,0);
@@ -59,40 +60,40 @@ export class If implements Instruccion {
             resultado3D.codigo3D += '\tgoto L'+(literalAsign+1)+';\n';
             resultado3D.codigo3D += '\tL'+literalAsign+':\n';
             this.instrucciones.forEach((element: Instruccion) => {
-                element.traducir(entornolocal, arbol,resultado3D,temporales);
+                element.traducir(entornolocal, arbol,resultado3D,temporales,listaErrores);
             });
             resultado3D.codigo3D += '\tgoto L'+ultAsign+';\n';
         }else{
             const entornolocal: Entorno = new Entorno(ent);       
             resultado3D.codigo3D += '\tL'+literalAsign+':\n';
             this.instrucciones.forEach((element: Instruccion) => {
-                element.traducir(entornolocal, arbol,resultado3D,temporales);
+                element.traducir(entornolocal, arbol,resultado3D,temporales,listaErrores);
             });
             resultado3D.codigo3D += '\tgoto L'+ultAsign+';\n';
         }
     }
 
-    ejecutar(ent: Entorno, arbol: AST) {
+    ejecutar(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
         console.log('ejecutado...ifnormal');
 
 
         //Revisar la condicion del if
         if(this.tipo == "if" || this.tipo == "elseif"){
-            if (this.condicion.getValorImplicito(ent, arbol) == true) {
+            if (this.condicion.getValorImplicito(ent, arbol,listaErrores) == true) {
                 const entornolocal: Entorno = new Entorno(ent);
 
                 this.instrucciones.forEach((element: Instruccion) => {
-                    element.ejecutar(entornolocal, arbol);
+                    element.ejecutar(entornolocal, arbol,listaErrores);
                 })
             } else {
                 let seEncontro = false;
                 for(let i = 0; i < this.sinos.length; i++){
                     let element = this.sinos[i];
                     if(element.tipo == "elseif"){
-                        if(element.condicion.getValorImplicito(ent,arbol) == true){
+                        if(element.condicion.getValorImplicito(ent,arbol,listaErrores) == true){
                             //Se encontro un elseif que cumple con la condicion
                             const entornolocal: Entorno = new Entorno(ent);
-                            element.ejecutar(entornolocal,arbol)
+                            element.ejecutar(entornolocal,arbol,listaErrores)
                             seEncontro = true;
                             break;
                         }    
@@ -104,7 +105,7 @@ export class If implements Instruccion {
                         if(element.tipo == "else"){
                             //Se encontro un else  
                             const entornolocal: Entorno = new Entorno(ent);
-                            element.ejecutar(entornolocal,arbol)
+                            element.ejecutar(entornolocal,arbol,listaErrores)
                             break;
                         }                    
                     }
@@ -114,7 +115,7 @@ export class If implements Instruccion {
             const entornolocal: Entorno = new Entorno(ent);
 
             this.instrucciones.forEach((element: Instruccion) => {
-                    element.ejecutar(entornolocal, arbol);
+                    element.ejecutar(entornolocal, arbol,listaErrores);
             });
         }
     }

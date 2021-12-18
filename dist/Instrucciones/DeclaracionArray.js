@@ -4,6 +4,7 @@ var Simbolo_1 = require("../AST/Simbolo");
 var Tipo_1 = require("../AST/Tipo");
 var AccesoArray_1 = require("../Expresiones/AccesoArray");
 var Arreglo_1 = require("../Objetos/Arreglo");
+var ErrorG_1 = require("../Objetos/ErrorG");
 // print("hola mundo");
 var DeclaracionArray = /** @class */ (function () {
     function DeclaracionArray(id, tipo, dimensiones, linea, columna, expresion) {
@@ -17,7 +18,7 @@ var DeclaracionArray = /** @class */ (function () {
     DeclaracionArray.prototype.traducir = function (ent, arbol) {
         throw new Error("Method not implemented.");
     };
-    DeclaracionArray.prototype.ejecutar = function (ent, arbol) {
+    DeclaracionArray.prototype.ejecutar = function (ent, arbol, listaErrores) {
         var _this = this;
         // console.log('ejecutado...'+ this.id);
         this.id.forEach(function (id) {
@@ -30,18 +31,19 @@ var DeclaracionArray = /** @class */ (function () {
                     }
                     else {
                         if (_this.expresion instanceof AccesoArray_1.AccesoArray) {
-                            var valor = _this.expresion.getValorImplicito(ent, arbol);
+                            var valor = _this.expresion.getValorImplicito(ent, arbol, listaErrores);
                             if (valor == null) {
                                 valor = [];
                             }
                             var valorSimbolo = new Arreglo_1.Arreglo(_this.tipo, valor.length, valor.length, valor, _this.linea, _this.columna);
-                            if (valorSimbolo.comprobarTipo(ent, arbol)) {
+                            if (valorSimbolo.comprobarTipo(ent, arbol, listaErrores)) {
                                 var simbol = new Simbolo_1.Simbolo(Tipo_1.Tipo.ARRAY, id, _this.linea, _this.columna, valorSimbolo);
                                 ent.agregar(id, simbol);
                             }
                         }
                         else {
-                            console.log('Error semantico, la asignacion no es un arreglo de datos en la linea ' + _this.linea + ' y columna ' + _this.columna);
+                            //    console.log('Error semantico, la asignacion no es un arreglo de datos en la linea '+ this.linea + ' y columna ' + this.columna); 
+                            listaErrores.push(new ErrorG_1.ErrorG('semantico', 'la asignacion no es un arreglo de datos', _this.linea, _this.columna));
                         }
                     }
                 }
@@ -53,38 +55,43 @@ var DeclaracionArray = /** @class */ (function () {
                     }
                     else {
                         if (_this.expresion instanceof AccesoArray_1.AccesoArray) {
-                            var valor = _this.expresion.getValorImplicito(ent, arbol);
+                            var valor = _this.expresion.getValorImplicito(ent, arbol, listaErrores);
                             if (valor == null) {
                                 valor = [];
                             }
-                            var dim = _this.dimensiones[0].getValorImplicito(ent, arbol);
+                            var dim = _this.dimensiones[0].getValorImplicito(ent, arbol, listaErrores);
                             if (typeof (dim) === 'number') {
                                 if (dim === valor.length) {
                                     var valorSimbolo = new Arreglo_1.Arreglo(_this.tipo, valor.length, valor.length, valor, _this.linea, _this.columna);
-                                    if (valorSimbolo.comprobarTipo(ent, arbol)) {
+                                    if (valorSimbolo.comprobarTipo(ent, arbol, listaErrores)) {
                                         var simbol = new Simbolo_1.Simbolo(Tipo_1.Tipo.ARRAY, id, _this.linea, _this.columna, valorSimbolo);
                                         ent.agregar(id, simbol);
                                     }
                                 }
                                 else {
                                     //no tienen las mismas dimensiones
+                                    listaErrores.push(new ErrorG_1.ErrorG('semantico', 'las dimesiones declaradas no es lo mismo al contenido', _this.linea, _this.columna));
                                 }
                             }
                             else {
                                 //la dimension no es un numero
+                                listaErrores.push(new ErrorG_1.ErrorG('semantico', 'la diemnsion declarada no es un numero', _this.linea, _this.columna));
                             }
                         }
                         else {
-                            console.log('Error semantico, la asignacion no es un arreglo de datos en la linea ' + _this.linea + ' y columna ' + _this.columna);
+                            //    console.log('Error semantico, la asignacion no es un arreglo de datos en la linea '+ this.linea + ' y columna ' + this.columna); 
+                            listaErrores.push(new ErrorG_1.ErrorG('semantico', 'la asignacion no es un arreglo de datos', _this.linea, _this.columna));
                         }
                     }
                 }
                 else {
-                    console.log('error semantico, dimension de la declaracion del arreglo no conocido, en la linea ' + _this.linea + ' y columna ' + _this.columna);
+                    // console.log('error semantico, dimension de la declaracion del arreglo no conocido, en la linea '+ this.linea + ' y columna ' + this.columna);
+                    listaErrores.push(new ErrorG_1.ErrorG('semantico', 'dimension de la declaracion del arreglo no es una expresion conocida', _this.linea, _this.columna));
                 }
             }
             else {
-                console.log('Error semantico, ya existe el id: ' + id + ' en la linea ' + _this.linea + ' y columna ' + _this.columna);
+                // console.log('Error semantico, ya existe el id: '+ id + ' en la linea '+ this.linea + ' y columna ' + this.columna);
+                listaErrores.push(new ErrorG_1.ErrorG('semantico', 'ya existe el id: ' + id, _this.linea, _this.columna));
             }
         });
     };

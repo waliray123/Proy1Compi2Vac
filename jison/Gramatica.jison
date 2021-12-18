@@ -177,15 +177,26 @@ BSL               "\\".
     const {Pop} = require("../dist/Instrucciones/Pop");
     const {OperacionCadena, OperadorCadena} = require("../dist/Expresiones/OperacionCadena");
     const {OperadorNativa, OperacionNativa} = require("../dist/Expresiones/OperacionNativa");
+    const {ErrorG} = require("../dist/Objetos/ErrorG");
 
     /*---CODIGO INCRUSTADO---*/
-    var errores = [
-        "Se esperaba una instruccion como : "
-    ];
+    var errores = [];
+    var elementos = [];
 
-    function genError(desc,linea,columna,val){
-        //let errorCom = new ErrorCom("Sintactico",linea,columna,errores[desc],val);
-        return errorCom;
+    function genError(desc,linea,columna){
+        let erro =  new ErrorG('sintactico',desc,linea,columna);
+        errores.push(erro);
+    }
+
+    function reiniciarArrays(instrucciones){
+        var elemento = {'id':'instrucciones','cont':instrucciones};
+        var elemento1 = {'id':'listaErrores','cont':errores};
+        elementos.push(elemento);
+        elementos.push(elemento1);
+        var aux = elementos;
+        elementos = [];
+        errores = [];
+        return aux;
     }
 %}
 
@@ -207,7 +218,7 @@ BSL               "\\".
 
 ini 
     : EOF                   {console.log("EOF encontrado");return [];}    
-    | instrucciones EOF     {$$ = $1;return $$;}
+    | instrucciones EOF     {$$ = $1;return reiniciarArrays($$);}
 ;
 
 
@@ -220,16 +231,17 @@ instruccion
     : declaracion_bloque    {$$ = $1;}        
     | asignacion_funcion    {$$ = $1;}
     | struct_declaracion    {$$ = $1;}
-    | error                 {}
 ;
 
 struct_declaracion 
     : STR_STRUCT ID_VAR cuerpo_struct {$$ = new Struct($2,$3,@1.first_line,@1.first_column); }
+    | error cuerpo_struct                 {genError(yytext,@1.first_line,@1.first_column);}
 ;
 
 cuerpo_struct 
     : BRACKI BRACKD PUNTCOMA      {$$ = []; }
     | BRACKI contenido_struct BRACKD PUNTCOMA {$$ = $2;}
+    | error                 {genError(yytext,@1.first_line,@1.first_column);}
 ;
 
 contenido_struct 
@@ -240,6 +252,7 @@ contenido_struct
 declaracion_struct
     : tiposVar ID_VAR       {$$ = new Declaracion($2,$1,@1.first_line,@1.first_column,null);}
     | ID_VAR ID_VAR         {$$ = new Declaracion($2,$1,@1.first_line,@1.first_column,null);}
+    | error                 {genError(yytext,@1.first_line,@1.first_column);}
 ;
 
 asignacion_funcion
@@ -255,6 +268,7 @@ parametros_funcion
 
 parametro_funcion
     : tiposVar ID_VAR {$$ = new Parametro($2,$1,@1.first_line,@1.first_column);}
+    | error                 {genError(yytext,@1.first_line,@1.first_column);}
 ;
 
 parametros_funcion_return
@@ -270,6 +284,7 @@ parametro_funcion_return
 cuerpoFuncion
     : BRACKI instrucciones_funciones BRACKD {$$ = $2;}
     | BRACKI BRACKD {$$ = null;}
+    | error                 {genError(yytext,@1.first_line,@1.first_column);}
 ;
 
 instrucciones_funciones
@@ -295,6 +310,7 @@ instruccion_funcion
     | funcion_return        {$$ = $1;}  
     | incremento_decremento {$$ = $1;}
     | funciones_arreglo     {$$ = $1;}
+    | error PUNTCOMA                 {genError(yytext,@1.first_line,@1.first_column);}
 ;
 
 funciones_arreglo
@@ -321,7 +337,7 @@ funcion_return
 
 switch_bloque
     : STR_SWITCH PARI expresion PARD switch_cuerpo      {$$ = new Switch($3,$5,@1.first_line,@1.first_column);}
-    |error
+    | error                 {genError(yytext,@1.first_line,@1.first_column);}
 ;
  
 switch_cuerpo
@@ -333,6 +349,7 @@ switch_cuerpo
             }
             $$ = $2;
         }
+    | error                 {genError(yytext,@1.first_line,@1.first_column);}
 ;
 
 casos_switch
@@ -393,6 +410,7 @@ asignacion_bloque
 print_bloque
     : PRINT PARI expresion PARD PUNTCOMA        {$$ = new Print($3,@1.first_line,@1.first_column,false);}
     | PRINTLN PARI expresion PARD PUNTCOMA      {$$ = new Print($3,@1.first_line,@1.first_column,true);}
+    | error PARD                {genError(yytext,@1.first_line,@1.first_column);}
 ;
 
 if_bloque //linea:number, columna:number,condicion:Expresion,instrucciones:Array<Instruccion>,sinos:Array<If>
@@ -450,6 +468,7 @@ arr_begin_end
     | ID_VAR CORCHI STR_BEGIN DOSPUNT expresion CORCHD  {let beg = new Primitivo("begin", @1.first_line, @1.first_column); $$ = new ArrbegEnd($1,@1.first_line,@1.first_column,beg,$5);}
     | ID_VAR CORCHI STR_BEGIN DOSPUNT STR_END CORCHD    {let beg1 = new Primitivo("begin", @1.first_line, @1.first_column); let end1 = new Primitivo("end", @1.first_line, @1.first_column); $$ = new ArrbegEnd($1,@1.first_line,@1.first_column,beg1,end1);}
     | ID_VAR CORCHI expresion DOSPUNT STR_END CORCHD    {let beg2 = new Primitivo("end", @1.first_line, @1.first_column); $$ = new ArrbegEnd($1,@1.first_line,@1.first_column,$3,beg2);}
+    | error DOSPUNT                {genError(yytext,@1.first_line,@1.first_column);}
 ;
 
 
@@ -464,6 +483,7 @@ tiposVar
 nombreVars 
     : ID_VAR {$$ = [$1];}
     | nombreVars COMA ID_VAR  { $1.push($3);$$ = $1;}
+    | error                 {genError(yytext,@1.first_line,@1.first_column);}
 ;
 
 nombreAtributos
@@ -480,6 +500,7 @@ nombreAtributos_prima
 
 asignacion
     : OP_IGUAL expresion {$$ = $2;}
+    | error                 {genError(yytext,@1.first_line,@1.first_column);}
 ;
 
 expresion
@@ -493,6 +514,7 @@ expresion
     | expresion_arr_arreglo     {$$ = $1;}
     | expresion_atributos       {$$ = $1;}
     | otras_nativas             {$$ = $1;}
+    | error                 {genError(yytext,@1.first_line,@1.first_column);}
 ;
 
 expresion_arr_arreglo
