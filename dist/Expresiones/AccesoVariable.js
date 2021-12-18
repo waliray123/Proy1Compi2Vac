@@ -17,6 +17,7 @@ var AccesoVariable = /** @class */ (function () {
             resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
             var valR = 't' + temporales.ultimoTemp;
             temporales.ultimoTemp += 1;
+            temporales.ultimoTipo = this.getTipo(ent, arbol, []);
             return valR;
         }
         else {

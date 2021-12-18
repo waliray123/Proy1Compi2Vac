@@ -10,6 +10,7 @@ var Primitivo = /** @class */ (function () {
     Primitivo.prototype.traducir = function (ent, arbol, resultado3d, temporales) {
         console.log("Traduciendo Primitivo");
         var tipo = this.getTipo(ent, arbol, []);
+        temporales.ultimoTipo = tipo;
         if (tipo != Tipo_1.Tipo.STRING) {
             return this.valor;
         }
@@ -23,7 +24,7 @@ var Primitivo = /** @class */ (function () {
                 resultado3d.codigo3D += '\tH = H + 1;\n';
                 console.log(valLet);
             }
-            resultado3d.codigo3D += '\theap[(int)H] = -1\n';
+            resultado3d.codigo3D += '\theap[(int)H] = -1;\n';
             resultado3d.codigo3D += '\tH = H + 1;\n';
             return 't' + temporales.ultimoTemp;
         }

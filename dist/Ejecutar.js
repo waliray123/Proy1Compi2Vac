@@ -4,6 +4,7 @@ var AST_1 = require("./AST/AST");
 var Entorno_1 = require("./AST/Entorno");
 var Resultado3D_1 = require("./AST/Resultado3D");
 var Temporales_1 = require("./AST/Temporales");
+var GenerarNativas_1 = require("./AST/GenerarNativas");
 var gramatica = require('../jison/Gramatica');
 window.ejecutarCodigo = function (entrada) {
     //Reiniciar consola
@@ -156,6 +157,9 @@ function traducirCompleto(resultado3D, temporales) {
     //Traer el codigo en 3D    
     //Ingresar encabezado
     var encabezado = '#include <stdio.h> \n#include <math.h> \ndouble heap[30101999]; \ndouble stack[30101999]; \ndouble P; \ndouble H;\n';
+    //Generar las funciones nativas
+    var generador = new GenerarNativas_1.GenerarNativas();
+    var nativas = generador.generar(temporales);
     //Inicializar todos los temporales
     var codTemporales = '';
     for (var i = 0; i <= temporales.ultimoTemp; i++) {
@@ -170,7 +174,6 @@ function traducirCompleto(resultado3D, temporales) {
         }
     }
     encabezado += codTemporales;
-    //Generar las funciones nativas
     //Generar el proceso main
     var procMain = '\nvoid main() { \n\tP = 0; \n\tH = 0;\n';
     //Agregar el resultado 3D en el main
@@ -178,7 +181,7 @@ function traducirCompleto(resultado3D, temporales) {
     //Cerrar     
     procMain += '\n\treturn; \n }';
     //Mostrar en el text area
-    var resultado = encabezado + procMain;
+    var resultado = encabezado + nativas + procMain;
     var areaTraduccion = document.getElementById('traduccion');
     areaTraduccion.value = resultado;
 }

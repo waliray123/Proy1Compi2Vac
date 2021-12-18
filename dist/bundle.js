@@ -335,6 +335,7 @@ var AccesoVariable = /** @class */ (function () {
             resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
             var valR = 't' + temporales.ultimoTemp;
             temporales.ultimoTemp += 1;
+            temporales.ultimoTipo = this.getTipo(ent, arbol, []);
             return valR;
         }
         else {
@@ -1230,6 +1231,7 @@ var Primitivo = /** @class */ (function () {
     Primitivo.prototype.traducir = function (ent, arbol, resultado3d, temporales) {
         console.log("Traduciendo Primitivo");
         var tipo = this.getTipo(ent, arbol, []);
+        temporales.ultimoTipo = tipo;
         if (tipo != Tipo_1.Tipo.STRING) {
             return this.valor;
         }
@@ -1243,7 +1245,7 @@ var Primitivo = /** @class */ (function () {
                 resultado3d.codigo3D += '\tH = H + 1;\n';
                 console.log(valLet);
             }
-            resultado3d.codigo3D += '\theap[(int)H] = -1\n';
+            resultado3d.codigo3D += '\theap[(int)H] = -1;\n';
             resultado3d.codigo3D += '\tH = H + 1;\n';
             return 't' + temporales.ultimoTemp;
         }
@@ -2353,6 +2355,7 @@ exports.Pop = Pop;
 },{"../AST/Tipo":3,"../Objetos/ErrorG":40}],33:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var Tipo_1 = require("../AST/Tipo");
 var ErrorG_1 = require("../Objetos/ErrorG");
 // print("hola mundo");
 var Print = /** @class */ (function () {
@@ -2362,8 +2365,29 @@ var Print = /** @class */ (function () {
         this.columna = columna;
         this.haysalto = haysalto;
     }
-    Print.prototype.traducir = function (ent, arbol) {
-        throw new Error("Method not implemented.");
+    Print.prototype.traducir = function (ent, arbol, resultado3d, temporales) {
+        var valAsign = this.expresion.traducir(ent, arbol, resultado3d, temporales, 0);
+        if (temporales.ultimoTipo != Tipo_1.Tipo.STRING) {
+            var parseo = '\"%f\"';
+            var parseo2 = '(double)';
+            resultado3d.codigo3D += '\tprintf(' + parseo + ' , ' + parseo2 + valAsign + ');\n';
+            if (this.haysalto) {
+                resultado3d.codigo3D += '\tprintf("%c", (char)10);\n';
+            }
+        }
+        else {
+            temporales.ultimoTemp += 1;
+            resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + ' = P + ' + (temporales.ultstack + 1) + ';\n';
+            resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + ' = t' + temporales.ultimoTemp + ' + 1;\n';
+            resultado3d.codigo3D += '\tstack[(int)t' + temporales.ultimoTemp + '] = ' + valAsign + ';\n';
+            resultado3d.codigo3D += '\tP = P + ' + (temporales.ultstack + 1) + ';\n';
+            resultado3d.codigo3D += '\tprintString();\n';
+            resultado3d.codigo3D += '\tP = P - ' + (temporales.ultstack + 1) + ';\n';
+            if (this.haysalto) {
+                resultado3d.codigo3D += '\tprintf("%c", (char)10);\n';
+            }
+            temporales.usoPrintStrings = true;
+        }
     };
     Print.prototype.ejecutar = function (ent, arbol, listaErrores) {
         var valor = this.expresion.getValorImplicito(ent, arbol, listaErrores);
@@ -2386,7 +2410,7 @@ var Print = /** @class */ (function () {
 }());
 exports.Print = Print;
 
-},{"../Objetos/ErrorG":40}],34:[function(require,module,exports){
+},{"../AST/Tipo":3,"../Objetos/ErrorG":40}],34:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Tipo_1 = require("../AST/Tipo");
@@ -3957,7 +3981,7 @@ if (typeof module !== 'undefined' && require.main === module) {
 }
 }
 }).call(this)}).call(this,require('_process'))
-},{"../dist/AST/Tipo":3,"../dist/Expresiones/AccesoArray":4,"../dist/Expresiones/AccesoAtribArray":5,"../dist/Expresiones/AccesoAtributo":6,"../dist/Expresiones/AccesoVariable":7,"../dist/Expresiones/ArrbegEnd":8,"../dist/Expresiones/Atributo":9,"../dist/Expresiones/Objeto":10,"../dist/Expresiones/Operacion":11,"../dist/Expresiones/OperacionCadena":12,"../dist/Expresiones/OperacionNativa":13,"../dist/Expresiones/ParametroReturn":14,"../dist/Expresiones/Primitivo":15,"../dist/Expresiones/Ternario":16,"../dist/Instrucciones/Asignacion":17,"../dist/Instrucciones/AsignacionArray":18,"../dist/Instrucciones/Break":19,"../dist/Instrucciones/Continue":20,"../dist/Instrucciones/Declaracion":21,"../dist/Instrucciones/DeclaracionArray":22,"../dist/Instrucciones/DeclaracionStruct":23,"../dist/Instrucciones/DoWhile":24,"../dist/Instrucciones/For":25,"../dist/Instrucciones/Forin":26,"../dist/Instrucciones/Funcion":27,"../dist/Instrucciones/FuncionReturn":28,"../dist/Instrucciones/If":29,"../dist/Instrucciones/IncrDecr":30,"../dist/Instrucciones/Parametro":31,"../dist/Instrucciones/Pop":32,"../dist/Instrucciones/Print":33,"../dist/Instrucciones/Push":34,"../dist/Instrucciones/Struct":35,"../dist/Instrucciones/Switch":36,"../dist/Instrucciones/SwitchCaso":37,"../dist/Instrucciones/While":38,"../dist/Objetos/ErrorG":40,"_process":50,"fs":48,"path":49}],42:[function(require,module,exports){
+},{"../dist/AST/Tipo":3,"../dist/Expresiones/AccesoArray":4,"../dist/Expresiones/AccesoAtribArray":5,"../dist/Expresiones/AccesoAtributo":6,"../dist/Expresiones/AccesoVariable":7,"../dist/Expresiones/ArrbegEnd":8,"../dist/Expresiones/Atributo":9,"../dist/Expresiones/Objeto":10,"../dist/Expresiones/Operacion":11,"../dist/Expresiones/OperacionCadena":12,"../dist/Expresiones/OperacionNativa":13,"../dist/Expresiones/ParametroReturn":14,"../dist/Expresiones/Primitivo":15,"../dist/Expresiones/Ternario":16,"../dist/Instrucciones/Asignacion":17,"../dist/Instrucciones/AsignacionArray":18,"../dist/Instrucciones/Break":19,"../dist/Instrucciones/Continue":20,"../dist/Instrucciones/Declaracion":21,"../dist/Instrucciones/DeclaracionArray":22,"../dist/Instrucciones/DeclaracionStruct":23,"../dist/Instrucciones/DoWhile":24,"../dist/Instrucciones/For":25,"../dist/Instrucciones/Forin":26,"../dist/Instrucciones/Funcion":27,"../dist/Instrucciones/FuncionReturn":28,"../dist/Instrucciones/If":29,"../dist/Instrucciones/IncrDecr":30,"../dist/Instrucciones/Parametro":31,"../dist/Instrucciones/Pop":32,"../dist/Instrucciones/Print":33,"../dist/Instrucciones/Push":34,"../dist/Instrucciones/Struct":35,"../dist/Instrucciones/Switch":36,"../dist/Instrucciones/SwitchCaso":37,"../dist/Instrucciones/While":38,"../dist/Objetos/ErrorG":40,"_process":51,"fs":49,"path":50}],42:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AST = void 0;
@@ -4068,7 +4092,40 @@ var Entorno = /** @class */ (function () {
 }());
 exports.Entorno = Entorno;
 
-},{"./Tipo":46}],44:[function(require,module,exports){
+},{"./Tipo":47}],44:[function(require,module,exports){
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.GenerarNativas = void 0;
+var GenerarNativas = /** @class */ (function () {
+    function GenerarNativas() {
+    }
+    GenerarNativas.prototype.generar = function (temporales) {
+        var resultado = '';
+        if (temporales.usoPrintStrings) {
+            resultado += 'void printString()\{\n';
+            temporales.ultimoTemp += 1;
+            resultado += '\tt' + temporales.ultimoTemp + '= P + 1;\n';
+            temporales.ultimoTemp += 1;
+            resultado += '\tt' + temporales.ultimoTemp + '= stack[(int)t' + (temporales.ultimoTemp - 1) + '];\n';
+            temporales.ultLiteral += 1;
+            resultado += '\tL' + temporales.ultLiteral + ':\n';
+            temporales.ultimoTemp += 1;
+            resultado += '\tt' + temporales.ultimoTemp + '= heap[(int)t' + (temporales.ultimoTemp - 1) + '];\n';
+            temporales.ultLiteral += 1;
+            resultado += '\tif (t' + temporales.ultimoTemp + '==-1) goto L' + temporales.ultLiteral + ';\n';
+            resultado += '\tprintf("%c", (char)t' + temporales.ultimoTemp + ');\n';
+            resultado += '\tt' + (temporales.ultimoTemp - 1) + '= t' + (temporales.ultimoTemp - 1) + '+1;\n';
+            resultado += '\tgoto L' + (temporales.ultLiteral - 1) + ';\n';
+            resultado += '\tL' + (temporales.ultLiteral) + ':\n';
+            resultado += '\treturn; \n\}\n';
+        }
+        return resultado;
+    };
+    return GenerarNativas;
+}());
+exports.GenerarNativas = GenerarNativas;
+
+},{}],45:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Resultado3D = void 0;
@@ -4083,10 +4140,11 @@ var Resultado3D = /** @class */ (function () {
 }());
 exports.Resultado3D = Resultado3D;
 
-},{}],45:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Temporales = void 0;
+var Tipo_1 = require("./Tipo");
 var Temporales = /** @class */ (function () {
     function Temporales() {
         this.ultimoTemp = 0;
@@ -4096,12 +4154,13 @@ var Temporales = /** @class */ (function () {
         this.ultLitEscr = 0;
         this.usoConcatStrings = false;
         this.usoPrintStrings = false;
+        this.ultimoTipo = Tipo_1.Tipo.NULL;
     }
     return Temporales;
 }());
 exports.Temporales = Temporales;
 
-},{}],46:[function(require,module,exports){
+},{"./Tipo":47}],47:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Tipo = void 0;
@@ -4120,13 +4179,14 @@ var Tipo;
     Tipo[Tipo["TIPO_STRUCT"] = 10] = "TIPO_STRUCT";
 })(Tipo = exports.Tipo || (exports.Tipo = {}));
 
-},{}],47:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var AST_1 = require("./AST/AST");
 var Entorno_1 = require("./AST/Entorno");
 var Resultado3D_1 = require("./AST/Resultado3D");
 var Temporales_1 = require("./AST/Temporales");
+var GenerarNativas_1 = require("./AST/GenerarNativas");
 var gramatica = require('../jison/Gramatica');
 window.ejecutarCodigo = function (entrada) {
     //Reiniciar consola
@@ -4279,6 +4339,9 @@ function traducirCompleto(resultado3D, temporales) {
     //Traer el codigo en 3D    
     //Ingresar encabezado
     var encabezado = '#include <stdio.h> \n#include <math.h> \ndouble heap[30101999]; \ndouble stack[30101999]; \ndouble P; \ndouble H;\n';
+    //Generar las funciones nativas
+    var generador = new GenerarNativas_1.GenerarNativas();
+    var nativas = generador.generar(temporales);
     //Inicializar todos los temporales
     var codTemporales = '';
     for (var i = 0; i <= temporales.ultimoTemp; i++) {
@@ -4293,7 +4356,6 @@ function traducirCompleto(resultado3D, temporales) {
         }
     }
     encabezado += codTemporales;
-    //Generar las funciones nativas
     //Generar el proceso main
     var procMain = '\nvoid main() { \n\tP = 0; \n\tH = 0;\n';
     //Agregar el resultado 3D en el main
@@ -4301,14 +4363,14 @@ function traducirCompleto(resultado3D, temporales) {
     //Cerrar     
     procMain += '\n\treturn; \n }';
     //Mostrar en el text area
-    var resultado = encabezado + procMain;
+    var resultado = encabezado + nativas + procMain;
     var areaTraduccion = document.getElementById('traduccion');
     areaTraduccion.value = resultado;
 }
 
-},{"../jison/Gramatica":41,"./AST/AST":42,"./AST/Entorno":43,"./AST/Resultado3D":44,"./AST/Temporales":45}],48:[function(require,module,exports){
+},{"../jison/Gramatica":41,"./AST/AST":42,"./AST/Entorno":43,"./AST/GenerarNativas":44,"./AST/Resultado3D":45,"./AST/Temporales":46}],49:[function(require,module,exports){
 
-},{}],49:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 (function (process){(function (){
 // 'path' module extracted from Node.js v8.11.1 (only the posix part)
 // transplited with Babel
@@ -4841,7 +4903,7 @@ posix.posix = posix;
 module.exports = posix;
 
 }).call(this)}).call(this,require('_process'))
-},{"_process":50}],50:[function(require,module,exports){
+},{"_process":51}],51:[function(require,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -5027,4 +5089,4 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}]},{},[47]);
+},{}]},{},[48]);

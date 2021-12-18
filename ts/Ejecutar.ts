@@ -7,6 +7,7 @@ import { Declaracion } from "./Instrucciones/Declaracion";
 import { Resultado3D } from "./AST/Resultado3D";
 import { Temporales } from "./AST/Temporales";
 import { ErrorG } from "./Objetos/ErrorG";
+import { GenerarNativas } from "./AST/GenerarNativas";
 
 const gramatica = require('../jison/Gramatica');
 
@@ -203,8 +204,13 @@ function traducirCompleto(resultado3D:Resultado3D,temporales:Temporales){
 
     let encabezado = '#include <stdio.h> \n#include <math.h> \ndouble heap[30101999]; \ndouble stack[30101999]; \ndouble P; \ndouble H;\n';
     
-    //Inicializar todos los temporales
+    
 
+    //Generar las funciones nativas
+    let generador =  new GenerarNativas();
+    let nativas = generador.generar(temporales);
+
+    //Inicializar todos los temporales
     let codTemporales = '';
     for(let i = 0; i <= temporales.ultimoTemp;i++){
         if(i == 0){
@@ -219,9 +225,6 @@ function traducirCompleto(resultado3D:Resultado3D,temporales:Temporales){
     }
 
     encabezado += codTemporales;
-
-    //Generar las funciones nativas
-
     //Generar el proceso main
 
     let procMain = '\nvoid main() { \n\tP = 0; \n\tH = 0;\n';
@@ -236,7 +239,7 @@ function traducirCompleto(resultado3D:Resultado3D,temporales:Temporales){
 
     //Mostrar en el text area
 
-    let resultado = encabezado + procMain
+    let resultado = encabezado + nativas + procMain;
 
     const areaTraduccion = document.getElementById('traduccion') as HTMLTextAreaElement;
     areaTraduccion.value = resultado;

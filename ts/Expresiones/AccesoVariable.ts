@@ -32,6 +32,7 @@ export class AccesoVariable implements Expresion {
             resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
             let valR = 't' + temporales.ultimoTemp;
             temporales.ultimoTemp += 1;
+            temporales.ultimoTipo = this.getTipo(ent,arbol,[]);
             return valR;
         } else {
             console.log('No existe el id ' + this.id + ' no hay tipo');

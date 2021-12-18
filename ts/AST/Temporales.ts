@@ -1,3 +1,4 @@
+import { Tipo } from "./Tipo";
 
 
 export class Temporales{
@@ -9,6 +10,7 @@ export class Temporales{
     public ultLitEscr:number;
     public usoConcatStrings:boolean;
     public usoPrintStrings:boolean;
+    public ultimoTipo : Tipo;
     
 
     constructor(){
@@ -19,6 +21,7 @@ export class Temporales{
         this.ultLitEscr = 0;
         this.usoConcatStrings = false;
         this.usoPrintStrings = false;
+        this.ultimoTipo = Tipo.NULL;
     }        
 
 }

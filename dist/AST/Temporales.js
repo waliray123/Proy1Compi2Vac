@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var Tipo_1 = require("./Tipo");
 var Temporales = /** @class */ (function () {
     function Temporales() {
         this.ultimoTemp = 0;
@@ -9,6 +10,7 @@ var Temporales = /** @class */ (function () {
         this.ultLitEscr = 0;
         this.usoConcatStrings = false;
         this.usoPrintStrings = false;
+        this.ultimoTipo = Tipo_1.Tipo.NULL;
     }
     return Temporales;
 }());

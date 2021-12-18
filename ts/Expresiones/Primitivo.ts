@@ -21,8 +21,8 @@ export class Primitivo implements Expresion {
         console.log("Traduciendo Primitivo");
         
         let tipo = this.getTipo(ent,arbol,[]);
-
-        if(tipo != Tipo.STRING){
+        temporales.ultimoTipo = tipo;
+        if(tipo != Tipo.STRING){            
             return this.valor;
         }else{
             temporales.ultimoTemp += 1;

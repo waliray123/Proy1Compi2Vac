@@ -1,5 +1,8 @@
 import { AST } from "../AST/AST";
 import { Entorno } from "../AST/Entorno";
+import { Resultado3D } from "../AST/Resultado3D";
+import { Temporales } from "../AST/Temporales";
+import { Tipo } from "../AST/Tipo";
 import { Expresion } from "../Interfaces/Expresion";
 import { Instruccion } from "../Interfaces/Instruccion";
 import { ErrorG } from "../Objetos/ErrorG";
@@ -19,8 +22,29 @@ export class Print implements Instruccion{
         this.haysalto = haysalto;
     }
 
-    traducir(ent: Entorno, arbol: AST) {
-        throw new Error("Method not implemented.");
+    traducir(ent: Entorno, arbol: AST,resultado3d:Resultado3D,temporales:Temporales) {
+        let valAsign = this.expresion.traducir(ent,arbol,resultado3d,temporales,0);
+
+        if(temporales.ultimoTipo != Tipo.STRING){            
+            let parseo = '\"%f\"';
+            let parseo2 = '(double)';            
+            resultado3d.codigo3D += '\tprintf('+parseo + ' , '+parseo2+valAsign+');\n';
+            if(this.haysalto){
+                resultado3d.codigo3D += '\tprintf("%c", (char)10);\n';
+            }
+        }else{            
+            temporales.ultimoTemp += 1;
+            resultado3d.codigo3D += '\tt'+temporales.ultimoTemp+' = P + '+ (temporales.ultstack+1)+';\n';
+            resultado3d.codigo3D += '\tt'+temporales.ultimoTemp+' = t'+temporales.ultimoTemp+' + 1;\n';
+            resultado3d.codigo3D += '\tstack[(int)t'+temporales.ultimoTemp+'] = '+valAsign+';\n';
+            resultado3d.codigo3D += '\tP = P + '+(temporales.ultstack+1)+';\n';
+            resultado3d.codigo3D += '\tprintString();\n';
+            resultado3d.codigo3D += '\tP = P - '+(temporales.ultstack+1)+';\n';
+            if(this.haysalto){
+                resultado3d.codigo3D += '\tprintf("%c", (char)10);\n';
+            }
+            temporales.usoPrintStrings = true;
+        }
     }
 
     ejecutar(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
