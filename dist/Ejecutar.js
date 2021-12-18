@@ -36,15 +36,19 @@ window.ejecutarCodigo = function (entrada) {
         var funcionesG = revisarFuncionesGlobales(instrucciones);
         var structsG = revisarStructsGlobales(instrucciones);
         var ast_1 = new AST_1.AST(instrucciones, structsG, funcionesG);
-        var entornoGlobal_1 = generarEntornoGlobal(ast_1, structsG);
+        var entornoGlobal_1 = generarEntornoGlobal(ast_1, structsG, listaErrores);
         console.log(entornoGlobal_1);
         //Buscar la funcion main    
         funcionesG.forEach(function (element) {
             if (element.nombrefuncion == "main") {
                 console.log("Se ejecutara");
-                element.ejecutar(entornoGlobal_1, ast_1);
+                element.ejecutar(entornoGlobal_1, ast_1, listaErrores);
             }
         });
+    }
+    //mostrar los errores semanticos
+    if (listaErrores.length > 0) {
+        console.log(listaErrores);
     }
 };
 window.traducirCodigo = function (entrada) {
@@ -114,7 +118,7 @@ function revisarStructsGlobales(instrucciones) {
     });
     return structs;
 }
-function generarEntornoGlobal(ast, structs) {
+function generarEntornoGlobal(ast, structs, listaErrores) {
     var entornoGlobal = new Entorno_1.Entorno(null);
     var instrucciones = ast.instrucciones;
     var declaracionesG = Array();
@@ -124,10 +128,10 @@ function generarEntornoGlobal(ast, structs) {
         }
     });
     declaracionesG.forEach(function (element) {
-        element.ejecutar(entornoGlobal, ast);
+        element.ejecutar(entornoGlobal, ast, listaErrores);
     });
     structs.forEach(function (element) {
-        element.ejecutar(entornoGlobal, ast);
+        element.ejecutar(entornoGlobal, ast, listaErrores);
     });
     return entornoGlobal;
 }

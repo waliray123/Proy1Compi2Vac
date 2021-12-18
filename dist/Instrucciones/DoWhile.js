@@ -22,13 +22,13 @@ var DoWhile = /** @class */ (function () {
         var valAsign = this.expresion.traducir(entornolocal, arbol, resultado3D, temporales, 0);
         resultado3D.codigo3D += '\tif(' + valAsign + ') goto L' + ulLit + ';\n';
     };
-    DoWhile.prototype.ejecutar = function (ent, arbol) {
+    DoWhile.prototype.ejecutar = function (ent, arbol, listaErrores) {
         var entornolocal = new Entorno_1.Entorno(ent);
         var realizar = this.expresion.getValorImplicito(entornolocal, arbol);
         var contSalir = 0;
         do {
             this.instrucciones.forEach(function (element) {
-                element.ejecutar(entornolocal, arbol);
+                element.ejecutar(entornolocal, arbol, listaErrores);
             });
             realizar = this.expresion.getValorImplicito(entornolocal, arbol);
             if (contSalir == 5000) {

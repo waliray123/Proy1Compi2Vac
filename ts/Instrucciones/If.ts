@@ -5,6 +5,7 @@ import { Simbolo } from "../AST/Simbolo";
 import { Temporales } from "../AST/Temporales";
 import { Expresion } from "../Interfaces/Expresion";
 import { Instruccion } from "../Interfaces/Instruccion";
+import { ErrorG } from "../Objetos/ErrorG";
 
 export class If implements Instruccion {
     linea: number;
@@ -72,7 +73,7 @@ export class If implements Instruccion {
         }
     }
 
-    ejecutar(ent: Entorno, arbol: AST) {
+    ejecutar(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
         console.log('ejecutado...ifnormal');
 
 
@@ -82,7 +83,7 @@ export class If implements Instruccion {
                 const entornolocal: Entorno = new Entorno(ent);
 
                 this.instrucciones.forEach((element: Instruccion) => {
-                    element.ejecutar(entornolocal, arbol);
+                    element.ejecutar(entornolocal, arbol,listaErrores);
                 })
             } else {
                 let seEncontro = false;
@@ -92,7 +93,7 @@ export class If implements Instruccion {
                         if(element.condicion.getValorImplicito(ent,arbol) == true){
                             //Se encontro un elseif que cumple con la condicion
                             const entornolocal: Entorno = new Entorno(ent);
-                            element.ejecutar(entornolocal,arbol)
+                            element.ejecutar(entornolocal,arbol,listaErrores)
                             seEncontro = true;
                             break;
                         }    
@@ -104,7 +105,7 @@ export class If implements Instruccion {
                         if(element.tipo == "else"){
                             //Se encontro un else  
                             const entornolocal: Entorno = new Entorno(ent);
-                            element.ejecutar(entornolocal,arbol)
+                            element.ejecutar(entornolocal,arbol,listaErrores)
                             break;
                         }                    
                     }
@@ -114,7 +115,7 @@ export class If implements Instruccion {
             const entornolocal: Entorno = new Entorno(ent);
 
             this.instrucciones.forEach((element: Instruccion) => {
-                    element.ejecutar(entornolocal, arbol);
+                    element.ejecutar(entornolocal, arbol,listaErrores);
             });
         }
     }

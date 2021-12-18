@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.Declaracion = void 0;
 var Simbolo_1 = require("../AST/Simbolo");
 var Tipo_1 = require("../AST/Tipo");
+var ErrorG_1 = require("../Objetos/ErrorG");
 // print("hola mundo");
 var Declaracion = /** @class */ (function () {
     function Declaracion(id, tipo, linea, columna, expresion) {
@@ -45,12 +46,13 @@ var Declaracion = /** @class */ (function () {
             }
         });
     };
-    Declaracion.prototype.ejecutar = function (ent, arbol) {
+    Declaracion.prototype.ejecutar = function (ent, arbol, listaErrores) {
         var _this = this;
         // console.log('ejecutado...'+ this.id);
         this.id.forEach(function (id) {
             if (ent.existe(id)) {
                 console.log('Id ' + id + ' ya existe');
+                listaErrores.push(new ErrorG_1.ErrorG('semantico', 'la variable' + id + ' ya existe', _this.linea, _this.columna));
             }
             else {
                 if (_this.expresion == null) {
@@ -65,6 +67,7 @@ var Declaracion = /** @class */ (function () {
                     }
                     else {
                         console.log('Error semantico, El tipo declarado (' + _this.tipo + ') no concuerda con el tipo asignado (' + tipoExpr + ') en la linea ' + _this.linea + ' y columna ' + _this.columna);
+                        listaErrores.push(new ErrorG_1.ErrorG('semantico', 'El tipo declarado (' + _this.tipo + ') no concuerda con el tipo asignado', _this.linea, _this.columna));
                     }
                 }
             }

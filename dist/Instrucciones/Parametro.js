@@ -11,7 +11,7 @@ var Parametro = /** @class */ (function () {
     Parametro.prototype.traducir = function (ent, arbol) {
         throw new Error("Method not implemented.");
     };
-    Parametro.prototype.ejecutar = function (ent, arbol) {
+    Parametro.prototype.ejecutar = function (ent, arbol, listaErrores) {
         console.log('ejecutado...' + this.id);
     };
     return Parametro;

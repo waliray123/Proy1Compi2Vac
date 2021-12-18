@@ -54,14 +54,14 @@ var If = /** @class */ (function () {
             resultado3D.codigo3D += '\tgoto L' + ultAsign + ';\n';
         }
     };
-    If.prototype.ejecutar = function (ent, arbol) {
+    If.prototype.ejecutar = function (ent, arbol, listaErrores) {
         console.log('ejecutado...ifnormal');
         //Revisar la condicion del if
         if (this.tipo == "if" || this.tipo == "elseif") {
             if (this.condicion.getValorImplicito(ent, arbol) == true) {
                 var entornolocal_3 = new Entorno_1.Entorno(ent);
                 this.instrucciones.forEach(function (element) {
-                    element.ejecutar(entornolocal_3, arbol);
+                    element.ejecutar(entornolocal_3, arbol, listaErrores);
                 });
             }
             else {
@@ -72,7 +72,7 @@ var If = /** @class */ (function () {
                         if (element.condicion.getValorImplicito(ent, arbol) == true) {
                             //Se encontro un elseif que cumple con la condicion
                             var entornolocal = new Entorno_1.Entorno(ent);
-                            element.ejecutar(entornolocal, arbol);
+                            element.ejecutar(entornolocal, arbol, listaErrores);
                             seEncontro = true;
                             break;
                         }
@@ -84,7 +84,7 @@ var If = /** @class */ (function () {
                         if (element.tipo == "else") {
                             //Se encontro un else  
                             var entornolocal = new Entorno_1.Entorno(ent);
-                            element.ejecutar(entornolocal, arbol);
+                            element.ejecutar(entornolocal, arbol, listaErrores);
                             break;
                         }
                     }
@@ -94,7 +94,7 @@ var If = /** @class */ (function () {
         else {
             var entornolocal_4 = new Entorno_1.Entorno(ent);
             this.instrucciones.forEach(function (element) {
-                element.ejecutar(entornolocal_4, arbol);
+                element.ejecutar(entornolocal_4, arbol, listaErrores);
             });
         }
     };

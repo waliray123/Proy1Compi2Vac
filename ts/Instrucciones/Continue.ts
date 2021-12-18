@@ -2,6 +2,7 @@ import exp from "constants";
 import { AST } from "../AST/AST";
 import { Entorno } from "../AST/Entorno";
 import { Instruccion } from "../Interfaces/Instruccion";
+import { ErrorG } from "../Objetos/ErrorG";
 
 // print("hola mundo");
 
@@ -18,7 +19,7 @@ export class Continue implements Instruccion{
         throw new Error("Method not implemented.");
     }
 
-    ejecutar(ent: Entorno, arbol: AST) {
+    ejecutar(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
         // console.log('ejecutado...'+ this.id);
     }
 

@@ -6,6 +6,7 @@ import { Temporales } from "../AST/Temporales";
 import { Tipo } from "../AST/Tipo";
 import { Expresion } from "../Interfaces/Expresion";
 import { Instruccion } from "../Interfaces/Instruccion";
+import { ErrorG } from "../Objetos/ErrorG";
 
 // print("hola mundo");
 
@@ -60,11 +61,12 @@ export class Declaracion implements Instruccion{
         
     }
 
-    ejecutar(ent: Entorno, arbol: AST) {
+    ejecutar(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
         // console.log('ejecutado...'+ this.id);
         this.id.forEach((id:string)=>{
             if (ent.existe(id) ){
                 console.log('Id '+ id +' ya existe');
+                listaErrores.push(new ErrorG('semantico','la variable' + id + ' ya existe',this.linea,this.columna));
             }else{
                 if(this.expresion == null){
                     let simbol = new Simbolo(this.tipo,id,this.linea,this.columna,this.getValDefault());
@@ -76,6 +78,7 @@ export class Declaracion implements Instruccion{
                         ent.agregar(id,simbol);
                     }else{
                         console.log('Error semantico, El tipo declarado (' + this.tipo +') no concuerda con el tipo asignado (' + tipoExpr + ') en la linea '+ this.linea + ' y columna ' + this.columna);
+                        listaErrores.push(new ErrorG('semantico', 'El tipo declarado (' + this.tipo +') no concuerda con el tipo asignado',this.linea,this.columna));
                     }                    
                 }
             }

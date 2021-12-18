@@ -13,11 +13,11 @@ var Switch = /** @class */ (function () {
     Switch.prototype.traducir = function (ent, arbol) {
         throw new Error("Method not implemented.");
     };
-    Switch.prototype.ejecutar = function (ent, arbol) {
+    Switch.prototype.ejecutar = function (ent, arbol, listaErrores) {
         for (var _i = 0, _a = this.lista_instrucciones; _i < _a.length; _i++) {
             var caso = _a[_i];
             if (this.expresion.getValorImplicito(ent, arbol) == caso.id.getValorImplicito(ent, arbol) || caso.id.getTipo(ent, arbol) == Tipo_1.Tipo.NULL) {
-                caso.ejecutar(ent, arbol);
+                caso.ejecutar(ent, arbol, listaErrores);
                 if (caso.getIsBreak()) {
                     break;
                 }

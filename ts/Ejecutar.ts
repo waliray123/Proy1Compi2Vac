@@ -6,7 +6,7 @@ import { Struct } from "./Instrucciones/Struct";
 import { Declaracion } from "./Instrucciones/Declaracion";
 import { Resultado3D } from "./AST/Resultado3D";
 import { Temporales } from "./AST/Temporales";
-import { Error } from "./Objetos/Error";
+import { ErrorG } from "./Objetos/ErrorG";
 
 const gramatica = require('../jison/Gramatica');
 
@@ -22,7 +22,7 @@ window.ejecutarCodigo = function (entrada:string){
 
     //declaro los array's
     let array: {'id':String,'cont':any}[] = []; 
-    let listaErrores:Error[] = [];
+    let listaErrores:ErrorG[] = [];
     let instrucciones:any = [];
 
     array = gramatica.parse(entrada); //parseamos la gramatica
@@ -50,7 +50,7 @@ window.ejecutarCodigo = function (entrada:string){
 
 
         const ast:AST = new AST(instrucciones,structsG,funcionesG);
-        const entornoGlobal:Entorno = generarEntornoGlobal(ast,structsG);   
+        const entornoGlobal:Entorno = generarEntornoGlobal(ast,structsG,listaErrores);   
         console.log(entornoGlobal); 
         
         //Buscar la funcion main    
@@ -58,10 +58,14 @@ window.ejecutarCodigo = function (entrada:string){
         funcionesG.forEach((element:Funcion) => {
             if(element.nombrefuncion == "main"){
                 console.log("Se ejecutara");
-                element.ejecutar(entornoGlobal,ast);
+                element.ejecutar(entornoGlobal,ast,listaErrores);
                 
             }
         })
+    }
+    //mostrar los errores semanticos
+    if (listaErrores.length > 0) {
+        console.log(listaErrores);
     }
     
 }
@@ -148,7 +152,7 @@ function revisarStructsGlobales(instrucciones:Array<any>){
 }
 
 
-function generarEntornoGlobal(ast:AST,structs:Array<Struct>){
+function generarEntornoGlobal(ast:AST,structs:Array<Struct>,listaErrores:Array<ErrorG>){
     const entornoGlobal:Entorno = new Entorno(null);
     let instrucciones = ast.instrucciones;
     let declaracionesG = Array<Declaracion>();
@@ -159,11 +163,11 @@ function generarEntornoGlobal(ast:AST,structs:Array<Struct>){
     });
 
     declaracionesG.forEach((element:Declaracion) => {
-        element.ejecutar(entornoGlobal, ast);
+        element.ejecutar(entornoGlobal, ast,listaErrores);
     });
 
     structs.forEach((element:Instruccion)=>{
-        element.ejecutar(entornoGlobal, ast);
+        element.ejecutar(entornoGlobal, ast,listaErrores);
     })
 
     return entornoGlobal;
