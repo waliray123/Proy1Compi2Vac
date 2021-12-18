@@ -28,7 +28,7 @@ export class AccesoVariable implements Expresion {
             
             //TODO: Alv ya me canse de esto mejor hago la declaracion de los strings  AAAAAAAAAAAAAA
 
-            let valor = '\tstack[(int)'+simbol.valor + ']\n';
+            let valor = 'stack[(int)'+simbol.valor + ']';
             resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
             let valR = 't' + temporales.ultimoTemp;
             temporales.ultimoTemp += 1;

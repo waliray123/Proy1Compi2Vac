@@ -58,14 +58,30 @@ export class Operacion implements Expresion {
             && this.operador != Operador.TAN && this.operador != Operador.INCREMENTO && this.operador != Operador.DECREMENTO) {
             let val1 = this.op_izquierda.traducir(ent, arbol, resultado3d, temporales, recursivo + 1);
             let val2 = this.op_derecha.traducir(ent, arbol, resultado3d, temporales, recursivo + 1);
-            let valor = this.unirResultado(val1, val2);
+            
+            let valor = this.unirResultado(val1, val2,resultado3d,temporales);
             if (recursivo == 0) {
                 return valor;
             } else {
-                resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
-                let valR = 't' + temporales.ultimoTemp;
-                temporales.ultimoTemp += 1;
-                return valR;
+                if(temporales.ultimoTipo == Tipo.BOOL){
+                    temporales.ultLiteral += 3;
+                    let ultLit = temporales.ultLiteral-2;
+                    resultado3d.codigo3D += '\tif('+valor+') goto L'+ultLit+';\n';
+                    resultado3d.codigo3D += '\tgoto L'+(ultLit+1)+';\n';
+                    resultado3d.codigo3D += '\tL'+(ultLit)+':\n';
+                    resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '= 1;\n';
+                    resultado3d.codigo3D += '\tgoto L'+(ultLit+2)+';\n';
+                    resultado3d.codigo3D += '\tL'+(ultLit+1)+':\n';
+                    resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '= 0;\n';
+                    resultado3d.codigo3D += '\tL'+(ultLit+2)+':\n';
+                    temporales.ultLitEscr = (ultLit+2);
+                }else{
+                    resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
+                    let valR = 't' + temporales.ultimoTemp;
+                    temporales.ultimoTemp += 1;
+                    return valR;
+                }
+                
             }
         }else{
             let val1 = this.op_izquierda.traducir(ent, arbol, resultado3d, temporales, recursivo + 1);
@@ -83,28 +99,47 @@ export class Operacion implements Expresion {
 
     }
 
-    unirResultado(val1: any, val2: any) {
+    unirResultado(val1: any, val2: any, resultado3d: Resultado3D ,temporales: Temporales) {
         let resultadoR = '';
         if (this.operador == Operador.SUMA) {
             resultadoR = val1 + "+" + val2;
+            temporales.ultimoTipo = Tipo.DOUBLE;
         } else if (this.operador == Operador.RESTA) {
             resultadoR = val1 + "-" + val2;
+            temporales.ultimoTipo = Tipo.DOUBLE;
         } else if (this.operador == Operador.MULTIPLICACION) {
             resultadoR = val1 + "*" + val2;
+            temporales.ultimoTipo = Tipo.DOUBLE;
         } else if (this.operador == Operador.DIVISION) {
             resultadoR = val1 + "/" + val2;
+            temporales.ultimoTipo = Tipo.DOUBLE;
         } else if (this.operador == Operador.MAYOR_QUE) {
             resultadoR = val1 + ">" + val2;
+            temporales.ultimoTipo = Tipo.BOOL;
         } else if (this.operador == Operador.MENOR_QUE) {
             resultadoR = val1 + "<" + val2;
+            temporales.ultimoTipo = Tipo.BOOL;
         } else if (this.operador == Operador.MAYOR_IGUA_QUE) {
             resultadoR = val1 + ">=" + val2;
+            temporales.ultimoTipo = Tipo.BOOL;
         } else if (this.operador == Operador.MENOR_IGUA_QUE) {
             resultadoR = val1 + "<=" + val2;
+            temporales.ultimoTipo = Tipo.BOOL;
         } else if (this.operador == Operador.IGUAL_IGUAL) {
-            resultadoR = val1 + "<=" + val2;
+            resultadoR = val1 + "==" + val2;
+            temporales.ultimoTipo = Tipo.BOOL;
         } else if (this.operador == Operador.MODULO) {
             resultadoR = 'fmod(' + val1 + ',' + val2 + ')';
+            temporales.ultimoTipo = Tipo.DOUBLE;
+        }        
+        //TODO: No se como hacerle para esto, porque si viene un tt como se el valor?
+        else if(this.operador == Operador.POW){
+            //TODO
+            temporales.ultimoTemp += 1;
+            
+            resultadoR = 't';
+        } else if(this.operador == Operador.SIN){
+
         }
 
         return resultadoR;

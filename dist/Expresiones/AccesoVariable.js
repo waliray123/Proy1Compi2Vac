@@ -13,7 +13,7 @@ var AccesoVariable = /** @class */ (function () {
         if (ent.existe(this.id)) {
             var simbol = ent.getSimbolo(this.id);
             //TODO: Alv ya me canse de esto mejor hago la declaracion de los strings  AAAAAAAAAAAAAA
-            var valor = '\tstack[(int)' + simbol.valor + ']\n';
+            var valor = 'stack[(int)' + simbol.valor + ']';
             resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
             var valR = 't' + temporales.ultimoTemp;
             temporales.ultimoTemp += 1;

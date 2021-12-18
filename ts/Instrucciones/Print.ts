@@ -25,14 +25,7 @@ export class Print implements Instruccion{
     traducir(ent: Entorno, arbol: AST,resultado3d:Resultado3D,temporales:Temporales) {
         let valAsign = this.expresion.traducir(ent,arbol,resultado3d,temporales,0);
 
-        if(temporales.ultimoTipo != Tipo.STRING){            
-            let parseo = '\"%f\"';
-            let parseo2 = '(double)';            
-            resultado3d.codigo3D += '\tprintf('+parseo + ' , '+parseo2+valAsign+');\n';
-            if(this.haysalto){
-                resultado3d.codigo3D += '\tprintf("%c", (char)10);\n';
-            }
-        }else{            
+        if(temporales.ultimoTipo == Tipo.STRING){   
             temporales.ultimoTemp += 1;
             resultado3d.codigo3D += '\tt'+temporales.ultimoTemp+' = P + '+ (temporales.ultstack+1)+';\n';
             resultado3d.codigo3D += '\tt'+temporales.ultimoTemp+' = t'+temporales.ultimoTemp+' + 1;\n';
@@ -43,7 +36,29 @@ export class Print implements Instruccion{
             if(this.haysalto){
                 resultado3d.codigo3D += '\tprintf("%c", (char)10);\n';
             }
-            temporales.usoPrintStrings = true;
+            temporales.usoPrintStrings = true;            
+        }else if(temporales.ultimoTipo == Tipo.BOOL){
+            temporales.ultLiteral += 3;
+            let ultLit = temporales.ultLiteral-2;
+            resultado3d.codigo3D += '\tif('+valAsign+' == 1) goto L'+ultLit+';\n';
+            resultado3d.codigo3D += '\tgoto L'+(ultLit+1)+';\n';
+            resultado3d.codigo3D += '\tL'+ultLit+':\n';
+            resultado3d.codigo3D += '\tprintf("%c", (char)116);\n\tprintf("%c", (char)114);\n\tprintf("%c", (char)117);\n\tprintf("%c", (char)101);\n';
+            resultado3d.codigo3D += '\tgoto L'+(ultLit+2)+';\n';
+            resultado3d.codigo3D += '\tL'+(ultLit+1)+':\n';
+            resultado3d.codigo3D += '\tprintf("%c", (char)102);\n\tprintf("%c", (char)97);\n\tprintf("%c", (char)108);\n\tprintf("%c", (char)115);\n\tprintf("%c", (char)101);\n';
+            resultado3d.codigo3D += '\tL'+(ultLit+2)+':\n';
+            temporales.ultLitEscr = (ultLit+2);
+            if(this.haysalto){
+                resultado3d.codigo3D += '\tprintf("%c", (char)10);\n';
+            }
+        }else{            
+            let parseo = '\"%f\"';
+            let parseo2 = '(double)';            
+            resultado3d.codigo3D += '\tprintf('+parseo + ' , '+parseo2+valAsign+');\n';
+            if(this.haysalto){
+                resultado3d.codigo3D += '\tprintf("%c", (char)10);\n';
+            }
         }
     }
 

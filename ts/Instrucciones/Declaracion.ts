@@ -52,7 +52,22 @@ export class Declaracion implements Instruccion{
                         temporales.ultstack += 1;                        
                         //Asignar el valor al stack
                         let valAsign = this.expresion.traducir(ent,arbol,resultado3d,temporales,0);
-                        resultado3d.codigo3D += '\tstack[(int)'+simbol.valor+'] ='+ valAsign  +';\n';
+                        if(temporales.ultimoTipo == Tipo.BOOL){
+                            temporales.ultLiteral += 3;
+                            let ultLit = temporales.ultLiteral-2;
+                            resultado3d.codigo3D += '\tif('+valAsign+') goto L'+ultLit+';\n';
+                            resultado3d.codigo3D += '\tgoto L'+(ultLit+1)+';\n';
+                            resultado3d.codigo3D += '\tL'+ultLit+':\n';
+                            resultado3d.codigo3D += '\tstack[(int)'+simbol.valor+'] = 1;\n';
+                            resultado3d.codigo3D += '\tgoto L'+(ultLit+2)+';\n';
+                            resultado3d.codigo3D += '\tL'+(ultLit+1)+':\n';
+                            resultado3d.codigo3D += '\tstack[(int)'+simbol.valor+'] = 0;\n';
+                            resultado3d.codigo3D += '\tL'+(ultLit+2)+':\n';
+                            temporales.ultLitEscr = (ultLit+2);
+                        }else{
+                            resultado3d.codigo3D += '\tstack[(int)'+simbol.valor+'] ='+ valAsign  +';\n';
+                        }
+                        
                         
                     }else{
                         console.log('Error semantico, El tipo declarado (' + this.tipo +') no concuerda con el tipo asignado (' + tipoExpr + ') en la linea '+ this.linea + ' y columna ' + this.columna);

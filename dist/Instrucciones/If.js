@@ -26,7 +26,7 @@ var If = /** @class */ (function () {
         var cont = ultLit + 1;
         for (var i = cantidadSinos - 1; i >= 0; i--) {
             var sino = this.sinos[i];
-            sino.traducirSinos(ent, arbol, resultado3D, temporales, cont, (cantidadSinos + 1), listaErrores);
+            sino.traducirSinos(ent, arbol, resultado3D, temporales, cont, (ultLit + cantidadSinos + 1), listaErrores);
             cont += 1;
         }
         resultado3D.codigo3D += '\tL' + (ultLit + cantidadSinos + 1) + ':\n';

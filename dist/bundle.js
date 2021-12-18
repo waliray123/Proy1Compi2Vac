@@ -331,7 +331,7 @@ var AccesoVariable = /** @class */ (function () {
         if (ent.existe(this.id)) {
             var simbol = ent.getSimbolo(this.id);
             //TODO: Alv ya me canse de esto mejor hago la declaracion de los strings  AAAAAAAAAAAAAA
-            var valor = '\tstack[(int)' + simbol.valor + ']\n';
+            var valor = 'stack[(int)' + simbol.valor + ']';
             resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
             var valR = 't' + temporales.ultimoTemp;
             temporales.ultimoTemp += 1;
@@ -530,15 +530,30 @@ var Operacion = /** @class */ (function () {
             && this.operador != Operador.TAN && this.operador != Operador.INCREMENTO && this.operador != Operador.DECREMENTO) {
             var val1 = this.op_izquierda.traducir(ent, arbol, resultado3d, temporales, recursivo + 1);
             var val2 = this.op_derecha.traducir(ent, arbol, resultado3d, temporales, recursivo + 1);
-            var valor = this.unirResultado(val1, val2);
+            var valor = this.unirResultado(val1, val2, resultado3d, temporales);
             if (recursivo == 0) {
                 return valor;
             }
             else {
-                resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
-                var valR = 't' + temporales.ultimoTemp;
-                temporales.ultimoTemp += 1;
-                return valR;
+                if (temporales.ultimoTipo == Tipo_1.Tipo.BOOL) {
+                    temporales.ultLiteral += 3;
+                    var ultLit = temporales.ultLiteral - 2;
+                    resultado3d.codigo3D += '\tif(' + valor + ') goto L' + ultLit + ';\n';
+                    resultado3d.codigo3D += '\tgoto L' + (ultLit + 1) + ';\n';
+                    resultado3d.codigo3D += '\tL' + (ultLit) + ':\n';
+                    resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '= 1;\n';
+                    resultado3d.codigo3D += '\tgoto L' + (ultLit + 2) + ';\n';
+                    resultado3d.codigo3D += '\tL' + (ultLit + 1) + ':\n';
+                    resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '= 0;\n';
+                    resultado3d.codigo3D += '\tL' + (ultLit + 2) + ':\n';
+                    temporales.ultLitEscr = (ultLit + 2);
+                }
+                else {
+                    resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
+                    var valR = 't' + temporales.ultimoTemp;
+                    temporales.ultimoTemp += 1;
+                    return valR;
+                }
             }
         }
         else {
@@ -555,37 +570,55 @@ var Operacion = /** @class */ (function () {
             }
         }
     };
-    Operacion.prototype.unirResultado = function (val1, val2) {
+    Operacion.prototype.unirResultado = function (val1, val2, resultado3d, temporales) {
         var resultadoR = '';
         if (this.operador == Operador.SUMA) {
             resultadoR = val1 + "+" + val2;
+            temporales.ultimoTipo = Tipo_1.Tipo.DOUBLE;
         }
         else if (this.operador == Operador.RESTA) {
             resultadoR = val1 + "-" + val2;
+            temporales.ultimoTipo = Tipo_1.Tipo.DOUBLE;
         }
         else if (this.operador == Operador.MULTIPLICACION) {
             resultadoR = val1 + "*" + val2;
+            temporales.ultimoTipo = Tipo_1.Tipo.DOUBLE;
         }
         else if (this.operador == Operador.DIVISION) {
             resultadoR = val1 + "/" + val2;
+            temporales.ultimoTipo = Tipo_1.Tipo.DOUBLE;
         }
         else if (this.operador == Operador.MAYOR_QUE) {
             resultadoR = val1 + ">" + val2;
+            temporales.ultimoTipo = Tipo_1.Tipo.BOOL;
         }
         else if (this.operador == Operador.MENOR_QUE) {
             resultadoR = val1 + "<" + val2;
+            temporales.ultimoTipo = Tipo_1.Tipo.BOOL;
         }
         else if (this.operador == Operador.MAYOR_IGUA_QUE) {
             resultadoR = val1 + ">=" + val2;
+            temporales.ultimoTipo = Tipo_1.Tipo.BOOL;
         }
         else if (this.operador == Operador.MENOR_IGUA_QUE) {
             resultadoR = val1 + "<=" + val2;
+            temporales.ultimoTipo = Tipo_1.Tipo.BOOL;
         }
         else if (this.operador == Operador.IGUAL_IGUAL) {
-            resultadoR = val1 + "<=" + val2;
+            resultadoR = val1 + "==" + val2;
+            temporales.ultimoTipo = Tipo_1.Tipo.BOOL;
         }
         else if (this.operador == Operador.MODULO) {
             resultadoR = 'fmod(' + val1 + ',' + val2 + ')';
+            temporales.ultimoTipo = Tipo_1.Tipo.DOUBLE;
+        }
+        //TODO: No se como hacerle para esto, porque si viene un tt como se el valor?
+        else if (this.operador == Operador.POW) {
+            //TODO
+            temporales.ultimoTemp += 1;
+            resultadoR = 't';
+        }
+        else if (this.operador == Operador.SIN) {
         }
         return resultadoR;
     };
@@ -1232,10 +1265,7 @@ var Primitivo = /** @class */ (function () {
         console.log("Traduciendo Primitivo");
         var tipo = this.getTipo(ent, arbol, []);
         temporales.ultimoTipo = tipo;
-        if (tipo != Tipo_1.Tipo.STRING) {
-            return this.valor;
-        }
-        else {
+        if (tipo == Tipo_1.Tipo.STRING) {
             temporales.ultimoTemp += 1;
             resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '= H;\n';
             for (var i = 0; i < this.valor.length; i++) {
@@ -1248,6 +1278,17 @@ var Primitivo = /** @class */ (function () {
             resultado3d.codigo3D += '\theap[(int)H] = -1;\n';
             resultado3d.codigo3D += '\tH = H + 1;\n';
             return 't' + temporales.ultimoTemp;
+        }
+        else if (tipo == Tipo_1.Tipo.BOOL) {
+            if (this.valor == true) {
+                return 1;
+            }
+            else {
+                return 0;
+            }
+        }
+        else {
+            return this.valor;
         }
     };
     Primitivo.prototype.getTipo = function (ent, arbol, listaErrores) {
@@ -1354,7 +1395,22 @@ var Asignacion = /** @class */ (function () {
                 if (tipo == this.expresion.getTipo(ent, arbol, listaErrores)) {
                     //Asignar al stack
                     var valAsign = this.expresion.traducir(ent, arbol, resultado3d, temporales, 0);
-                    resultado3d.codigo3D += '\tstack[(int)' + simbol.valor + '] =' + valAsign + ';\n';
+                    if (temporales.ultimoTipo == Tipo_1.Tipo.BOOL) {
+                        temporales.ultLiteral += 3;
+                        var ultLit = temporales.ultLiteral - 2;
+                        resultado3d.codigo3D += '\tif(' + valAsign + ') goto L' + ultLit + ';\n';
+                        resultado3d.codigo3D += '\tgoto L' + (ultLit + 1) + ';\n';
+                        resultado3d.codigo3D += '\tL' + ultLit + ':\n';
+                        resultado3d.codigo3D += '\tstack[(int)' + simbol.valor + '] = 1;\n';
+                        resultado3d.codigo3D += '\tgoto L' + (ultLit + 2) + ';\n';
+                        resultado3d.codigo3D += '\tL' + (ultLit + 1) + ':\n';
+                        resultado3d.codigo3D += '\tstack[(int)' + simbol.valor + '] = 0;\n';
+                        resultado3d.codigo3D += '\tL' + (ultLit + 2) + ':\n';
+                        temporales.ultLitEscr = (ultLit + 2);
+                    }
+                    else {
+                        resultado3d.codigo3D += '\tstack[(int)' + simbol.valor + '] =' + valAsign + ';\n';
+                    }
                 }
                 else {
                     console.log('Error semantico, El tipo de la variable (' + tipo + ') no concuerda con el tipo asignado (' + this.expresion.getTipo(ent, arbol, listaErrores) + ') en la linea ' + this.linea + ' y columna ' + this.columna);
@@ -1633,7 +1689,22 @@ var Declaracion = /** @class */ (function () {
                         temporales.ultstack += 1;
                         //Asignar el valor al stack
                         var valAsign = _this.expresion.traducir(ent, arbol, resultado3d, temporales, 0);
-                        resultado3d.codigo3D += '\tstack[(int)' + simbol.valor + '] =' + valAsign + ';\n';
+                        if (temporales.ultimoTipo == Tipo_1.Tipo.BOOL) {
+                            temporales.ultLiteral += 3;
+                            var ultLit = temporales.ultLiteral - 2;
+                            resultado3d.codigo3D += '\tif(' + valAsign + ') goto L' + ultLit + ';\n';
+                            resultado3d.codigo3D += '\tgoto L' + (ultLit + 1) + ';\n';
+                            resultado3d.codigo3D += '\tL' + ultLit + ':\n';
+                            resultado3d.codigo3D += '\tstack[(int)' + simbol.valor + '] = 1;\n';
+                            resultado3d.codigo3D += '\tgoto L' + (ultLit + 2) + ';\n';
+                            resultado3d.codigo3D += '\tL' + (ultLit + 1) + ':\n';
+                            resultado3d.codigo3D += '\tstack[(int)' + simbol.valor + '] = 0;\n';
+                            resultado3d.codigo3D += '\tL' + (ultLit + 2) + ':\n';
+                            temporales.ultLitEscr = (ultLit + 2);
+                        }
+                        else {
+                            resultado3d.codigo3D += '\tstack[(int)' + simbol.valor + '] =' + valAsign + ';\n';
+                        }
                     }
                     else {
                         console.log('Error semantico, El tipo declarado (' + _this.tipo + ') no concuerda con el tipo asignado (' + tipoExpr + ') en la linea ' + _this.linea + ' y columna ' + _this.columna);
@@ -2185,7 +2256,7 @@ var If = /** @class */ (function () {
         var cont = ultLit + 1;
         for (var i = cantidadSinos - 1; i >= 0; i--) {
             var sino = this.sinos[i];
-            sino.traducirSinos(ent, arbol, resultado3D, temporales, cont, (cantidadSinos + 1), listaErrores);
+            sino.traducirSinos(ent, arbol, resultado3D, temporales, cont, (ultLit + cantidadSinos + 1), listaErrores);
             cont += 1;
         }
         resultado3D.codigo3D += '\tL' + (ultLit + cantidadSinos + 1) + ':\n';
@@ -2367,15 +2438,7 @@ var Print = /** @class */ (function () {
     }
     Print.prototype.traducir = function (ent, arbol, resultado3d, temporales) {
         var valAsign = this.expresion.traducir(ent, arbol, resultado3d, temporales, 0);
-        if (temporales.ultimoTipo != Tipo_1.Tipo.STRING) {
-            var parseo = '\"%f\"';
-            var parseo2 = '(double)';
-            resultado3d.codigo3D += '\tprintf(' + parseo + ' , ' + parseo2 + valAsign + ');\n';
-            if (this.haysalto) {
-                resultado3d.codigo3D += '\tprintf("%c", (char)10);\n';
-            }
-        }
-        else {
+        if (temporales.ultimoTipo == Tipo_1.Tipo.STRING) {
             temporales.ultimoTemp += 1;
             resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + ' = P + ' + (temporales.ultstack + 1) + ';\n';
             resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + ' = t' + temporales.ultimoTemp + ' + 1;\n';
@@ -2387,6 +2450,30 @@ var Print = /** @class */ (function () {
                 resultado3d.codigo3D += '\tprintf("%c", (char)10);\n';
             }
             temporales.usoPrintStrings = true;
+        }
+        else if (temporales.ultimoTipo == Tipo_1.Tipo.BOOL) {
+            temporales.ultLiteral += 3;
+            var ultLit = temporales.ultLiteral - 2;
+            resultado3d.codigo3D += '\tif(' + valAsign + ' == 1) goto L' + ultLit + ';\n';
+            resultado3d.codigo3D += '\tgoto L' + (ultLit + 1) + ';\n';
+            resultado3d.codigo3D += '\tL' + ultLit + ':\n';
+            resultado3d.codigo3D += '\tprintf("%c", (char)116);\n\tprintf("%c", (char)114);\n\tprintf("%c", (char)117);\n\tprintf("%c", (char)101);\n';
+            resultado3d.codigo3D += '\tgoto L' + (ultLit + 2) + ';\n';
+            resultado3d.codigo3D += '\tL' + (ultLit + 1) + ':\n';
+            resultado3d.codigo3D += '\tprintf("%c", (char)102);\n\tprintf("%c", (char)97);\n\tprintf("%c", (char)108);\n\tprintf("%c", (char)115);\n\tprintf("%c", (char)101);\n';
+            resultado3d.codigo3D += '\tL' + (ultLit + 2) + ':\n';
+            temporales.ultLitEscr = (ultLit + 2);
+            if (this.haysalto) {
+                resultado3d.codigo3D += '\tprintf("%c", (char)10);\n';
+            }
+        }
+        else {
+            var parseo = '\"%f\"';
+            var parseo2 = '(double)';
+            resultado3d.codigo3D += '\tprintf(' + parseo + ' , ' + parseo2 + valAsign + ');\n';
+            if (this.haysalto) {
+                resultado3d.codigo3D += '\tprintf("%c", (char)10);\n';
+            }
         }
     };
     Print.prototype.ejecutar = function (ent, arbol, listaErrores) {
