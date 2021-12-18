@@ -5,6 +5,7 @@ import { Expresion } from "../Interfaces/Expresion";
 import { Tipo } from "../AST/Tipo";
 import { AST } from "../AST/AST";
 import { Entorno } from "../AST/Entorno";
+import { ErrorG } from "./ErrorG";
 
 export class Arreglo{
     
@@ -24,8 +25,8 @@ export class Arreglo{
         this.columna = columna;
     }
 
-    push(ent:Entorno, arbol: AST,nuevo:Expresion){
-        if (nuevo.getTipo(ent,arbol) == this.tipo) {
+    push(ent:Entorno, arbol: AST,nuevo:Expresion,listaErrores:Array<ErrorG>){
+        if (nuevo.getTipo(ent,arbol,listaErrores) == this.tipo) {
             this.contenido.push(nuevo);
             this.length += 1;
             this.dimension += 1;
@@ -46,12 +47,12 @@ export class Arreglo{
         return this.contenido[this.length-1];
     }
 
-    comprobarTipo(ent:Entorno, arbol: AST):boolean{
+    comprobarTipo(ent:Entorno, arbol: AST,listaErrores:Array<ErrorG>):boolean{
         let isFine:boolean = true;
         this.contenido.forEach((cont:Expresion) =>{
-            if (!(cont.getTipo(ent,arbol) == this.tipo)) {
+            if (!(cont.getTipo(ent,arbol,listaErrores) == this.tipo)) {
                 isFine = false;
-                console.log('Error semantico, el valor: ' + cont.getValorImplicito(ent, arbol) + ' no concuerda con el tipo del arreglo en la linea '+ this.linea + ' y columna ' + this.columna)
+                console.log('Error semantico, el valor: ' + cont.getValorImplicito(ent, arbol,listaErrores) + ' no concuerda con el tipo del arreglo en la linea '+ this.linea + ' y columna ' + this.columna)
             }
         });
         return isFine;

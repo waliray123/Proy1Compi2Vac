@@ -24,7 +24,7 @@ export class Print implements Instruccion{
     }
 
     ejecutar(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
-        const valor = this.expresion.getValorImplicito(ent, arbol);
+        const valor = this.expresion.getValorImplicito(ent, arbol,listaErrores);
         if(valor!==null){
             console.log('>',valor);
             const area = document.getElementById('consola') as HTMLTextAreaElement;

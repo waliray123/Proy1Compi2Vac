@@ -11,19 +11,19 @@ var Asignacion = /** @class */ (function () {
         this.linea = linea;
         this.columna = columna;
     }
-    Asignacion.prototype.traducir = function (ent, arbol, resultado3d, temporales) {
+    Asignacion.prototype.traducir = function (ent, arbol, resultado3d, temporales, listaErrores) {
         if (this.id.length == 1) {
             var id = this.id[0];
             if (ent.existe(id)) {
                 var simbol = ent.getSimbolo(id);
                 var tipo = simbol.getTipo(ent, arbol);
-                if (tipo == this.expresion.getTipo(ent, arbol)) {
+                if (tipo == this.expresion.getTipo(ent, arbol, listaErrores)) {
                     //Asignar al stack
                     var valAsign = this.expresion.traducir(ent, arbol, resultado3d, temporales, 0);
                     resultado3d.codigo3D += '\tstack[(int)' + simbol.valor + '] =' + valAsign + ';\n';
                 }
                 else {
-                    console.log('Error semantico, El tipo de la variable (' + tipo + ') no concuerda con el tipo asignado (' + this.expresion.getTipo(ent, arbol) + ') en la linea ' + this.linea + ' y columna ' + this.columna);
+                    console.log('Error semantico, El tipo de la variable (' + tipo + ') no concuerda con el tipo asignado (' + this.expresion.getTipo(ent, arbol, listaErrores) + ') en la linea ' + this.linea + ' y columna ' + this.columna);
                 }
             }
             else {
@@ -61,16 +61,16 @@ var Asignacion = /** @class */ (function () {
             if (ent.existe(id)) {
                 var simbol = ent.getSimbolo(id);
                 var tipo = simbol.getTipo(ent, arbol);
-                if (tipo == this.expresion.getTipo(ent, arbol)) {
-                    simbol.valor = this.expresion.getValorImplicito(ent, arbol);
+                if (tipo == this.expresion.getTipo(ent, arbol, listaErrores)) {
+                    simbol.valor = this.expresion.getValorImplicito(ent, arbol, listaErrores);
                 }
                 else {
-                    console.log('Error semantico, El tipo de la variable (' + tipo + ') no concuerda con el tipo asignado (' + this.expresion.getTipo(ent, arbol) + ') en la linea ' + this.linea + ' y columna ' + this.columna);
-                    listaErrores.push(new ErrorG_1.ErrorG('semantico', 'El tipo de la variable (' + tipo + ') no concuerda con el tipo asignado', this.linea, this.columna));
+                    // console.log('Error semantico, El tipo de la variable (' + tipo +') no concuerda con el tipo asignado (' + this.expresion.getTipo(ent,arbol) + ') en la linea '+ this.linea + ' y columna ' + this.columna);
+                    listaErrores.push(new ErrorG_1.ErrorG('semantico', 'El tipo de la variable (' + this.getNameTipo(tipo) + ') no concuerda con el tipo asignado', this.linea, this.columna));
                 }
             }
             else {
-                console.log('Error semantico, no existe la variable ' + id + ' en la linea ' + this.linea + ' y columna ' + this.columna);
+                // console.log('Error semantico, no existe la variable ' + id +' en la linea '+ this.linea + ' y columna ' + this.columna);
                 listaErrores.push(new ErrorG_1.ErrorG('semantico', 'no existe la variable ' + id, this.linea, this.columna));
             }
         }
@@ -86,7 +86,7 @@ var Asignacion = /** @class */ (function () {
                 }
             }
             else {
-                console.log('Error semantico, no existe ' + id + ' en la linea ' + this.linea + ' y columna ' + this.columna);
+                // console.log('Error semantico, no existe ' + id +' en la linea '+ this.linea + ' y columna ' + this.columna);
                 listaErrores.push(new ErrorG_1.ErrorG('semantico', 'no existe la variable ' + id, this.linea, this.columna));
             }
         }
@@ -96,7 +96,7 @@ var Asignacion = /** @class */ (function () {
     };
     Asignacion.prototype.asignacionStruct = function (i, atributos, ent, arbol, listaErrores) {
         if ((i + 1) >= this.id.length) {
-            console.log("No se encontro");
+            // console.log("No se encontro");
             listaErrores.push(new ErrorG_1.ErrorG('semantico', 'No se encontro el atributo ' + this.id[i], this.linea, this.columna));
             return;
         }
@@ -116,7 +116,7 @@ var Asignacion = /** @class */ (function () {
                     if (atributo.expresion instanceof AccesoVariable_1.AccesoVariable) {
                         atributo.expresion.isAlone = false;
                         // console.log(atributo.expresion.getValorImplicito(ent, arbol));
-                        var val1 = atributo.expresion.getValorImplicito(ent, arbol);
+                        var val1 = atributo.expresion.getValorImplicito(ent, arbol, listaErrores);
                         atributo.expresion.isAlone = true;
                         this_1.asignacionStruct(i + 1, val1, ent, arbol, listaErrores);
                     }
@@ -133,6 +133,38 @@ var Asignacion = /** @class */ (function () {
             var state_1 = _loop_1();
             if (typeof state_1 === "object")
                 return state_1.value;
+        }
+    };
+    Asignacion.prototype.getNameTipo = function (tipo) {
+        if (tipo == Tipo_1.Tipo.STRING) {
+            return "string";
+        }
+        else if (tipo == Tipo_1.Tipo.BOOL) {
+            return 'boolean';
+        }
+        else if (tipo == Tipo_1.Tipo.INT) {
+            return 'int';
+        }
+        else if (tipo == Tipo_1.Tipo.CHAR) {
+            return 'char';
+        }
+        else if (tipo == Tipo_1.Tipo.DOUBLE) {
+            return 'double';
+        }
+        else if (tipo == Tipo_1.Tipo.VOID) {
+            return 'void';
+        }
+        else if (tipo == Tipo_1.Tipo.STRUCT) {
+            return 'struct';
+        }
+        else if (tipo == Tipo_1.Tipo.ARRAY) {
+            return 'array';
+        }
+        else if (tipo == Tipo_1.Tipo.TIPO_STRUCT) {
+            return 'struct';
+        }
+        else {
+            return 'null';
         }
     };
     return Asignacion;

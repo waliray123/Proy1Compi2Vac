@@ -50,7 +50,7 @@ export class DeclaracionStruct implements Instruccion{
                                 // console.log("--index---------" + index);
                                 // console.log(declaracion.tipo);
                                 // console.log(param.getTipo(ent,arbol));
-                                let tipoParam = param.getTipo(ent,arbol);
+                                let tipoParam = param.getTipo(ent,arbol,listaErrores);
                                 if(tipoParam == Tipo.TIPO_STRUCT){
                                     declaracion.expresion = param.valor;
                                 }                           
@@ -59,7 +59,7 @@ export class DeclaracionStruct implements Instruccion{
                                     declaracion.expresion = param;
                                 }else{
                                     // console.log('Error semantico, El parametro ' + param.getValorImplicito(ent, arbol)  + ' no coincide con el tipo del atributo de la estructura en la linea '+ this.linea + ' y columna ' + this.columna);
-                                    listaErrores.push(new ErrorG('semantico','El parametro ' + param.getValorImplicito(ent, arbol)  + ' no coincide con el tipo del atributo de la estructura',this.linea,this.columna));
+                                    listaErrores.push(new ErrorG('semantico','El parametro ' + param.getValorImplicito(ent, arbol,listaErrores)  + ' no coincide con el tipo del atributo de la estructura',this.linea,this.columna));
                                     error =  true;
                                 }
                             })

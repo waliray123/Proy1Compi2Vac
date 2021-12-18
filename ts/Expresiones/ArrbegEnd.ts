@@ -2,6 +2,7 @@ import { AST } from "../AST/AST";
 import { Entorno } from "../AST/Entorno";
 import { Tipo } from "../AST/Tipo";
 import { Expresion } from "../Interfaces/Expresion";
+import { ErrorG } from "../Objetos/ErrorG";
 
 export class ArrbegEnd implements Expresion {
     linea: number;
@@ -22,8 +23,8 @@ export class ArrbegEnd implements Expresion {
         throw new Error("Method not implemented.");
     }
 
-    getTipo(ent: Entorno, arbol: AST): Tipo {
-        const valor = this.getValorImplicito(ent, arbol);
+    getTipo(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>): Tipo {
+        const valor = this.getValorImplicito(ent, arbol,listaErrores);
         if (typeof(valor) === 'boolean')
         {
             return Tipo.BOOL;
@@ -46,7 +47,7 @@ export class ArrbegEnd implements Expresion {
         return Tipo.VOID;
     }
 
-    getValorImplicito(ent: Entorno, arbol: AST) {
+    getValorImplicito(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
         return this.id;
     }
 

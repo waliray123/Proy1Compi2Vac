@@ -15,10 +15,10 @@ var Funcion = /** @class */ (function () {
         this.parametros = parametros;
         this.parametrosR = [];
     }
-    Funcion.prototype.traducir = function (ent, arbol, resultado3D, temporales) {
+    Funcion.prototype.traducir = function (ent, arbol, resultado3D, temporales, listaErrores) {
         var entornoGlobal = new Entorno_1.Entorno(ent);
         this.instrucciones.forEach(function (element) {
-            element.traducir(entornoGlobal, arbol, resultado3D, temporales);
+            element.traducir(entornoGlobal, arbol, resultado3D, temporales, listaErrores);
         });
     };
     Funcion.prototype.ejecutar = function (ent, arbol, listaErrores) {
@@ -42,7 +42,7 @@ var Funcion = /** @class */ (function () {
             for (var i = 0; i < this.parametros.length; i++) {
                 var parametro = this.parametros[i];
                 var parametroR = this.parametrosR[i];
-                if (parametroR.getTipo(ent, arbol) == parametro.tipoParametro) {
+                if (parametroR.getTipo(ent, arbol, listaErrores) == parametro.tipoParametro) {
                     //id:Array<string>,tipo:Tipo, linea:number, columna:number,expresion:Expresion                                        
                     var declPar = new Declaracion_1.Declaracion([parametro.id], parametro.tipoParametro, this.linea, this.columna, parametroR.valor);
                     declPar.ejecutar(ent, arbol, listaErrores);

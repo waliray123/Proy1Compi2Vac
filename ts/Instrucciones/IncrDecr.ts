@@ -25,7 +25,7 @@ export class IncrDecr implements Instruccion{
     }
 
     ejecutar(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
-        const valorIns = this.operacion.getValorImplicito(ent, arbol);
+        const valorIns = this.operacion.getValorImplicito(ent, arbol,listaErrores);
         if(valorIns!==null){                                      
             if (ent.existe(this.idVar)) {
                 let simbol: Simbolo = ent.getSimbolo(this.idVar);                

@@ -20,7 +20,7 @@ export class DoWhile implements Instruccion{
         this.expresion = expresion;
     }
 
-    traducir(ent: Entorno, arbol: AST,resultado3D:Resultado3D,temporales:Temporales) {
+    traducir(ent: Entorno, arbol: AST,resultado3D:Resultado3D,temporales:Temporales,listaErrores:Array<ErrorG>) {
         const entornolocal:Entorno = new Entorno(ent);              
         if(temporales.ultLiteral == 0){
             resultado3D.codigo3D += '\tL'+temporales.ultLiteral + ":\n";    
@@ -29,7 +29,7 @@ export class DoWhile implements Instruccion{
         temporales.ultLiteral += 1;
 
         this.instrucciones.forEach((element:Instruccion) => {
-            element.traducir(entornolocal,arbol,resultado3D,temporales);
+            element.traducir(entornolocal,arbol,resultado3D,temporales,listaErrores);
         });                   
         
         let valAsign = this.expresion.traducir(entornolocal,arbol,resultado3D,temporales,0);
@@ -38,13 +38,13 @@ export class DoWhile implements Instruccion{
 
     ejecutar(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
         const entornolocal:Entorno = new Entorno(ent);
-        let realizar = this.expresion.getValorImplicito(entornolocal,arbol);
+        let realizar = this.expresion.getValorImplicito(entornolocal,arbol,listaErrores);
         let contSalir = 0;
         do{            
             this.instrucciones.forEach((element:Instruccion) => {
                 element.ejecutar(entornolocal,arbol,listaErrores);
             });
-            realizar = this.expresion.getValorImplicito(entornolocal,arbol);            
+            realizar = this.expresion.getValorImplicito(entornolocal,arbol,listaErrores);            
             if(contSalir == 5000){
                 realizar = false;
             }

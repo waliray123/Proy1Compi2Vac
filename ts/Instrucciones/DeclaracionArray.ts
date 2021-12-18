@@ -43,13 +43,13 @@ export class DeclaracionArray implements Instruccion{
                         ent.agregar(id,simbol);
                     }else{
                         if (this.expresion instanceof AccesoArray) {
-                            let valor = this.expresion.getValorImplicito(ent, arbol);
+                            let valor = this.expresion.getValorImplicito(ent, arbol,listaErrores);
                             if (valor == null) {
                                 valor = [];
                             }
                             let valorSimbolo:Arreglo = new Arreglo(this.tipo,valor.length,valor.length, valor,this.linea,this.columna);
                     
-                            if (valorSimbolo.comprobarTipo(ent,arbol)) {
+                            if (valorSimbolo.comprobarTipo(ent,arbol,listaErrores)) {
 
                                 let simbol:Simbolo = new Simbolo(Tipo.ARRAY,id,this.linea,this.columna,valorSimbolo);
                                 ent.agregar(id,simbol);
@@ -67,15 +67,15 @@ export class DeclaracionArray implements Instruccion{
                         ent.agregar(id,simbol);
                     }else{
                         if (this.expresion instanceof AccesoArray) {
-                            let valor = this.expresion.getValorImplicito(ent, arbol);
+                            let valor = this.expresion.getValorImplicito(ent, arbol,listaErrores);
                             if (valor == null) {
                                 valor = [];
                             }
-                            let dim = this.dimensiones[0].getValorImplicito(ent, arbol);
+                            let dim = this.dimensiones[0].getValorImplicito(ent, arbol,listaErrores);
                             if (typeof(dim) === 'number') {
                                 if (dim === valor.length) {
                                     let valorSimbolo:Arreglo = new Arreglo(this.tipo,valor.length,valor.length, valor,this.linea,this.columna);                    
-                                    if (valorSimbolo.comprobarTipo(ent,arbol)) {
+                                    if (valorSimbolo.comprobarTipo(ent,arbol,listaErrores)) {
                                         let simbol:Simbolo = new Simbolo(Tipo.ARRAY,id,this.linea,this.columna,valorSimbolo);
                                         ent.agregar(id,simbol);
                                     }

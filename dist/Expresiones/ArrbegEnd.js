@@ -13,8 +13,8 @@ var ArrbegEnd = /** @class */ (function () {
     ArrbegEnd.prototype.traducir = function (ent, arbol) {
         throw new Error("Method not implemented.");
     };
-    ArrbegEnd.prototype.getTipo = function (ent, arbol) {
-        var valor = this.getValorImplicito(ent, arbol);
+    ArrbegEnd.prototype.getTipo = function (ent, arbol, listaErrores) {
+        var valor = this.getValorImplicito(ent, arbol, listaErrores);
         if (typeof (valor) === 'boolean') {
             return Tipo_1.Tipo.BOOL;
         }
@@ -32,7 +32,7 @@ var ArrbegEnd = /** @class */ (function () {
         }
         return Tipo_1.Tipo.VOID;
     };
-    ArrbegEnd.prototype.getValorImplicito = function (ent, arbol) {
+    ArrbegEnd.prototype.getValorImplicito = function (ent, arbol, listaErrores) {
         return this.id;
     };
     ArrbegEnd.prototype.isInt = function (n) {

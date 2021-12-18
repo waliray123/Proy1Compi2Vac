@@ -4,6 +4,7 @@ import { Resultado3D } from "../AST/Resultado3D";
 import { Temporales } from "../AST/Temporales";
 import { Tipo } from "../AST/Tipo";
 import { Expresion } from "../Interfaces/Expresion";
+import { ErrorG } from "../Objetos/ErrorG";
 
 export class Primitivo implements Expresion {
     linea: number;
@@ -24,8 +25,8 @@ export class Primitivo implements Expresion {
         return this.valor;
     }
 
-    getTipo(ent: Entorno, arbol: AST): Tipo {
-        const valor = this.getValorImplicito(ent, arbol);
+    getTipo(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>): Tipo {
+        const valor = this.getValorImplicito(ent, arbol,listaErrores);
         if (typeof(valor) === 'boolean')
         {
             return Tipo.BOOL;
@@ -48,7 +49,7 @@ export class Primitivo implements Expresion {
         return Tipo.VOID;
     }
 
-    getValorImplicito(ent: Entorno, arbol: AST) {
+    getValorImplicito(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
         return this.valor;
     }
 

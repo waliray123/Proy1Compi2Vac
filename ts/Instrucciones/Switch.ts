@@ -29,7 +29,7 @@ export class Switch implements Instruccion{
 
     ejecutar(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
         for(var caso of this.lista_instrucciones){
-            if (this.expresion.getValorImplicito(ent,arbol) == caso.id.getValorImplicito(ent, arbol) || caso.id.getTipo(ent,arbol) == Tipo.NULL) {
+            if (this.expresion.getValorImplicito(ent,arbol) == caso.id.getValorImplicito(ent, arbol,listaErrores) || caso.id.getTipo(ent,arbol,listaErrores) == Tipo.NULL) {
                 caso.ejecutar(ent,arbol,listaErrores);
                 if (caso.getIsBreak()) {
                     break;

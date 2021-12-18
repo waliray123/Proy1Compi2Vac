@@ -80,7 +80,7 @@ window.traducirCodigo = function (entrada:string){
 
     //declaro los array's
     let array: {'id':String,'cont':any}[] = []; 
-    let listaErrores:Error[] = [];
+    let listaErrores:ErrorG[] = [];
     let instrucciones:any = [];
 
     array = gramatica.parse(entrada); //parseamos la gramatica
@@ -106,14 +106,14 @@ window.traducirCodigo = function (entrada:string){
 
 
         const ast:AST = new AST(instrucciones,structsG,funcionesG);
-        const entornoGlobal:Entorno = generarEntornoGlobalTraducir(ast,structsG,resultado3d,temporales);       
+        const entornoGlobal:Entorno = generarEntornoGlobalTraducir(ast,structsG,resultado3d,temporales,listaErrores);       
         
         //Buscar la funcion main    
 
         funcionesG.forEach((element:Funcion) => {
             if(element.nombrefuncion == "main"){
                 console.log("Se ejecutara");
-                element.traducir(entornoGlobal,ast,resultado3d,temporales);            
+                element.traducir(entornoGlobal,ast,resultado3d,temporales,listaErrores);            
             }
         })
 
@@ -173,7 +173,7 @@ function generarEntornoGlobal(ast:AST,structs:Array<Struct>,listaErrores:Array<E
     return entornoGlobal;
 }
 
-function generarEntornoGlobalTraducir(ast:AST,structs:Array<Struct>,resultado3D:Resultado3D,temporales:Temporales){
+function generarEntornoGlobalTraducir(ast:AST,structs:Array<Struct>,resultado3D:Resultado3D,temporales:Temporales,listaErrores:Array<ErrorG>){
     const entornoGlobal:Entorno = new Entorno(null);
     let instrucciones = ast.instrucciones;
     let declaracionesG = Array<Declaracion>();
@@ -184,11 +184,11 @@ function generarEntornoGlobalTraducir(ast:AST,structs:Array<Struct>,resultado3D:
     });
 
     declaracionesG.forEach((element:Declaracion) => {
-        element.traducir(entornoGlobal, ast,resultado3D,temporales);
+        element.traducir(entornoGlobal, ast,resultado3D,temporales,listaErrores);
     });
 
     structs.forEach((element:Instruccion)=>{
-        element.traducir(entornoGlobal, ast,resultado3D,temporales);
+        element.traducir(entornoGlobal, ast,resultado3D,temporales,listaErrores);
     })
 
     return entornoGlobal;

@@ -35,7 +35,7 @@ var DeclaracionStruct = /** @class */ (function () {
                                 // console.log("--index---------" + index);
                                 // console.log(declaracion.tipo);
                                 // console.log(param.getTipo(ent,arbol));
-                                var tipoParam = param.getTipo(ent, arbol);
+                                var tipoParam = param.getTipo(ent, arbol, listaErrores);
                                 if (tipoParam == Tipo_1.Tipo.TIPO_STRUCT) {
                                     declaracion.expresion = param.valor;
                                 }
@@ -45,7 +45,7 @@ var DeclaracionStruct = /** @class */ (function () {
                                 }
                                 else {
                                     // console.log('Error semantico, El parametro ' + param.getValorImplicito(ent, arbol)  + ' no coincide con el tipo del atributo de la estructura en la linea '+ this.linea + ' y columna ' + this.columna);
-                                    listaErrores.push(new ErrorG_1.ErrorG('semantico', 'El parametro ' + param.getValorImplicito(ent, arbol) + ' no coincide con el tipo del atributo de la estructura', _this.linea, _this.columna));
+                                    listaErrores.push(new ErrorG_1.ErrorG('semantico', 'El parametro ' + param.getValorImplicito(ent, arbol, listaErrores) + ' no coincide con el tipo del atributo de la estructura', _this.linea, _this.columna));
                                     error_1 = true;
                                 }
                             });

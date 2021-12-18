@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AccesoVariable = void 0;
 var Tipo_1 = require("../AST/Tipo");
+var ErrorG_1 = require("../Objetos/ErrorG");
 var AccesoVariable = /** @class */ (function () {
     function AccesoVariable(id, linea, columna) {
         this.id = id;
@@ -12,17 +13,18 @@ var AccesoVariable = /** @class */ (function () {
     AccesoVariable.prototype.traducir = function (ent, arbol) {
         throw new Error("Method not implemented.");
     };
-    AccesoVariable.prototype.getTipo = function (ent, arbol) {
+    AccesoVariable.prototype.getTipo = function (ent, arbol, listaErrores) {
         if (ent.existe(this.id)) {
             var simbol = ent.getSimbolo(this.id);
             return simbol.getTipo(ent, arbol);
         }
         else {
-            console.log('No existe el id ' + this.id + ' no hay tipo');
+            // console.log('No existe el id ' + this.id + ' no hay tipo');
+            listaErrores.push(new ErrorG_1.ErrorG('semantico', 'no existe la variable ' + this.id, this.linea, this.columna));
         }
         return Tipo_1.Tipo.NULL;
     };
-    AccesoVariable.prototype.getValorImplicito = function (ent, arbol) {
+    AccesoVariable.prototype.getValorImplicito = function (ent, arbol, listaErrores) {
         if (ent.existe(this.id)) {
             var simbol = ent.getSimbolo(this.id);
             if (simbol.getTipo(ent, arbol) == Tipo_1.Tipo.TIPO_STRUCT && this.isAlone) {
@@ -30,7 +32,7 @@ var AccesoVariable = /** @class */ (function () {
                 var atributos_1 = simbol.getValorImplicito(ent, arbol);
                 var i_1 = 0;
                 atributos_1.forEach(function (atributo) {
-                    sendResultado_1 += atributo.expresion.getValorImplicito(ent, arbol);
+                    sendResultado_1 += atributo.expresion.getValorImplicito(ent, arbol, listaErrores);
                     if (i_1 == atributos_1.length - 1) {
                         sendResultado_1 += ')';
                     }
@@ -47,7 +49,7 @@ var AccesoVariable = /** @class */ (function () {
                 var exprs_1 = valor.contenido;
                 var i_2 = 0;
                 exprs_1.forEach(function (expr) {
-                    sendResultado_2 += expr.getValorImplicito(ent, arbol);
+                    sendResultado_2 += expr.getValorImplicito(ent, arbol, listaErrores);
                     if (i_2 == exprs_1.length - 1) {
                         sendResultado_2 += ']';
                     }
@@ -63,7 +65,8 @@ var AccesoVariable = /** @class */ (function () {
             }
         }
         else {
-            console.log('No existe el id ' + this.id);
+            // console.log('No existe el id ' + this.id);
+            listaErrores.push(new ErrorG_1.ErrorG('semantico', 'no existe la variable ' + this.id, this.linea, this.columna));
         }
     };
     AccesoVariable.prototype.getId = function () {

@@ -12,7 +12,7 @@ var For = /** @class */ (function () {
         this.expresion1 = expresion1;
         this.expresion2 = expresion2;
     }
-    For.prototype.traducir = function (ent, arbol, resultado3D, temporales) {
+    For.prototype.traducir = function (ent, arbol, resultado3D, temporales, listaErrores) {
         var entornolocal = new Entorno_1.Entorno(ent);
         if (temporales.ultLiteral == 0) {
             resultado3D.codigo3D += '\tL' + temporales.ultLiteral + ":\n";
@@ -28,7 +28,7 @@ var For = /** @class */ (function () {
         resultado3D.codigo3D += '\tL' + (ulLit + 1) + ':\n';
         //Traducir instrucciones
         this.instrucciones.forEach(function (element) {
-            element.traducir(entornolocal, arbol, resultado3D, temporales);
+            element.traducir(entornolocal, arbol, resultado3D, temporales, listaErrores);
         });
         //Traducir el incremento o decremento
         var id = this.expresion2.op_izquierda.getId();
@@ -54,7 +54,7 @@ var For = /** @class */ (function () {
         this.declAsign.ejecutar(entornolocal, arbol);
         //expresion 1 es la que hay que validar 
         console.log("empezando el while  en for");
-        while (this.expresion1.getValorImplicito(entornolocal, arbol) == true) {
+        while (this.expresion1.getValorImplicito(entornolocal, arbol, listaErrores) == true) {
             //Realizar instrucciones
             this.instrucciones.forEach(function (element) {
                 element.ejecutar(entornolocal, arbol, listaErrores);

@@ -32,10 +32,10 @@ export class AsignacionArray implements Instruccion{
             let simbol:Simbolo = ent.getSimbolo(this.id);
             if (simbol.getTipo(ent,arbol) ==  Tipo.ARRAY) {
                 let valor:Arreglo = simbol.getValorImplicito(ent,arbol);
-                let pos = this.posicion.getValorImplicito(ent, arbol);
+                let pos = this.posicion.getValorImplicito(ent, arbol,listaErrores);
                 if (typeof(pos) == 'number') {
                     if (pos >= 0 && pos < valor.length) {
-                        if (this.expresion.getTipo(ent,arbol) == valor.tipo ) {
+                        if (this.expresion.getTipo(ent,arbol,listaErrores) == valor.tipo ) {
                             valor.contenido[pos] = this.expresion;
                         }else{
                             listaErrores.push(new ErrorG('semantico','no esta en el rango del arreglo',this.linea,this.columna));

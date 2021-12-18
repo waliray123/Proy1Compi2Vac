@@ -4,6 +4,7 @@ import { Simbolo } from "../AST/Simbolo";
 import { Tipo } from "../AST/Tipo";
 import { Declaracion } from "../Instrucciones/Declaracion";
 import { Expresion } from "../Interfaces/Expresion";
+import { ErrorG } from "../Objetos/ErrorG";
 import { AccesoVariable } from "./AccesoVariable";
 
 export class AccesoAtributo implements Expresion {
@@ -25,21 +26,21 @@ export class AccesoAtributo implements Expresion {
         throw new Error("Method not implemented.");
     }
 
-    getTipo(ent: Entorno, arbol: AST):Tipo {
+    getTipo(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>):Tipo {
         try{
             let valor = Tipo.NULL;
             this.expr1.isAlone = false;
-            let val1:Array<Declaracion> = this.expr1.getValorImplicito(ent, arbol);
+            let val1:Array<Declaracion> = this.expr1.getValorImplicito(ent, arbol,listaErrores);
             val1.forEach((decl:Declaracion)=>{
                 let nombre = decl.id[0];
                 if (nombre == this.expr2) {
                     // console.log('valor ' + decl.expresion.getValorImplicito(ent, arbol))
                     if (decl.expresion instanceof AccesoVariable) {
                         decl.expresion.isAlone = false;  
-                        valor =  decl.expresion.getValorImplicito(ent, arbol);
+                        valor =  decl.expresion.getValorImplicito(ent, arbol,listaErrores);
                         decl.expresion.isAlone = true;                      
                     }else{
-                        valor =  decl.expresion.getTipo(ent,arbol);
+                        valor =  decl.expresion.getTipo(ent,arbol,listaErrores);
                     }                    
                 }             
             })
@@ -47,25 +48,26 @@ export class AccesoAtributo implements Expresion {
             return valor;
         }catch(e){
             console.error("hubo un error en AccesoAtributo " + e);
+            listaErrores.push(new ErrorG('semantico','hubo un erro en en acceder al atributo',this.linea,this.columna));
             return Tipo.NULL;
         }
     }
 
-    getValorImplicito(ent: Entorno, arbol: AST) {
+    getValorImplicito(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
         try{
             let valor = null;
             this.expr1.isAlone = false;
-            let val1:Array<Declaracion> = this.expr1.getValorImplicito(ent, arbol);
+            let val1:Array<Declaracion> = this.expr1.getValorImplicito(ent, arbol,listaErrores);
             val1.forEach((decl:Declaracion)=>{
                 let nombre = decl.id[0];
                 if (nombre == this.expr2) {
                     // console.log('valor ' + decl.expresion.getValorImplicito(ent, arbol))
                     if (decl.expresion instanceof AccesoVariable) {
                         decl.expresion.isAlone = false;  
-                        valor =  decl.expresion.getValorImplicito(ent, arbol);
+                        valor =  decl.expresion.getValorImplicito(ent, arbol,listaErrores);
                         decl.expresion.isAlone = true;                      
                     }else{
-                        valor =  decl.expresion.getValorImplicito(ent, arbol);
+                        valor =  decl.expresion.getValorImplicito(ent, arbol,listaErrores);
                     }                    
                 }             
             })
@@ -73,6 +75,7 @@ export class AccesoAtributo implements Expresion {
             return valor;
         }catch(e){
             console.error("hubo un error en AccesoAtributo " + e);
+            listaErrores.push(new ErrorG('semantico','hubo un error en acceder al atributo',this.linea,this.columna));
             return null;
         }
     }
