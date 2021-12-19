@@ -9,7 +9,7 @@ var AccesoVariable = /** @class */ (function () {
         this.columna = columna;
         this.isAlone = true;
     }
-    AccesoVariable.prototype.traducir = function (ent, arbol, resultado3d, temporales) {
+    AccesoVariable.prototype.traducir = function (ent, arbol, resultado3d, temporales, recursivo) {
         if (ent.existe(this.id)) {
             var simbol = ent.getSimbolo(this.id);
             //TODO: Alv ya me canse de esto mejor hago la declaracion de los strings  AAAAAAAAAAAAAA

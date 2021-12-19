@@ -5,6 +5,7 @@ import { Parametro } from "../Instrucciones/Parametro";
 import { Funcion } from "../Instrucciones/Funcion";
 import { ParametroReturn } from "../Expresiones/ParametroReturn";
 import { ErrorG } from "../Objetos/ErrorG";
+import { Tipo } from "../AST/Tipo";
 
 export class FuncionReturn implements Instruccion{
     linea: number;
@@ -25,13 +26,33 @@ export class FuncionReturn implements Instruccion{
 
     ejecutar(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
         const funciones = arbol.funciones;
-        funciones.forEach((element:Funcion) => {
-            if(this.nombrefuncion == element.nombrefuncion){
+        for(let element of funciones){
+            if(this.nombrefuncion == element.nombrefuncion){                
                 element.setParametrosReturn(this.parametros);
-                element.ejecutar(ent,arbol,listaErrores);
-                return ; // Retornar el valor que retorna la funcion ejecutar
+                element.ejecutar(ent,arbol,listaErrores);                
+                return ent.valorReturn; // Retornar el valor que retorna la funcion ejecutar
             }
-        })
+        }
+    }
+
+    getTipo(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>){
+        const funciones = arbol.funciones;        
+        for(let element of funciones){
+            if(this.nombrefuncion == element.nombrefuncion){                
+                return element.tipoFuncion;
+            }
+        }
+    }
+
+    getValorImplicito(ent:Entorno, arbol:AST,listaErrores:Array<ErrorG>){
+        const funciones = arbol.funciones;
+        for(let element of funciones){
+            if(this.nombrefuncion == element.nombrefuncion){                
+                element.setParametrosReturn(this.parametros);
+                element.ejecutar(ent,arbol,listaErrores);                
+                return ent.valorReturn; // Retornar el valor que retorna la funcion ejecutar
+            }
+        }
     }
 
 }

@@ -53,11 +53,17 @@ var For = /** @class */ (function () {
         this.declAsign.ejecutar(entornolocal, arbol);
         //expresion 1 es la que hay que validar 
         console.log("empezando el while  en for");
+        var realizar = true;
         while (this.expresion1.getValorImplicito(entornolocal, arbol, listaErrores) == true) {
             //Realizar instrucciones
-            this.instrucciones.forEach(function (element) {
-                element.ejecutar(entornolocal, arbol, listaErrores);
-            });
+            for (var _i = 0, _a = this.instrucciones; _i < _a.length; _i++) {
+                var element = _a[_i];
+                var valR = element.ejecutar(entornolocal, arbol, listaErrores);
+                if (valR == 'RETORNAR') {
+                    ent.valorReturn = entornolocal.valorReturn;
+                    return 'RETORNAR';
+                }
+            }
             //Sumar o realizar la expresion2            
             //Primero se obtiene la operacion;            
             var valAsig = this.expresion2.getValorImplicito(entornolocal, arbol);

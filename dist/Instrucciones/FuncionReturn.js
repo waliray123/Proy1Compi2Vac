@@ -12,15 +12,35 @@ var FuncionReturn = /** @class */ (function () {
         throw new Error("Method not implemented.");
     };
     FuncionReturn.prototype.ejecutar = function (ent, arbol, listaErrores) {
-        var _this = this;
         var funciones = arbol.funciones;
-        funciones.forEach(function (element) {
-            if (_this.nombrefuncion == element.nombrefuncion) {
-                element.setParametrosReturn(_this.parametros);
+        for (var _i = 0, funciones_1 = funciones; _i < funciones_1.length; _i++) {
+            var element = funciones_1[_i];
+            if (this.nombrefuncion == element.nombrefuncion) {
+                element.setParametrosReturn(this.parametros);
                 element.ejecutar(ent, arbol, listaErrores);
-                return; // Retornar el valor que retorna la funcion ejecutar
+                return ent.valorReturn; // Retornar el valor que retorna la funcion ejecutar
             }
-        });
+        }
+    };
+    FuncionReturn.prototype.getTipo = function (ent, arbol, listaErrores) {
+        var funciones = arbol.funciones;
+        for (var _i = 0, funciones_2 = funciones; _i < funciones_2.length; _i++) {
+            var element = funciones_2[_i];
+            if (this.nombrefuncion == element.nombrefuncion) {
+                return element.tipoFuncion;
+            }
+        }
+    };
+    FuncionReturn.prototype.getValorImplicito = function (ent, arbol, listaErrores) {
+        var funciones = arbol.funciones;
+        for (var _i = 0, funciones_3 = funciones; _i < funciones_3.length; _i++) {
+            var element = funciones_3[_i];
+            if (this.nombrefuncion == element.nombrefuncion) {
+                element.setParametrosReturn(this.parametros);
+                element.ejecutar(ent, arbol, listaErrores);
+                return ent.valorReturn; // Retornar el valor que retorna la funcion ejecutar
+            }
+        }
     };
     return FuncionReturn;
 }());

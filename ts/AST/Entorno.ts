@@ -5,10 +5,12 @@ import { Tipo } from "./Tipo";
 export class Entorno{
     private anterior:Entorno;
     private tabla:{[id:string] : Simbolo};
+    public  valorReturn:any;
 
     constructor(anterior:any){
         this.tabla = {};
         this.anterior = anterior;
+        this.valorReturn = null;
     }
 
     agregar(id:string, simbolo:Simbolo){

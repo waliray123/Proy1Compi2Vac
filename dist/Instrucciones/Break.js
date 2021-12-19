@@ -6,8 +6,8 @@ var Break = /** @class */ (function () {
         this.linea = linea;
         this.columna = columna;
     }
-    Break.prototype.traducir = function (ent, arbol) {
-        throw new Error("Method not implemented.");
+    Break.prototype.traducir = function (ent, arbol, resultado3D, temporales, listaErrores) {
+        resultado3D.codigo3D += '\tgoto L' + temporales.ultLiteral + ';\n';
     };
     Break.prototype.ejecutar = function (ent, arbol, listaErrores) {
         return;

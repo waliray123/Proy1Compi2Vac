@@ -58,10 +58,15 @@ var If = /** @class */ (function () {
         //Revisar la condicion del if
         if (this.tipo == "if" || this.tipo == "elseif") {
             if (this.condicion.getValorImplicito(ent, arbol, listaErrores) == true) {
-                var entornolocal_3 = new Entorno_1.Entorno(ent);
-                this.instrucciones.forEach(function (element) {
-                    element.ejecutar(entornolocal_3, arbol, listaErrores);
-                });
+                var entornolocal = new Entorno_1.Entorno(ent);
+                for (var _i = 0, _a = this.instrucciones; _i < _a.length; _i++) {
+                    var element = _a[_i];
+                    var valR = element.ejecutar(entornolocal, arbol, listaErrores);
+                    if (valR == 'RETORNAR') {
+                        ent.valorReturn = entornolocal.valorReturn;
+                        return 'RETORNAR';
+                    }
+                }
             }
             else {
                 var seEncontro = false;
@@ -71,8 +76,11 @@ var If = /** @class */ (function () {
                         if (element.condicion.getValorImplicito(ent, arbol, listaErrores) == true) {
                             //Se encontro un elseif que cumple con la condicion
                             var entornolocal = new Entorno_1.Entorno(ent);
-                            element.ejecutar(entornolocal, arbol, listaErrores);
-                            seEncontro = true;
+                            var valR = element.ejecutar(entornolocal, arbol, listaErrores);
+                            if (valR == 'RETORNAR') {
+                                ent.valorReturn = entornolocal.valorReturn;
+                                return 'RETORNAR';
+                            }
                             break;
                         }
                     }
@@ -83,7 +91,11 @@ var If = /** @class */ (function () {
                         if (element.tipo == "else") {
                             //Se encontro un else  
                             var entornolocal = new Entorno_1.Entorno(ent);
-                            element.ejecutar(entornolocal, arbol, listaErrores);
+                            var valR = element.ejecutar(entornolocal, arbol, listaErrores);
+                            if (valR == 'RETORNAR') {
+                                ent.valorReturn = entornolocal.valorReturn;
+                                return 'RETORNAR';
+                            }
                             break;
                         }
                     }
@@ -91,10 +103,17 @@ var If = /** @class */ (function () {
             }
         }
         else {
-            var entornolocal_4 = new Entorno_1.Entorno(ent);
-            this.instrucciones.forEach(function (element) {
-                element.ejecutar(entornolocal_4, arbol, listaErrores);
-            });
+            var entornolocal = new Entorno_1.Entorno(ent);
+            for (var _b = 0, _c = this.instrucciones; _b < _c.length; _b++) {
+                var element = _c[_b];
+                var valR = element.ejecutar(entornolocal, arbol, listaErrores);
+                if (valR == 'RETORNAR') {
+                    ent.valorReturn = entornolocal.valorReturn;
+                    console.log('VAl return');
+                    console.log(ent.valorReturn);
+                    return 'RETORNAR';
+                }
+            }
         }
     };
     return If;

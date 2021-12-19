@@ -5,6 +5,7 @@ var Entorno = /** @class */ (function () {
     function Entorno(anterior) {
         this.tabla = {};
         this.anterior = anterior;
+        this.valorReturn = null;
     }
     Entorno.prototype.agregar = function (id, simbolo) {
         id = id;

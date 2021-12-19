@@ -26,9 +26,14 @@ var DoWhile = /** @class */ (function () {
         var realizar = this.expresion.getValorImplicito(entornolocal, arbol, listaErrores);
         var contSalir = 0;
         do {
-            this.instrucciones.forEach(function (element) {
-                element.ejecutar(entornolocal, arbol, listaErrores);
-            });
+            for (var _i = 0, _a = this.instrucciones; _i < _a.length; _i++) {
+                var element = _a[_i];
+                var valR = element.ejecutar(entornolocal, arbol, listaErrores);
+                if (valR == 'RETORNAR') {
+                    ent.valorReturn = entornolocal.valorReturn;
+                    return 'RETORNAR';
+                }
+            }
             realizar = this.expresion.getValorImplicito(entornolocal, arbol, listaErrores);
             if (contSalir == 5000) {
                 realizar = false;
