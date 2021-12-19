@@ -8,8 +8,19 @@ var AccesoArray = /** @class */ (function () {
         this.linea = linea;
         this.columna = columna;
     }
-    AccesoArray.prototype.traducir = function (ent, arbol) {
-        throw new Error("Method not implemented.");
+    AccesoArray.prototype.traducir = function (ent, arbol, resultado3d, temporales, recursivo) {
+        temporales.ultimoTemp += 1;
+        var tempAux = temporales.ultimoTemp;
+        resultado3d.codigo3D += '\tt' + tempAux + '= H;\n';
+        temporales.ultimoTemp += 1;
+        this.contenido.forEach(function (contenido) {
+            var valor = contenido.traducir(ent, arbol, resultado3d, temporales, 0);
+            resultado3d.codigo3D += '\theap[(int)H] = ' + valor + ';\n';
+            resultado3d.codigo3D += '\tH = H + 1;\n';
+        });
+        resultado3d.codigo3D += '\theap[(int)H] = -1;\n';
+        resultado3d.codigo3D += '\tH = H + 1;\n';
+        return 't' + tempAux;
     };
     AccesoArray.prototype.getTipo = function (ent, arbol, listaErrores) {
         return Tipo_1.Tipo.ARRAY;
