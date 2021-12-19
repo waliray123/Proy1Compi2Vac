@@ -22,9 +22,7 @@ export class Primitivo implements Expresion {
         
         let tipo = this.getTipo(ent,arbol,[]);
         temporales.ultimoTipo = tipo;
-        if(tipo != Tipo.STRING){            
-            return this.valor;
-        }else{
+        if(tipo == Tipo.STRING){            
             temporales.ultimoTemp += 1;
             resultado3d.codigo3D += '\tt'+temporales.ultimoTemp + '= H;\n';
 
@@ -38,7 +36,15 @@ export class Primitivo implements Expresion {
             }
             resultado3d.codigo3D += '\theap[(int)H] = -1;\n'; 
             resultado3d.codigo3D += '\tH = H + 1;\n';
-            return 't'+temporales.ultimoTemp;
+            return 't'+temporales.ultimoTemp;            
+        }else if(tipo == Tipo.BOOL){            
+            if(this.valor == true){
+                return 1;
+            }else{
+                return 0;
+            }            
+        }else{
+            return this.valor;
         }
         
     }

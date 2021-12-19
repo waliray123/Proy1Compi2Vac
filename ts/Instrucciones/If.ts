@@ -45,7 +45,7 @@ export class If implements Instruccion {
         let cont = ultLit+1;
         for(let i = cantidadSinos-1; i >= 0; i--){
             let sino = this.sinos[i];
-            sino.traducirSinos(ent,arbol,resultado3D,temporales,cont,(cantidadSinos+1),listaErrores);
+            sino.traducirSinos(ent,arbol,resultado3D,temporales,cont,(ultLit+cantidadSinos+1),listaErrores);
             cont +=1;
         }        
         resultado3D.codigo3D += '\tL'+(ultLit+cantidadSinos+1)+':\n';
@@ -70,6 +70,7 @@ export class If implements Instruccion {
                 element.traducir(entornolocal, arbol,resultado3D,temporales,listaErrores);
             });
             resultado3D.codigo3D += '\tgoto L'+ultAsign+';\n';
+            
         }
     }
 
