@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Funcion = void 0;
 var Entorno_1 = require("../AST/Entorno");
 var Declaracion_1 = require("./Declaracion");
 var ErrorG_1 = require("../Objetos/ErrorG");
@@ -17,18 +16,36 @@ var Funcion = /** @class */ (function () {
     }
     Funcion.prototype.traducir = function (ent, arbol, resultado3D, temporales, listaErrores) {
         var entornoGlobal = new Entorno_1.Entorno(ent);
-        this.instrucciones.forEach(function (element) {
+        for (var _i = 0, _a = this.instrucciones; _i < _a.length; _i++) {
+            var element = _a[_i];
             element.traducir(entornoGlobal, arbol, resultado3D, temporales, listaErrores);
-        });
+        }
+        /*
+        this.instrucciones.forEach((element:Instruccion) => {
+            element.traducir(entornoGlobal,arbol,resultado3D,temporales,listaErrores);
+        })
+        */
     };
     Funcion.prototype.ejecutar = function (ent, arbol, listaErrores) {
         var entornoGlobal = new Entorno_1.Entorno(ent);
         //Declarar todos los parametros
         this.declararParametrosReturn(entornoGlobal, arbol, listaErrores);
         //recorro todas las raices  RECURSIVA
-        this.instrucciones.forEach(function (element) {
-            element.ejecutar(entornoGlobal, arbol, listaErrores);
-        });
+        for (var _i = 0, _a = this.instrucciones; _i < _a.length; _i++) {
+            var element = _a[_i];
+            var valR = element.ejecutar(entornoGlobal, arbol, listaErrores);
+            if (valR == 'RETORNAR') {
+                console.log('VAl return Funcion');
+                ent.valorReturn = entornoGlobal.valorReturn;
+                console.log(ent.valorReturn);
+                break;
+            }
+        }
+        /*
+        this.instrucciones.forEach((element:Instruccion) => {
+            element.ejecutar(entornoGlobal,arbol,listaErrores);
+        })
+        */
         // console.log(this.instrucciones);
     };
     Funcion.prototype.getTipo = function () {

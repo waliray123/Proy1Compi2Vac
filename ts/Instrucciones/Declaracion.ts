@@ -89,7 +89,7 @@ export class Declaracion implements Instruccion{
                     let simbol = new Simbolo(this.tipo,id,this.linea,this.columna,this.getValDefault());
                     ent.agregar(id,simbol);
                 }else{
-                    let tipoExpr:Tipo = this.expresion.getTipo(ent,arbol,listaErrores);
+                    let tipoExpr:Tipo = this.expresion.getTipo(ent,arbol,listaErrores);            
                     if(tipoExpr == this.tipo){
                         let simbol = new Simbolo(this.tipo,id,this.linea,this.columna,this.expresion.getValorImplicito(ent,arbol,listaErrores));
                         ent.agregar(id,simbol);

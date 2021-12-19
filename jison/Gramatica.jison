@@ -157,6 +157,7 @@ BSL               "\\".
     const {DeclaracionStruct} = require("../dist/Instrucciones/DeclaracionStruct");
     const {SwitchCaso} = require("../dist/Instrucciones/SwitchCaso");
     const {Break} = require("../dist/Instrucciones/Break");
+    const {Return} = require("../dist/Instrucciones/Return");
     const {Continue} = require("../dist/Instrucciones/Continue");
     const {FuncionReturn} = require("../dist/Instrucciones/FuncionReturn");
     const {Parametro} = require("../dist/Instrucciones/Parametro");
@@ -311,7 +312,13 @@ instruccion_funcion
     | funcion_return        {$$ = $1;}  
     | incremento_decremento {$$ = $1;}
     | funciones_arreglo     {$$ = $1;}
+    | returns_bloque        {$$ = $1;}
     | error PUNTCOMA                 {genError(yytext,@1.first_line,@1.first_column);}
+;
+
+returns_bloque
+    : STR_RETURN PUNTCOMA               {$$ = new Return(null,@1.first_line,@1.first_column);}
+    | STR_RETURN expresion PUNTCOMA     {$$ = new Return($2,@1.first_line,@1.first_column);}
 ;
 
 funciones_arreglo

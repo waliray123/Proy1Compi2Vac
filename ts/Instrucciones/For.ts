@@ -82,13 +82,17 @@ export class For implements Instruccion{
         console.log("empezando el while  en for");
 
         
-        
+        let realizar = true;
         while(this.expresion1.getValorImplicito(entornolocal,arbol,listaErrores) == true){
             
             //Realizar instrucciones
-            this.instrucciones.forEach((element:Instruccion) => {
-                element.ejecutar(entornolocal,arbol,listaErrores);
-            });
+            for(let element of this.instrucciones){
+                let valR = element.ejecutar(entornolocal,arbol,listaErrores);            
+                if(valR == 'RETORNAR'){                
+                    ent.valorReturn = entornolocal.valorReturn;       
+                    return 'RETORNAR';       
+                }
+            }           
             //Sumar o realizar la expresion2            
             //Primero se obtiene la operacion;            
             const valAsig = this.expresion2.getValorImplicito(entornolocal,arbol);

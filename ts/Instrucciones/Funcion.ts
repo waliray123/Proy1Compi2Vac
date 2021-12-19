@@ -31,10 +31,14 @@ export class Funcion implements Instruccion{
     traducir(ent: Entorno, arbol: AST,resultado3D:Resultado3D,temporales:Temporales,listaErrores:Array<ErrorG>) {
         const entornoGlobal:Entorno = new Entorno(ent);
 
+        for(let element of this.instrucciones){
+            element.traducir(entornoGlobal,arbol,resultado3D,temporales,listaErrores);
+        }
+        /*
         this.instrucciones.forEach((element:Instruccion) => {
             element.traducir(entornoGlobal,arbol,resultado3D,temporales,listaErrores);
         })
-
+        */
     }
 
     ejecutar(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {        
@@ -46,9 +50,20 @@ export class Funcion implements Instruccion{
         this.declararParametrosReturn(entornoGlobal,arbol,listaErrores);
 
         //recorro todas las raices  RECURSIVA
+        for(let element of this.instrucciones){
+            let valR = element.ejecutar(entornoGlobal,arbol,listaErrores);            
+            if(valR == 'RETORNAR'){        
+                console.log('VAl return Funcion');   
+                ent.valorReturn = entornoGlobal.valorReturn;
+                console.log(ent.valorReturn);         
+                break;
+            }
+        }
+        /*
         this.instrucciones.forEach((element:Instruccion) => {
             element.ejecutar(entornoGlobal,arbol,listaErrores);
         })
+        */
         // console.log(this.instrucciones);
     }
 

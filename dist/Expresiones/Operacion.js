@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Operacion = exports.Operador = void 0;
 var Tipo_1 = require("../AST/Tipo");
 var ErrorG_1 = require("../Objetos/ErrorG");
 var Operador;
@@ -64,6 +63,9 @@ var Operacion = /** @class */ (function () {
                     resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '= 0;\n';
                     resultado3d.codigo3D += '\tL' + (ultLit + 2) + ':\n';
                     temporales.ultLitEscr = (ultLit + 2);
+                    var valR = 't' + temporales.ultimoTemp;
+                    temporales.ultimoTemp += 1;
+                    return valR;
                 }
                 else {
                     resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
@@ -128,6 +130,56 @@ var Operacion = /** @class */ (function () {
         else if (this.operador == Operador.MODULO) {
             resultadoR = 'fmod(' + val1 + ',' + val2 + ')';
             temporales.ultimoTipo = Tipo_1.Tipo.DOUBLE;
+        }
+        else if (this.operador == Operador.AND) {
+            temporales.ultimoTemp += 1;
+            var temReturn = temporales.ultimoTemp;
+            temporales.ultLiteral += 3;
+            var ultLit = temporales.ultLiteral - 2;
+            resultado3d.codigo3D += '\tif (' + val1 + ' == 1) goto L' + ultLit + ';\n';
+            resultado3d.codigo3D += '\tgoto L' + (ultLit + 1) + ';\n';
+            resultado3d.codigo3D += '\tL' + (ultLit) + ':\n';
+            temporales.ultLiteral += 2;
+            var ultLit2 = temporales.ultLiteral - 1;
+            resultado3d.codigo3D += '\tif (' + val2 + ' == 1) goto L' + ultLit2 + ';\n';
+            resultado3d.codigo3D += '\tgoto L' + (ultLit2 + 1) + ';\n';
+            resultado3d.codigo3D += '\tL' + (ultLit2) + ':\n';
+            resultado3d.codigo3D += '\tt' + temReturn + '= 1;\n';
+            resultado3d.codigo3D += '\tgoto L' + (ultLit + 2) + ';\n';
+            resultado3d.codigo3D += '\tL' + (ultLit2 + 1) + ':\n';
+            resultado3d.codigo3D += '\tt' + temReturn + '= 0;\n';
+            resultado3d.codigo3D += '\tgoto L' + (ultLit + 2) + ';\n';
+            resultado3d.codigo3D += '\tL' + (ultLit + 1) + ':\n';
+            resultado3d.codigo3D += '\tt' + temReturn + '= 0;\n';
+            resultado3d.codigo3D += '\tL' + (ultLit + 2) + ':\n';
+            temporales.ultLitEscr = ultLit + 2;
+            resultadoR = 't' + temReturn;
+            temporales.ultimoTipo = Tipo_1.Tipo.BOOL;
+        }
+        else if (this.operador == Operador.OR) {
+            temporales.ultimoTemp += 1;
+            var temReturn = temporales.ultimoTemp;
+            temporales.ultLiteral += 3;
+            var ultLit = temporales.ultLiteral - 2;
+            resultado3d.codigo3D += '\tif (' + val1 + ' == 0) goto L' + ultLit + ';\n';
+            resultado3d.codigo3D += '\tgoto L' + (ultLit + 1) + ';\n';
+            resultado3d.codigo3D += '\tL' + (ultLit) + ':\n';
+            temporales.ultLiteral += 2;
+            var ultLit2 = temporales.ultLiteral - 1;
+            resultado3d.codigo3D += '\tif (' + val2 + ' == 0) goto L' + ultLit2 + ';\n';
+            resultado3d.codigo3D += '\tgoto L' + (ultLit2 + 1) + ';\n';
+            resultado3d.codigo3D += '\tL' + (ultLit2) + ':\n';
+            resultado3d.codigo3D += '\tt' + temReturn + '= 0;\n';
+            resultado3d.codigo3D += '\tgoto L' + (ultLit + 2) + ';\n';
+            resultado3d.codigo3D += '\tL' + (ultLit2 + 1) + ':\n';
+            resultado3d.codigo3D += '\tt' + temReturn + '= 1;\n';
+            resultado3d.codigo3D += '\tgoto L' + (ultLit + 2) + ';\n';
+            resultado3d.codigo3D += '\tL' + (ultLit + 1) + ':\n';
+            resultado3d.codigo3D += '\tt' + temReturn + '= 1;\n';
+            resultado3d.codigo3D += '\tL' + (ultLit + 2) + ':\n';
+            temporales.ultLitEscr = ultLit + 2;
+            resultadoR = 't' + temReturn;
+            temporales.ultimoTipo = Tipo_1.Tipo.BOOL;
         }
         //TODO: No se como hacerle para esto, porque si viene un tt como se el valor?
         else if (this.operador == Operador.POW) {

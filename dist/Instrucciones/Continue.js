@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Continue = void 0;
 // print("hola mundo");
 var Continue = /** @class */ (function () {
     function Continue(linea, columna) {

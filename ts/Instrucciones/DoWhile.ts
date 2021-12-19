@@ -41,14 +41,18 @@ export class DoWhile implements Instruccion{
         let realizar = this.expresion.getValorImplicito(entornolocal,arbol,listaErrores);
         let contSalir = 0;
         do{            
-            this.instrucciones.forEach((element:Instruccion) => {
-                element.ejecutar(entornolocal,arbol,listaErrores);
-            });
+            for(let element of this.instrucciones){
+                let valR = element.ejecutar(entornolocal,arbol,listaErrores);            
+                if(valR == 'RETORNAR'){                
+                    ent.valorReturn = entornolocal.valorReturn;       
+                    return 'RETORNAR';       
+                }
+            } 
             realizar = this.expresion.getValorImplicito(entornolocal,arbol,listaErrores);            
             if(contSalir == 5000){
                 realizar = false;
             }
-            contSalir++;
+            contSalir++;               
         }while(realizar);
     }
 
