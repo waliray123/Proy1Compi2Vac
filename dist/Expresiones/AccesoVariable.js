@@ -15,9 +15,9 @@ var AccesoVariable = /** @class */ (function () {
             var simbol = ent.getSimbolo(this.id);
             //TODO: Alv ya me canse de esto mejor hago la declaracion de los strings  AAAAAAAAAAAAAA
             var valor = 'stack[(int)' + simbol.valor + ']';
+            temporales.ultimoTemp += 1;
             resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
             var valR = 't' + temporales.ultimoTemp;
-            temporales.ultimoTemp += 1;
             temporales.ultimoTipo = this.getTipo(ent, arbol, []);
             return valR;
         }
