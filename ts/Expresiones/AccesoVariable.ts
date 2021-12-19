@@ -29,9 +29,9 @@ export class AccesoVariable implements Expresion {
             //TODO: Alv ya me canse de esto mejor hago la declaracion de los strings  AAAAAAAAAAAAAA
 
             let valor = 'stack[(int)'+simbol.valor + ']';
-            resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
-            let valR = 't' + temporales.ultimoTemp;
             temporales.ultimoTemp += 1;
+            resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
+            let valR = 't' + temporales.ultimoTemp;            
             temporales.ultimoTipo = this.getTipo(ent,arbol,[]);
             return valR;
         } else {

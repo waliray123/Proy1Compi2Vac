@@ -65,6 +65,5 @@ function autoRefresh(){
   list_editors.forEach(function(editor, indice, array) {
     // editor.setOption("viewportMargin", Infinity)
     editor.refresh()
-    console.log(indice)
   })
 }
