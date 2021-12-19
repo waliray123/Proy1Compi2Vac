@@ -16,8 +16,45 @@ var DeclaracionArray = /** @class */ (function () {
         this.linea = linea;
         this.columna = columna;
     }
-    DeclaracionArray.prototype.traducir = function (ent, arbol) {
-        throw new Error("Method not implemented.");
+    DeclaracionArray.prototype.traducir = function (ent, arbol, resultado3d, temporales, listaErrores) {
+        var _this = this;
+        this.id.forEach(function (id) {
+            if (!ent.existe(id)) {
+                if (_this.dimensiones.length == 0) {
+                    if (_this.expresion == null) {
+                        // let valor:Arreglo = new Arreglo(this.tipo,0,0,[],this.linea,this.columna);
+                        var simbol = new Simbolo_1.Simbolo(Tipo_1.Tipo.ARRAY, id, _this.linea, _this.columna, temporales.ultstack);
+                        temporales.ultstack += 1;
+                        ent.agregar(id, simbol);
+                        resultado3d.codigo3D += 'stack[(int)' + simbol.valor + '];\n';
+                    }
+                    else {
+                        if (_this.expresion instanceof AccesoArray_1.AccesoArray) {
+                            // let valor = this.expresion.getValorImplicito(ent, chejoharbol,listaErrores);
+                            // if (valor == null) {
+                            //     valor = [];
+                            // }
+                            //let valorSimbolo:Arreglo = new Arreglo(this.tipo,valor.length,valor.length, valor,this.linea,this.columna);
+                            var simbol = new Simbolo_1.Simbolo(Tipo_1.Tipo.ARRAY, id, _this.linea, _this.columna, temporales.ultstack);
+                            temporales.ultstack += 1;
+                            ent.agregar(id, simbol);
+                            //asignar los valores al stack
+                            var valor = _this.expresion.traducir(ent, arbol, resultado3d, temporales, 0);
+                            console.log('temp array: ');
+                            console.log(valor);
+                            resultado3d.codigo3D += '\tstack[(int)' + simbol.valor + '] =' + valor + ';\n';
+                        }
+                        else {
+                            //    console.log('Error semantico, la asignacion no es un arreglo de datos en la linea '+ this.linea + ' y columna ' + this.columna); 
+                            listaErrores.push(new ErrorG_1.ErrorG('semantico', 'la asignacion no es un arreglo de datos', _this.linea, _this.columna));
+                        }
+                    }
+                }
+            }
+            else {
+                // error, si existe
+            }
+        });
     };
     DeclaracionArray.prototype.ejecutar = function (ent, arbol, listaErrores) {
         var _this = this;

@@ -10,8 +10,24 @@ var AccesoAtribArray = /** @class */ (function () {
         this.linea = linea;
         this.columna = columna;
     }
-    AccesoAtribArray.prototype.traducir = function (ent, arbol) {
-        throw new Error("Method not implemented.");
+    AccesoAtribArray.prototype.traducir = function (ent, arbol, resultado3d, temporales, recursivo) {
+        if (ent.existe(this.id)) {
+            var simbol = ent.getSimbolo(this.id);
+            if (simbol.getTipo(ent, arbol) == Tipo_1.Tipo.ARRAY) {
+                var pos = this.posicion.traducir(ent, arbol, resultado3d, temporales, 0);
+                temporales.ultimoTemp += 1;
+                var stackPos = temporales.ultimoTemp;
+                resultado3d.codigo3D += '\tt' + stackPos + ' = stack[(int)' + simbol.valor + '];\n';
+                temporales.ultimoTemp += 1;
+                var posHeap = temporales.ultimoTemp;
+                resultado3d.codigo3D += '\tt' + posHeap + ' = t' + stackPos + ' + ' + pos + ';\n';
+                temporales.ultimoTemp += 1;
+                resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + ' = heap[(int) t' + posHeap + '];\n';
+                return 't' + temporales.ultimoTemp;
+            }
+        }
+        else {
+        }
     };
     AccesoAtribArray.prototype.getTipo = function (ent, arbol, listaErrores) {
         if (ent.existe(this.id)) {

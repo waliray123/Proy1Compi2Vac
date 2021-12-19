@@ -1,6 +1,8 @@
 import { AST } from "../AST/AST";
 import { Entorno } from "../AST/Entorno";
+import { Resultado3D } from "../AST/Resultado3D";
 import { Simbolo } from "../AST/Simbolo";
+import { Temporales } from "../AST/Temporales";
 import { Tipo } from "../AST/Tipo";
 import { Declaracion } from "../Instrucciones/Declaracion";
 import { Expresion } from "../Interfaces/Expresion";
@@ -21,8 +23,26 @@ export class AccesoAtribArray implements Expresion {
         this.columna = columna;
     }
     
-    traducir(ent: Entorno, arbol: AST) {
-        throw new Error("Method not implemented.");
+    traducir(ent: Entorno, arbol: AST,resultado3d: Resultado3D, temporales: Temporales,recursivo: number) {
+        if (ent.existe(this.id)) {
+            let simbol:Simbolo = ent.getSimbolo(this.id);
+            if (simbol.getTipo(ent,arbol) == Tipo.ARRAY) {
+
+                let pos = this.posicion.traducir(ent,arbol,resultado3d,temporales,0);
+                temporales.ultimoTemp += 1;
+                let stackPos = temporales.ultimoTemp;
+                resultado3d.codigo3D += '\tt'+ stackPos +' = stack[(int)'+simbol.valor+'];\n';
+                temporales.ultimoTemp += 1;
+                let posHeap = temporales.ultimoTemp;
+                resultado3d.codigo3D += '\tt'+posHeap+' = t'+ stackPos + ' + ' + pos+';\n';
+                temporales.ultimoTemp += 1;
+                resultado3d.codigo3D += '\tt'+temporales.ultimoTemp+' = heap[(int) t'+posHeap+'];\n';
+
+                return 't'+ temporales.ultimoTemp;
+            }
+        }else{
+
+        }
     }
 
     getTipo(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>):Tipo {
