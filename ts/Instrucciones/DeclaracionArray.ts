@@ -1,6 +1,8 @@
 import { AST } from "../AST/AST";
 import { Entorno } from "../AST/Entorno";
+import { Resultado3D } from "../AST/Resultado3D";
 import { Simbolo } from "../AST/Simbolo";
+import { Temporales } from "../AST/Temporales";
 import { Tipo } from "../AST/Tipo";
 import { AccesoArray } from "../Expresiones/AccesoArray";
 import { Expresion } from "../Interfaces/Expresion";
@@ -27,8 +29,52 @@ export class DeclaracionArray implements Instruccion{
         this.columna = columna;
     }
 
-    traducir(ent: Entorno, arbol: AST) {
-        throw new Error("Method not implemented.");
+    traducir(ent: Entorno, arbol: AST,resultado3d: Resultado3D, temporales: Temporales,listaErrores:Array<ErrorG>) {
+        this.id.forEach((id:string)=>{
+            if (!ent.existe(id)) {
+                if (this.dimensiones.length == 0) {
+                    
+                    if (this.expresion == null) {
+
+                        // let valor:Arreglo = new Arreglo(this.tipo,0,0,[],this.linea,this.columna);
+                        let simbol:Simbolo = new Simbolo(Tipo.ARRAY,id,this.linea,this.columna,temporales.ultstack);
+                        temporales.ultstack += 1;
+                        ent.agregar(id,simbol);
+                        resultado3d.codigo3D += 'stack[(int)'+simbol.valor+'];\n';
+                    }else{
+
+                        if (this.expresion instanceof AccesoArray) {
+
+                            // let valor = this.expresion.getValorImplicito(ent, chejoharbol,listaErrores);
+
+                            // if (valor == null) {
+                            //     valor = [];
+                            // }
+                            
+                            //let valorSimbolo:Arreglo = new Arreglo(this.tipo,valor.length,valor.length, valor,this.linea,this.columna);
+                    
+                            
+                            let simbol:Simbolo = new Simbolo(Tipo.ARRAY,id,this.linea,this.columna,temporales.ultstack);
+                            temporales.ultstack += 1;
+                            ent.agregar(id,simbol);
+
+                            //asignar los valores al stack
+                            let valor = this.expresion.traducir(ent,arbol,resultado3d,temporales,0);
+                            console.log('temp array: ');
+                            console.log(valor);
+                            resultado3d.codigo3D += '\tstack[(int)'+simbol.valor+'] ='+ valor  +';\n';
+
+
+                        }else{
+                        //    console.log('Error semantico, la asignacion no es un arreglo de datos en la linea '+ this.linea + ' y columna ' + this.columna); 
+                           listaErrores.push(new ErrorG('semantico','la asignacion no es un arreglo de datos',this.linea,this.columna));
+                        }
+                    }
+                }
+            }else{
+                // error, si existe
+            }
+        })
     }
 
     ejecutar(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {

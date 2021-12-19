@@ -10,8 +10,27 @@ var AsignacionArray = /** @class */ (function () {
         this.linea = linea;
         this.columna = columna;
     }
-    AsignacionArray.prototype.traducir = function (ent, arbol) {
-        throw new Error("Method not implemented.");
+    AsignacionArray.prototype.traducir = function (ent, arbol, resultado3d, temporales, listaErrores) {
+        if (ent.existe(this.id)) {
+            var simbol = ent.getSimbolo(this.id);
+            if (simbol.getTipo(ent, arbol) == Tipo_1.Tipo.ARRAY) {
+                // let valor:Arreglo = simbol.getValorImplicito(ent,arbol);
+                var pos = this.posicion.traducir(ent, arbol, resultado3d, temporales, 0);
+                var val = this.expresion.traducir(ent, arbol, resultado3d, temporales, 0);
+                temporales.ultimoTemp += 1;
+                var stackPos = temporales.ultimoTemp;
+                resultado3d.codigo3D += '\tt' + stackPos + ' = stack[(int)' + simbol.valor + '];\n';
+                temporales.ultimoTemp += 1;
+                resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + ' = t' + stackPos + ' + ' + pos + ';\n';
+                resultado3d.codigo3D += '\theap[(int) t' + temporales.ultimoTemp + '] =' + val + ';\n';
+            }
+            else {
+                listaErrores.push(new ErrorG_1.ErrorG('semantico', 'la variable no es del tipo array', this.linea, this.columna));
+            }
+        }
+        else {
+            listaErrores.push(new ErrorG_1.ErrorG('semantico', 'no existe la variable', this.linea, this.columna));
+        }
     };
     AsignacionArray.prototype.ejecutar = function (ent, arbol, listaErrores) {
         if (ent.existe(this.id)) {
