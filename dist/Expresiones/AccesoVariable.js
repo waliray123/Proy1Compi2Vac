@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.AccesoVariable = void 0;
 var Tipo_1 = require("../AST/Tipo");
 var ErrorG_1 = require("../Objetos/ErrorG");
 var AccesoVariable = /** @class */ (function () {
@@ -9,7 +10,7 @@ var AccesoVariable = /** @class */ (function () {
         this.columna = columna;
         this.isAlone = true;
     }
-    AccesoVariable.prototype.traducir = function (ent, arbol, resultado3d, temporales) {
+    AccesoVariable.prototype.traducir = function (ent, arbol, resultado3d, temporales, recursivo) {
         if (ent.existe(this.id)) {
             var simbol = ent.getSimbolo(this.id);
             //TODO: Alv ya me canse de esto mejor hago la declaracion de los strings  AAAAAAAAAAAAAA

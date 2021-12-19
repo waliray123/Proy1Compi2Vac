@@ -1,6 +1,8 @@
 import exp from "constants";
 import { AST } from "../AST/AST";
 import { Entorno } from "../AST/Entorno";
+import { Resultado3D } from "../AST/Resultado3D";
+import { Temporales } from "../AST/Temporales";
 import { Expresion } from "../Interfaces/Expresion";
 import { Instruccion } from "../Interfaces/Instruccion";
 import { ErrorG } from "../Objetos/ErrorG";
@@ -24,8 +26,10 @@ export class SwitchCaso implements Instruccion{
         this.isBreak = false;
     }
 
-    traducir(ent: Entorno, arbol: AST) {
-        throw new Error("Method not implemented.");
+    traducir(ent: Entorno, arbol: AST,resultado3D:Resultado3D,temporales:Temporales,listaErrores:Array<ErrorG>) {
+        for (var ints of this.lista_instrucciones){
+            ints.traducir(ent, arbol,resultado3D,temporales,listaErrores);           
+        }
     }
 
     ejecutar(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {

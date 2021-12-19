@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.SwitchCaso = void 0;
 var Break_1 = require("./Break");
 // print("hola mundo");
 var SwitchCaso = /** @class */ (function () {
@@ -10,8 +11,11 @@ var SwitchCaso = /** @class */ (function () {
         this.columna = columna;
         this.isBreak = false;
     }
-    SwitchCaso.prototype.traducir = function (ent, arbol) {
-        throw new Error("Method not implemented.");
+    SwitchCaso.prototype.traducir = function (ent, arbol, resultado3D, temporales, listaErrores) {
+        for (var _i = 0, _a = this.lista_instrucciones; _i < _a.length; _i++) {
+            var ints = _a[_i];
+            ints.traducir(ent, arbol, resultado3D, temporales, listaErrores);
+        }
     };
     SwitchCaso.prototype.ejecutar = function (ent, arbol, listaErrores) {
         for (var _i = 0, _a = this.lista_instrucciones; _i < _a.length; _i++) {

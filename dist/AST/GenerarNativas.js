@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.GenerarNativas = void 0;
 var GenerarNativas = /** @class */ (function () {
     function GenerarNativas() {
     }
