@@ -39,7 +39,7 @@ export class Operacion implements Expresion {
     columna: number;
     public op_izquierda: Expresion;
     public op_derecha: Expresion;
-    operador: Operador;
+    public operador: Operador;
 
     constructor(op_izquierda: Expresion, op_derecha: Expresion, operacion: Operador, linea: number, columna: number) {
         this.linea = linea;
@@ -75,6 +75,9 @@ export class Operacion implements Expresion {
                     resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '= 0;\n';
                     resultado3d.codigo3D += '\tL'+(ultLit+2)+':\n';
                     temporales.ultLitEscr = (ultLit+2);
+                    let valR = 't' + temporales.ultimoTemp;
+                    temporales.ultimoTemp += 1;
+                    return valR;
                 }else{
                     resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
                     let valR = 't' + temporales.ultimoTemp;
@@ -131,7 +134,55 @@ export class Operacion implements Expresion {
         } else if (this.operador == Operador.MODULO) {
             resultadoR = 'fmod(' + val1 + ',' + val2 + ')';
             temporales.ultimoTipo = Tipo.DOUBLE;
-        }        
+        } else if (this.operador == Operador.AND){
+            temporales.ultimoTemp +=1;
+            let temReturn = temporales.ultimoTemp;
+            temporales.ultLiteral += 3;
+            let ultLit = temporales.ultLiteral -2;
+            resultado3d.codigo3D += '\tif ('+val1+' == 1) goto L'+ultLit + ';\n';
+            resultado3d.codigo3D += '\tgoto L'+(ultLit+1)+';\n';
+            resultado3d.codigo3D += '\tL'+(ultLit)+':\n';
+            temporales.ultLiteral += 2;
+            let ultLit2 = temporales.ultLiteral - 1;
+            resultado3d.codigo3D += '\tif ('+val2+' == 1) goto L'+ultLit2 + ';\n';
+            resultado3d.codigo3D += '\tgoto L'+(ultLit2+1)+';\n';
+            resultado3d.codigo3D += '\tL'+(ultLit2)+':\n';
+            resultado3d.codigo3D += '\tt'+temReturn+'= 1;\n';
+            resultado3d.codigo3D += '\tgoto L'+(ultLit+2)+';\n';
+            resultado3d.codigo3D += '\tL'+(ultLit2+1)+':\n';
+            resultado3d.codigo3D += '\tt'+temReturn+'= 0;\n';
+            resultado3d.codigo3D += '\tgoto L'+(ultLit+2)+';\n';            
+            resultado3d.codigo3D += '\tL'+(ultLit+1)+':\n';
+            resultado3d.codigo3D += '\tt'+temReturn+'= 0;\n';
+            resultado3d.codigo3D += '\tL'+(ultLit+2)+':\n';
+            temporales.ultLitEscr = ultLit+2;
+            resultadoR = 't'+temReturn;
+            temporales.ultimoTipo = Tipo.BOOL;
+        } else if (this.operador == Operador.OR){
+            temporales.ultimoTemp +=1;
+            let temReturn = temporales.ultimoTemp;
+            temporales.ultLiteral += 3;
+            let ultLit = temporales.ultLiteral -2;
+            resultado3d.codigo3D += '\tif ('+val1+' == 0) goto L'+ultLit + ';\n';
+            resultado3d.codigo3D += '\tgoto L'+(ultLit+1)+';\n';
+            resultado3d.codigo3D += '\tL'+(ultLit)+':\n';
+            temporales.ultLiteral += 2;
+            let ultLit2 = temporales.ultLiteral - 1;
+            resultado3d.codigo3D += '\tif ('+val2+' == 0) goto L'+ultLit2 + ';\n';
+            resultado3d.codigo3D += '\tgoto L'+(ultLit2+1)+';\n';
+            resultado3d.codigo3D += '\tL'+(ultLit2)+':\n';
+            resultado3d.codigo3D += '\tt'+temReturn+'= 0;\n';
+            resultado3d.codigo3D += '\tgoto L'+(ultLit+2)+';\n';
+            resultado3d.codigo3D += '\tL'+(ultLit2+1)+':\n';
+            resultado3d.codigo3D += '\tt'+temReturn+'= 1;\n';
+            resultado3d.codigo3D += '\tgoto L'+(ultLit+2)+';\n';            
+            resultado3d.codigo3D += '\tL'+(ultLit+1)+':\n';
+            resultado3d.codigo3D += '\tt'+temReturn+'= 1;\n';
+            resultado3d.codigo3D += '\tL'+(ultLit+2)+':\n';
+            temporales.ultLitEscr = ultLit+2;
+            resultadoR = 't'+temReturn;
+            temporales.ultimoTipo = Tipo.BOOL;
+        }
         //TODO: No se como hacerle para esto, porque si viene un tt como se el valor?
         else if(this.operador == Operador.POW){
             //TODO
