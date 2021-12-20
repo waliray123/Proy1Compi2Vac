@@ -178,6 +178,7 @@ BSL               "\\".
     const {Pop} = require("../dist/Instrucciones/Pop");
     const {OperacionCadena, OperadorCadena} = require("../dist/Expresiones/OperacionCadena");
     const {OperadorNativa, OperacionNativa} = require("../dist/Expresiones/OperacionNativa");
+    const {ConcatenacionString} = require("../dist/Expresiones/ConcatenacionString");
     const {ErrorG} = require("../dist/Objetos/ErrorG");
 
     /*---CODIGO INCRUSTADO---*/
@@ -415,9 +416,18 @@ asignacion_bloque
 ;
 
 print_bloque
-    : PRINT PARI expresion PARD PUNTCOMA        {$$ = new Print($3,@1.first_line,@1.first_column,false);}
-    | PRINTLN PARI expresion PARD PUNTCOMA      {$$ = new Print($3,@1.first_line,@1.first_column,true);}
+    : PRINT PARI expresiones_print PARD PUNTCOMA        {$$ = new Print($3,@1.first_line,@1.first_column,false);}
+    | PRINTLN PARI expresiones_print PARD PUNTCOMA      {$$ = new Print($3,@1.first_line,@1.first_column,true);}
     | error PARD                {genError(yytext,@1.first_line,@1.first_column);}
+;
+
+expresiones_print
+    :expresion expresion_print               {$2.unshift($1); $$ = new ConcatenacionString($2,@1.first_line,@1.first_column);}
+;
+
+expresion_print
+    : COMA expresion expresion_print                        {$3.unshift($2); $$ = $3;}
+    |                                                       {$$ = [];}
 ;
 
 if_bloque //linea:number, columna:number,condicion:Expresion,instrucciones:Array<Instruccion>,sinos:Array<If>
