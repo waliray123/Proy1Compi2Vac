@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Break = void 0;
 // print("hola mundo");
 var Break = /** @class */ (function () {
     function Break(linea, columna) {

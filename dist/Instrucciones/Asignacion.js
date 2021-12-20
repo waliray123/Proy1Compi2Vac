@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Asignacion = void 0;
 var Tipo_1 = require("../AST/Tipo");
 var AccesoVariable_1 = require("../Expresiones/AccesoVariable");
 var ErrorG_1 = require("../Objetos/ErrorG");

@@ -485,7 +485,7 @@ arr_begin_end
     | ID_VAR CORCHI STR_BEGIN DOSPUNT expresion CORCHD  {let beg = new Primitivo("begin", @1.first_line, @1.first_column); $$ = new ArrbegEnd($1,@1.first_line,@1.first_column,beg,$5);}
     | ID_VAR CORCHI STR_BEGIN DOSPUNT STR_END CORCHD    {let beg1 = new Primitivo("begin", @1.first_line, @1.first_column); let end1 = new Primitivo("end", @1.first_line, @1.first_column); $$ = new ArrbegEnd($1,@1.first_line,@1.first_column,beg1,end1);}
     | ID_VAR CORCHI expresion DOSPUNT STR_END CORCHD    {let beg2 = new Primitivo("end", @1.first_line, @1.first_column); $$ = new ArrbegEnd($1,@1.first_line,@1.first_column,$3,beg2);}
-    | error DOSPUNT                {genError(yytext,@1.first_line,@1.first_column);}
+    //| error DOSPUNT                {genError(yytext,@1.first_line,@1.first_column);}
 ;
 
 
@@ -537,6 +537,7 @@ expresion
 expresion_arr_arreglo
     : arr_decl                                          {$$ = new AccesoArray($1,@1.first_line, @1.first_column);}
     | ID_VAR CORCHI expresion CORCHD                    {$$ = new AccesoAtribArray($1,$3,@1.first_line, @1.first_column);}
+    | arr_begin_end                                     {$$ = $1;}
 ;
 
 expresion_atributos

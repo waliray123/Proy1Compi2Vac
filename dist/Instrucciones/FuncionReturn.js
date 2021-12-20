@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.FuncionReturn = void 0;
 var FuncionReturn = /** @class */ (function () {
     function FuncionReturn(nombrefuncion, linea, columna, parametros) {
         if (parametros === void 0) { parametros = []; }
