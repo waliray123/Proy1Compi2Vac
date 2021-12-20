@@ -30,10 +30,25 @@ export class Funcion implements Instruccion{
 
     traducir(ent: Entorno, arbol: AST,resultado3D:Resultado3D,temporales:Temporales,listaErrores:Array<ErrorG>) {
         const entornoGlobal:Entorno = new Entorno(ent);
-
-        for(let element of this.instrucciones){
-            element.traducir(entornoGlobal,arbol,resultado3D,temporales,listaErrores);
+        if(this.nombrefuncion == "main"){
+            temporales.esFuncion = false;
+            for(let element of this.instrucciones){
+                element.traducir(entornoGlobal,arbol,resultado3D,temporales,listaErrores);
+            }
+        }else{
+            //Traducir segun funcion
+            temporales.esFuncion = true;
+            temporales.cantidadParametrosFunc = this.parametros.length+1;
+            //Traducir traer parametros
+            for (const parametro of this.parametros) {
+                
+            }
+            //Traducir completo
+            for(let element of this.instrucciones){
+                element.traducir(entornoGlobal,arbol,resultado3D,temporales,listaErrores);
+            }
         }
+        
         /*
         this.instrucciones.forEach((element:Instruccion) => {
             element.traducir(entornoGlobal,arbol,resultado3D,temporales,listaErrores);

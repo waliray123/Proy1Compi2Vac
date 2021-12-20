@@ -12,6 +12,8 @@ var Temporales = /** @class */ (function () {
         this.usoConcatStrings = false;
         this.usoPrintStrings = false;
         this.ultimoTipo = Tipo_1.Tipo.NULL;
+        this.esFuncion = false;
+        this.cantidadParametrosFunc = 0;
     }
     return Temporales;
 }());

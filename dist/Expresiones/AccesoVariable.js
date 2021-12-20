@@ -11,18 +11,35 @@ var AccesoVariable = /** @class */ (function () {
         this.isAlone = true;
     }
     AccesoVariable.prototype.traducir = function (ent, arbol, resultado3d, temporales, recursivo) {
-        if (ent.existe(this.id)) {
-            var simbol = ent.getSimbolo(this.id);
-            //TODO: Alv ya me canse de esto mejor hago la declaracion de los strings  AAAAAAAAAAAAAA
-            var valor = 'stack[(int)' + simbol.valor + ']';
-            temporales.ultimoTemp += 1;
-            resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
-            var valR = 't' + temporales.ultimoTemp;
-            temporales.ultimoTipo = this.getTipo(ent, arbol, []);
-            return valR;
+        if (temporales.esFuncion == true) {
+            if (ent.existe(this.id)) {
+                var simbol = ent.getSimbolo(this.id);
+                temporales.ultimoTemp += 1;
+                resultado3d.codigo3D += 't' + temporales.ultimoTemp + '= P +' + simbol.valor + ';\n';
+                var valor = 'stack[(int)t' + temporales.ultimoTemp + ']';
+                temporales.ultimoTemp += 1;
+                resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
+                var valR = 't' + temporales.ultimoTemp;
+                temporales.ultimoTipo = this.getTipo(ent, arbol, []);
+                return valR;
+            }
+            else {
+                console.log('No existe el id ' + this.id + ' no hay tipo');
+            }
         }
         else {
-            console.log('No existe el id ' + this.id + ' no hay tipo');
+            if (ent.existe(this.id)) {
+                var simbol = ent.getSimbolo(this.id);
+                var valor = 'stack[(int)' + simbol.valor + ']';
+                resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
+                var valR = 't' + temporales.ultimoTemp;
+                temporales.ultimoTemp += 1;
+                temporales.ultimoTipo = this.getTipo(ent, arbol, []);
+                return valR;
+            }
+            else {
+                console.log('No existe el id ' + this.id + ' no hay tipo');
+            }
         }
     };
     AccesoVariable.prototype.getTipo = function (ent, arbol, listaErrores) {

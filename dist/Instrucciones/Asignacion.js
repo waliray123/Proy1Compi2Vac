@@ -21,20 +21,44 @@ var Asignacion = /** @class */ (function () {
                     //Asignar al stack
                     var valAsign = this.expresion.traducir(ent, arbol, resultado3d, temporales, 0);
                     if (temporales.ultimoTipo == Tipo_1.Tipo.BOOL) {
-                        temporales.ultLiteral += 3;
-                        var ultLit = temporales.ultLiteral - 2;
-                        resultado3d.codigo3D += '\tif(' + valAsign + ') goto L' + ultLit + ';\n';
-                        resultado3d.codigo3D += '\tgoto L' + (ultLit + 1) + ';\n';
-                        resultado3d.codigo3D += '\tL' + ultLit + ':\n';
-                        resultado3d.codigo3D += '\tstack[(int)' + simbol.valor + '] = 1;\n';
-                        resultado3d.codigo3D += '\tgoto L' + (ultLit + 2) + ';\n';
-                        resultado3d.codigo3D += '\tL' + (ultLit + 1) + ':\n';
-                        resultado3d.codigo3D += '\tstack[(int)' + simbol.valor + '] = 0;\n';
-                        resultado3d.codigo3D += '\tL' + (ultLit + 2) + ':\n';
-                        temporales.ultLitEscr = (ultLit + 2);
+                        if (temporales.esFuncion) {
+                            temporales.ultimoTemp += 1;
+                            resultado3d.codigo3D += 't' + temporales.ultimoTemp + '= P +' + (simbol.valor) + ';\n';
+                            temporales.ultLiteral += 3;
+                            var ultLit = temporales.ultLiteral - 2;
+                            resultado3d.codigo3D += '\tif(' + valAsign + ') goto L' + ultLit + ';\n';
+                            resultado3d.codigo3D += '\tgoto L' + (ultLit + 1) + ';\n';
+                            resultado3d.codigo3D += '\tL' + ultLit + ':\n';
+                            resultado3d.codigo3D += '\tstack[(int)t' + temporales.ultimoTemp + '] = 1;\n';
+                            resultado3d.codigo3D += '\tgoto L' + (ultLit + 2) + ';\n';
+                            resultado3d.codigo3D += '\tL' + (ultLit + 1) + ':\n';
+                            resultado3d.codigo3D += '\tstack[(int)t' + temporales.ultimoTemp + '] = 0;\n';
+                            resultado3d.codigo3D += '\tL' + (ultLit + 2) + ':\n';
+                            temporales.ultLitEscr = (ultLit + 2);
+                        }
+                        else {
+                            temporales.ultLiteral += 3;
+                            var ultLit = temporales.ultLiteral - 2;
+                            resultado3d.codigo3D += '\tif(' + valAsign + ') goto L' + ultLit + ';\n';
+                            resultado3d.codigo3D += '\tgoto L' + (ultLit + 1) + ';\n';
+                            resultado3d.codigo3D += '\tL' + ultLit + ':\n';
+                            resultado3d.codigo3D += '\tstack[(int)' + simbol.valor + '] = 1;\n';
+                            resultado3d.codigo3D += '\tgoto L' + (ultLit + 2) + ';\n';
+                            resultado3d.codigo3D += '\tL' + (ultLit + 1) + ':\n';
+                            resultado3d.codigo3D += '\tstack[(int)' + simbol.valor + '] = 0;\n';
+                            resultado3d.codigo3D += '\tL' + (ultLit + 2) + ':\n';
+                            temporales.ultLitEscr = (ultLit + 2);
+                        }
                     }
                     else {
-                        resultado3d.codigo3D += '\tstack[(int)' + simbol.valor + '] =' + valAsign + ';\n';
+                        if (temporales.esFuncion) {
+                            temporales.ultimoTemp += 1;
+                            resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '= P +' + (simbol.valor) + ';\n';
+                            resultado3d.codigo3D += '\tstack[(int)t' + temporales.ultimoTemp + '] =' + valAsign + ';\n';
+                        }
+                        else {
+                            resultado3d.codigo3D += '\tstack[(int)' + simbol.valor + '] =' + valAsign + ';\n';
+                        }
                     }
                 }
                 else {

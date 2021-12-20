@@ -90,7 +90,7 @@ window.traducirCodigo = function (entrada) {
                 element.traducir(entornoGlobal_2, ast_2, resultado3d, temporales, listaErrores);
             }
         });
-        traducirCompleto(resultado3d, temporales);
+        traducirCompleto(entornoGlobal_2, resultado3d, temporales, ast_2, listaErrores);
     }
 };
 function reiniciarConsola() {
@@ -153,12 +153,15 @@ function generarEntornoGlobalTraducir(ast, structs, resultado3D, temporales, lis
     });
     return entornoGlobal;
 }
-function traducirCompleto(resultado3D, temporales) {
+function traducirCompleto(ent, resultado3D, temporales, arbol, listaErrores) {
     //Traer el codigo en 3D    
     //Ingresar encabezado
     var encabezado = '#include <stdio.h> \n#include <math.h> \ndouble heap[30101999]; \ndouble stack[30101999]; \ndouble P; \ndouble H;\n';
     //Generar las funciones nativas
     var generador = new GenerarNativas_1.GenerarNativas();
+    //Generar funciones 
+    var codFunc = generador.generarFunciones(ent, arbol, temporales, listaErrores);
+    //Generar Nativas
     var nativas = generador.generar(temporales);
     //Inicializar todos los temporales
     var codTemporales = '';
@@ -181,7 +184,7 @@ function traducirCompleto(resultado3D, temporales) {
     //Cerrar     
     procMain += '\n\treturn; \n }';
     //Mostrar en el text area
-    var resultado = encabezado + nativas + procMain;
+    var resultado = encabezado + nativas + codFunc + procMain;
     var areaTraduccion = document.getElementById('traduccion');
     areaTraduccion.value = resultado;
 }

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.GenerarNativas = void 0;
+var Resultado3D_1 = require("../AST/Resultado3D");
 var GenerarNativas = /** @class */ (function () {
     function GenerarNativas() {
     }
@@ -23,6 +23,21 @@ var GenerarNativas = /** @class */ (function () {
             resultado += '\tgoto L' + (temporales.ultLiteral - 1) + ';\n';
             resultado += '\tL' + (temporales.ultLiteral) + ':\n';
             resultado += '\treturn; \n\}\n';
+        }
+        return resultado;
+    };
+    GenerarNativas.prototype.generarFunciones = function (ent, arbol, temporales, listaErrores) {
+        var resultado = '';
+        for (var _i = 0, _a = arbol.funciones; _i < _a.length; _i++) {
+            var element = _a[_i];
+            if (element.nombrefuncion != 'main') {
+                var resultado3d = new Resultado3D_1.Resultado3D;
+                //Abrir funcion
+                resultado3d.codigo3D += 'void ' + element.nombrefuncion + '(){\n';
+                element.traducir(ent, arbol, resultado3d, temporales, listaErrores);
+                resultado3d.codigo3D += '}\n';
+                resultado += resultado3d.codigo3D;
+            }
         }
         return resultado;
     };
