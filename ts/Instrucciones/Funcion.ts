@@ -74,12 +74,6 @@ export class Funcion implements Instruccion{
                 break;
             }
         }
-        /*
-        this.instrucciones.forEach((element:Instruccion) => {
-            element.ejecutar(entornoGlobal,arbol,listaErrores);
-        })
-        */
-        // console.log(this.instrucciones);
     }
 
     getTipo(){

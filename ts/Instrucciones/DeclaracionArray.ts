@@ -150,6 +150,10 @@ export class DeclaracionArray implements Instruccion{
         })
     }
 
+    getTipo(){
+        return "declaracion";
+    }
+
     getValDefault():any {
         if (this.tipo == Tipo.STRING) {
             return "undefined";

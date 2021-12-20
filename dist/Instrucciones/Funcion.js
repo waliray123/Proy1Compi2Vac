@@ -58,12 +58,6 @@ var Funcion = /** @class */ (function () {
                 break;
             }
         }
-        /*
-        this.instrucciones.forEach((element:Instruccion) => {
-            element.ejecutar(entornoGlobal,arbol,listaErrores);
-        })
-        */
-        // console.log(this.instrucciones);
     };
     Funcion.prototype.getTipo = function () {
         return "funcion";

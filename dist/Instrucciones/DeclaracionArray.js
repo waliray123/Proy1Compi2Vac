@@ -132,6 +132,9 @@ var DeclaracionArray = /** @class */ (function () {
             }
         });
     };
+    DeclaracionArray.prototype.getTipo = function () {
+        return "declaracion";
+    };
     DeclaracionArray.prototype.getValDefault = function () {
         if (this.tipo == Tipo_1.Tipo.STRING) {
             return "undefined";
