@@ -1,6 +1,20 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Forin = void 0;
+exports.Forin = exports.CasoForIn = void 0;
+var Entorno_1 = require("../AST/Entorno");
+var Simbolo_1 = require("../AST/Simbolo");
+var Tipo_1 = require("../AST/Tipo");
+var ArrbegEnd_1 = require("../Expresiones/ArrbegEnd");
+var Primitivo_1 = require("../Expresiones/Primitivo");
+var ErrorG_1 = require("../Objetos/ErrorG");
+var Asignacion_1 = require("./Asignacion");
+var CasoForIn;
+(function (CasoForIn) {
+    CasoForIn[CasoForIn["IDVAR"] = 0] = "IDVAR";
+    CasoForIn[CasoForIn["ARRBEGEND"] = 1] = "ARRBEGEND";
+    CasoForIn[CasoForIn["ARRAY"] = 2] = "ARRAY";
+    CasoForIn[CasoForIn["NULL"] = 3] = "NULL";
+})(CasoForIn = exports.CasoForIn || (exports.CasoForIn = {}));
 var Forin = /** @class */ (function () {
     function Forin(linea, columna, instrucciones, expresion1, expresion2) {
         this.linea = linea;
@@ -13,7 +27,100 @@ var Forin = /** @class */ (function () {
         throw new Error("Method not implemented.");
     };
     Forin.prototype.ejecutar = function (ent, arbol, listaErrores) {
-        console.log('ejecutado...fornormal');
+        var variable = this.expresion1;
+        var condicion = this.expresion2;
+        var entNuevo = new Entorno_1.Entorno(ent);
+        var casoForIn = CasoForIn.NULL;
+        //variables nulos 
+        var condicionArreglo = [];
+        //configurando la declaracion
+        var variables = [];
+        variables.push(variable);
+        var tipoVariable = Tipo_1.Tipo.NULL;
+        //IDVAR
+        //[]
+        //array[]
+        if (condicion instanceof ArrbegEnd_1.ArrbegEnd) {
+            //array[]
+            casoForIn = CasoForIn.ARRBEGEND;
+            condicion.isAlone = false;
+            tipoVariable = condicion.getTipo(ent, arbol, listaErrores);
+            condicion.isAlone = true;
+        }
+        else if (typeof (condicion) === 'string') {
+            //IDVAR
+            if (ent.existe(condicion)) {
+                casoForIn = CasoForIn.IDVAR;
+                var simbol = ent.getSimbolo(condicion);
+                tipoVariable = simbol.getTipo(ent, arbol);
+            }
+            else {
+                listaErrores.push(new ErrorG_1.ErrorG('semantico', 'no existe la variable ' + condicion, this.linea, this.columna));
+            }
+        }
+        else {
+            //[]
+            casoForIn = CasoForIn.ARRAY;
+            condicionArreglo = condicion;
+            tipoVariable = condicionArreglo[0].getTipo(ent, arbol, listaErrores);
+        }
+        // //@ts-ignore
+        // let declaraVariable: Declaracion = new Declaracion(variables,Tipo.STRING,this.linea,this.columna,null);
+        if (!entNuevo.existeEnActual(variable)) {
+            var simbol = new Simbolo_1.Simbolo(tipoVariable, variable, this.linea, this.columna, null);
+            entNuevo.agregar(variable, simbol);
+        }
+        else {
+            console.log('anda medio raro que si exista');
+        }
+        var isTerminado = false;
+        switch (casoForIn) {
+            case CasoForIn.ARRAY: {
+                break;
+            }
+            case CasoForIn.IDVAR: {
+                var simbol = ent.getSimbolo(condicion);
+                var valor = simbol.getValorImplicito(ent, arbol);
+                for (var i = 0; i < valor.length; i++) {
+                    var letra = valor.substr(i, 1);
+                    var variables_1 = [];
+                    variables_1.push(variable);
+                    var expr = new Primitivo_1.Primitivo(letra, this.linea, this.columna);
+                    var asignar = new Asignacion_1.Asignacion(variables_1, this.linea, this.columna, expr);
+                    asignar.ejecutar(entNuevo, arbol, listaErrores);
+                    for (var _i = 0, _a = this.instrucciones; _i < _a.length; _i++) {
+                        var instruccion = _a[_i];
+                        instruccion.ejecutar(entNuevo, arbol, listaErrores);
+                    }
+                }
+                break;
+            }
+            case CasoForIn.ARRBEGEND: {
+                break;
+            }
+            default:
+                break;
+        }
+    };
+    Forin.prototype.getValDefault = function (tipo) {
+        if (tipo == Tipo_1.Tipo.STRING) {
+            return "undefined";
+        }
+        else if (tipo == Tipo_1.Tipo.BOOL) {
+            return true;
+        }
+        else if (tipo == Tipo_1.Tipo.INT) {
+            return 1;
+        }
+        else if (tipo == Tipo_1.Tipo.CHAR) {
+            return 'a';
+        }
+        else if (tipo == Tipo_1.Tipo.DOUBLE) {
+            return 1.0;
+        }
+        else {
+            return null;
+        }
     };
     return Forin;
 }());

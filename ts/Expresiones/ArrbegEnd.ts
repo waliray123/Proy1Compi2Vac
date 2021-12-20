@@ -28,27 +28,15 @@ export class ArrbegEnd implements Expresion {
     }
 
     getTipo(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>): Tipo {
-        const valor = this.getValorImplicito(ent, arbol,listaErrores);
-        if (typeof(valor) === 'boolean')
-        {
-            return Tipo.BOOL;
+        if (this.isAlone) {
+            return Tipo.ARRAY;    
         }
-        else if (typeof(valor) === 'string')
-        {
-            return Tipo.STRING;
-        }
-        else if (typeof(valor) === 'number')
-        {
-            if(this.isInt(Number(valor))){
-                return Tipo.INT;
-            }
-           return Tipo.DOUBLE;
-        }
-        else if(valor === null){
-            return Tipo.NULL;
-        }
-            
-        return Tipo.VOID;
+        if(ent.existe(this.id)){
+            let simbol:Simbolo = ent.getSimbolo(this.id);
+            let valor:Arreglo = simbol.getValorImplicito(ent,arbol);
+            return valor.tipo;
+        }   
+        return Tipo.NULL;     
     }
 
     getValorImplicito(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {

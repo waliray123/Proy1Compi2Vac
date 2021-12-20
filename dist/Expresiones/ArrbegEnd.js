@@ -16,23 +16,15 @@ var ArrbegEnd = /** @class */ (function () {
         throw new Error("Method not implemented.");
     };
     ArrbegEnd.prototype.getTipo = function (ent, arbol, listaErrores) {
-        var valor = this.getValorImplicito(ent, arbol, listaErrores);
-        if (typeof (valor) === 'boolean') {
-            return Tipo_1.Tipo.BOOL;
+        if (this.isAlone) {
+            return Tipo_1.Tipo.ARRAY;
         }
-        else if (typeof (valor) === 'string') {
-            return Tipo_1.Tipo.STRING;
+        if (ent.existe(this.id)) {
+            var simbol = ent.getSimbolo(this.id);
+            var valor = simbol.getValorImplicito(ent, arbol);
+            return valor.tipo;
         }
-        else if (typeof (valor) === 'number') {
-            if (this.isInt(Number(valor))) {
-                return Tipo_1.Tipo.INT;
-            }
-            return Tipo_1.Tipo.DOUBLE;
-        }
-        else if (valor === null) {
-            return Tipo_1.Tipo.NULL;
-        }
-        return Tipo_1.Tipo.VOID;
+        return Tipo_1.Tipo.NULL;
     };
     ArrbegEnd.prototype.getValorImplicito = function (ent, arbol, listaErrores) {
         if (ent.existe(this.id)) {
