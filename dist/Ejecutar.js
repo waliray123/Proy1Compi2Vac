@@ -28,9 +28,11 @@ window.ejecutarCodigo = function (entrada) {
     // console.log(listaErrores);
     // console.log(instrucciones);
     if (listaErrores.length > 0) {
-        console.log(listaErrores);
-        var areaConsola = document.getElementById('consola');
-        areaConsola.value = "Hay errores, revise la lista";
+        //console.log(listaErrores);
+        var areaConsola_1 = document.getElementById('consola');
+        listaErrores.forEach(function (err) {
+            areaConsola_1.value += err.mostrarErrorConsola();
+        });
     }
     else {
         //Obtengo las funciones y strucs globales y se los asigno al ast
@@ -49,10 +51,14 @@ window.ejecutarCodigo = function (entrada) {
     }
     //mostrar los errores semanticos
     if (listaErrores.length > 0) {
-        console.log(listaErrores);
+        var areaConsola_2 = document.getElementById('consola');
+        listaErrores.forEach(function (err) {
+            areaConsola_2.value += err.mostrarErrorConsola();
+        });
     }
 };
 window.traducirCodigo = function (entrada) {
+    reiniciarConsola();
     reiniciarTraduccion();
     var resultado3d = new Resultado3D_1.Resultado3D();
     var temporales = new Temporales_1.Temporales();
@@ -73,9 +79,10 @@ window.traducirCodigo = function (entrada) {
         }
     });
     if (listaErrores.length > 0) {
-        console.log(listaErrores);
-        var areaConsola = document.getElementById('consola');
-        areaConsola.value = "Hay errores y no se puede traducir, revise la lista";
+        var areaConsola_3 = document.getElementById('consola');
+        listaErrores.forEach(function (err) {
+            areaConsola_3.value += err.mostrarErrorConsola();
+        });
     }
     else {
         //Obtengo las funciones y strucs globales y se los asigno al ast
@@ -91,6 +98,13 @@ window.traducirCodigo = function (entrada) {
             }
         });
         traducirCompleto(entornoGlobal_2, resultado3d, temporales, ast_2, listaErrores);
+    }
+    //mostrar los errores semanticos
+    if (listaErrores.length > 0) {
+        var areaConsola_4 = document.getElementById('consola');
+        listaErrores.forEach(function (err) {
+            areaConsola_4.value += err.mostrarErrorConsola();
+        });
     }
 };
 function reiniciarConsola() {

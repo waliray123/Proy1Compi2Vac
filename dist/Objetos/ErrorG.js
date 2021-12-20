@@ -9,6 +9,10 @@ var ErrorG = /** @class */ (function () {
         this.columna = columna;
         this.ambito = 'global';
     }
+    ErrorG.prototype.mostrarErrorConsola = function () {
+        var resultado = '\nError ' + this.tipoError + ', ' + this.descripcion + ' -> linea ' + this.linea + ' y columna ' + this.columna;
+        return resultado;
+    };
     return ErrorG;
 }());
 exports.ErrorG = ErrorG;

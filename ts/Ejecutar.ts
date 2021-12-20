@@ -41,9 +41,11 @@ window.ejecutarCodigo = function (entrada:string){
     // console.log(listaErrores);
     // console.log(instrucciones);
     if (listaErrores.length > 0) {
-        console.log(listaErrores);
+        //console.log(listaErrores);
         const areaConsola = document.getElementById('consola') as HTMLTextAreaElement;
-        areaConsola.value = "Hay errores, revise la lista";
+        listaErrores.forEach((err:ErrorG)=>{
+            areaConsola.value += err.mostrarErrorConsola();
+        });
     }else{
         //Obtengo las funciones y strucs globales y se los asigno al ast
         let funcionesG = revisarFuncionesGlobales(instrucciones);
@@ -66,13 +68,16 @@ window.ejecutarCodigo = function (entrada:string){
     }
     //mostrar los errores semanticos
     if (listaErrores.length > 0) {
-        console.log(listaErrores);
+        const areaConsola = document.getElementById('consola') as HTMLTextAreaElement;
+        listaErrores.forEach((err:ErrorG)=>{
+            areaConsola.value += err.mostrarErrorConsola();
+        });
     }
     
 }
 
 window.traducirCodigo = function (entrada:string){
-
+    reiniciarConsola();
     reiniciarTraduccion();
 
     let resultado3d = new Resultado3D();
@@ -97,9 +102,10 @@ window.traducirCodigo = function (entrada:string){
     })
     
     if (listaErrores.length > 0) {
-        console.log(listaErrores);
         const areaConsola = document.getElementById('consola') as HTMLTextAreaElement;
-        areaConsola.value = "Hay errores y no se puede traducir, revise la lista";
+        listaErrores.forEach((err:ErrorG)=>{
+            areaConsola.value += err.mostrarErrorConsola();
+        });
     }else{
         //Obtengo las funciones y strucs globales y se los asigno al ast
         let funcionesG = revisarFuncionesGlobales(instrucciones);
@@ -119,6 +125,14 @@ window.traducirCodigo = function (entrada:string){
         })
 
         traducirCompleto(entornoGlobal,resultado3d,temporales,ast,listaErrores);
+    }
+
+    //mostrar los errores semanticos
+    if (listaErrores.length > 0) {
+        const areaConsola = document.getElementById('consola') as HTMLTextAreaElement;
+        listaErrores.forEach((err:ErrorG)=>{
+            areaConsola.value += err.mostrarErrorConsola();
+        });
     }
 }
 
