@@ -8,12 +8,15 @@ import { Resultado3D } from "./AST/Resultado3D";
 import { Temporales } from "./AST/Temporales";
 import { ErrorG } from "./Objetos/ErrorG";
 import { GenerarNativas } from "./AST/GenerarNativas";
+import { FuncionesReportes } from "./Objetos/FuncionesReportes";
 
 const gramatica = require('../jison/Gramatica');
+let listaErroresGlobal:Array<ErrorG> = [];
 
 declare global {
     interface Window { ejecutarCodigo: any; }
     interface Window { traducirCodigo: any; }
+    interface Window { reporteError: any; }
 }
 
 window.ejecutarCodigo = function (entrada:string){
@@ -41,9 +44,11 @@ window.ejecutarCodigo = function (entrada:string){
     // console.log(listaErrores);
     // console.log(instrucciones);
     if (listaErrores.length > 0) {
-        console.log(listaErrores);
+        //console.log(listaErrores);
         const areaConsola = document.getElementById('consola') as HTMLTextAreaElement;
-        areaConsola.value = "Hay errores, revise la lista";
+        listaErrores.forEach((err:ErrorG)=>{
+            areaConsola.value += err.mostrarErrorConsola();
+        });
     }else{
         //Obtengo las funciones y strucs globales y se los asigno al ast
         let funcionesG = revisarFuncionesGlobales(instrucciones);
@@ -66,13 +71,17 @@ window.ejecutarCodigo = function (entrada:string){
     }
     //mostrar los errores semanticos
     if (listaErrores.length > 0) {
-        console.log(listaErrores);
+        const areaConsola = document.getElementById('consola') as HTMLTextAreaElement;
+        listaErrores.forEach((err:ErrorG)=>{
+            areaConsola.value += err.mostrarErrorConsola();
+        });
     }
+    listaErroresGlobal = listaErrores;
     
 }
 
 window.traducirCodigo = function (entrada:string){
-
+    reiniciarConsola();
     reiniciarTraduccion();
 
     let resultado3d = new Resultado3D();
@@ -97,9 +106,10 @@ window.traducirCodigo = function (entrada:string){
     })
     
     if (listaErrores.length > 0) {
-        console.log(listaErrores);
         const areaConsola = document.getElementById('consola') as HTMLTextAreaElement;
-        areaConsola.value = "Hay errores y no se puede traducir, revise la lista";
+        listaErrores.forEach((err:ErrorG)=>{
+            areaConsola.value += err.mostrarErrorConsola();
+        });
     }else{
         //Obtengo las funciones y strucs globales y se los asigno al ast
         let funcionesG = revisarFuncionesGlobales(instrucciones);
@@ -120,6 +130,15 @@ window.traducirCodigo = function (entrada:string){
 
         traducirCompleto(entornoGlobal,resultado3d,temporales,ast,listaErrores);
     }
+
+    //mostrar los errores semanticos
+    if (listaErrores.length > 0) {
+        const areaConsola = document.getElementById('consola') as HTMLTextAreaElement;
+        listaErrores.forEach((err:ErrorG)=>{
+            areaConsola.value += err.mostrarErrorConsola();
+        });
+    }
+    listaErroresGlobal = listaErrores;
 }
 
 function reiniciarConsola(){
@@ -250,4 +269,14 @@ function traducirCompleto(ent:Entorno,resultado3D:Resultado3D,temporales:Tempora
     const areaTraduccion = document.getElementById('traduccion') as HTMLTextAreaElement;
     areaTraduccion.value = resultado;
 
+}
+
+window.reporteError = function(isActive:boolean){
+    const areaError = document.getElementById('listaErrores') as HTMLDivElement;
+    let funReport:FuncionesReportes = new FuncionesReportes();
+    if (isActive) {
+        areaError.innerHTML = '';
+    }else{
+        areaError.innerHTML = funReport.generarTablaError(listaErroresGlobal);
+    }
 }

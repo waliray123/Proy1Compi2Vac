@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.OperacionCadena = exports.OperadorCadena = void 0;
 var Tipo_1 = require("../AST/Tipo");
 var Arreglo_1 = require("../Objetos/Arreglo");
 var ErrorG_1 = require("../Objetos/ErrorG");
