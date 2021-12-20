@@ -34,8 +34,6 @@ var Forin = /** @class */ (function () {
         //variables nulos 
         var condicionArreglo = [];
         //configurando la declaracion
-        var variables = [];
-        variables.push(variable);
         var tipoVariable = Tipo_1.Tipo.NULL;
         //IDVAR
         //[]
@@ -59,10 +57,15 @@ var Forin = /** @class */ (function () {
             }
         }
         else {
-            //[]
-            casoForIn = CasoForIn.ARRAY;
+            //[]            
             condicionArreglo = condicion;
-            tipoVariable = condicionArreglo[0].getTipo(ent, arbol, listaErrores);
+            if (condicionArreglo.length > 0) {
+                casoForIn = CasoForIn.ARRAY;
+                tipoVariable = condicionArreglo[0].getTipo(ent, arbol, listaErrores);
+            }
+            else {
+                listaErrores.push(new ErrorG_1.ErrorG('semantico', 'El arreglo esta vacio ', this.linea, this.columna));
+            }
         }
         // //@ts-ignore
         // let declaraVariable: Declaracion = new Declaracion(variables,Tipo.STRING,this.linea,this.columna,null);
@@ -76,6 +79,19 @@ var Forin = /** @class */ (function () {
         var isTerminado = false;
         switch (casoForIn) {
             case CasoForIn.ARRAY: {
+                for (var _i = 0, condicionArreglo_1 = condicionArreglo; _i < condicionArreglo_1.length; _i++) {
+                    var atributo = condicionArreglo_1[_i];
+                    var valor = atributo.getValorImplicito(ent, arbol, listaErrores);
+                    var expr = new Primitivo_1.Primitivo(valor, this.linea, this.columna);
+                    var variables = [];
+                    variables.push(variable);
+                    var asignar = new Asignacion_1.Asignacion(variables, this.linea, this.columna, expr);
+                    asignar.ejecutar(entNuevo, arbol, listaErrores);
+                    for (var _a = 0, _b = this.instrucciones; _a < _b.length; _a++) {
+                        var instruccion = _b[_a];
+                        instruccion.ejecutar(entNuevo, arbol, listaErrores);
+                    }
+                }
                 break;
             }
             case CasoForIn.IDVAR: {
@@ -83,13 +99,13 @@ var Forin = /** @class */ (function () {
                 var valor = simbol.getValorImplicito(ent, arbol);
                 for (var i = 0; i < valor.length; i++) {
                     var letra = valor.substr(i, 1);
-                    var variables_1 = [];
-                    variables_1.push(variable);
+                    var variables = [];
+                    variables.push(variable);
                     var expr = new Primitivo_1.Primitivo(letra, this.linea, this.columna);
-                    var asignar = new Asignacion_1.Asignacion(variables_1, this.linea, this.columna, expr);
+                    var asignar = new Asignacion_1.Asignacion(variables, this.linea, this.columna, expr);
                     asignar.ejecutar(entNuevo, arbol, listaErrores);
-                    for (var _i = 0, _a = this.instrucciones; _i < _a.length; _i++) {
-                        var instruccion = _a[_i];
+                    for (var _c = 0, _d = this.instrucciones; _c < _d.length; _c++) {
+                        var instruccion = _d[_c];
                         instruccion.ejecutar(entNuevo, arbol, listaErrores);
                     }
                 }

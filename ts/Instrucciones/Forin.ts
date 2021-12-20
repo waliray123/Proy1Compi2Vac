@@ -50,8 +50,6 @@ export class Forin implements Instruccion{
 
 
         //configurando la declaracion
-        let variables = [];
-        variables.push(variable);
         
         let tipoVariable = Tipo.NULL;
         //IDVAR
@@ -78,10 +76,15 @@ export class Forin implements Instruccion{
 
         }else{
 
-            //[]
-            casoForIn = CasoForIn.ARRAY;
+            //[]            
             condicionArreglo = condicion;
-            tipoVariable = condicionArreglo[0].getTipo(ent,arbol,listaErrores);
+            if(condicionArreglo.length > 0){
+                casoForIn = CasoForIn.ARRAY;
+                tipoVariable = condicionArreglo[0].getTipo(ent,arbol,listaErrores);
+            }else{
+                listaErrores.push(new ErrorG('semantico','El arreglo esta vacio ',this.linea,this.columna));
+            }
+            
         }
 
         // //@ts-ignore
@@ -99,7 +102,17 @@ export class Forin implements Instruccion{
 
         switch (casoForIn) {
             case CasoForIn.ARRAY:{
-
+                for(var atributo of condicionArreglo){
+                    let valor = atributo.getValorImplicito(ent,arbol,listaErrores);
+                    let expr: Primitivo = new Primitivo(valor,this.linea,this.columna);
+                    let variables = [];
+                    variables.push(variable);
+                    let asignar:Asignacion = new Asignacion(variables,this.linea,this.columna,expr);
+                    asignar.ejecutar(entNuevo,arbol,listaErrores);
+                    for(var instruccion of this.instrucciones){
+                        instruccion.ejecutar(entNuevo,arbol,listaErrores);
+                    }
+                }
                 break;
             }                
             case CasoForIn.IDVAR:{
