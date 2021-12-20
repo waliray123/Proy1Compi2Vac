@@ -133,7 +133,22 @@ export class Forin implements Instruccion{
                 break;
             }
             case CasoForIn.ARRBEGEND:{
+                if (condicion instanceof ArrbegEnd) {
+                    let content:Array<Expresion> = condicion.getListaDatos(ent,arbol,listaErrores);
 
+                    for(var atributo of content){
+                        let valor = atributo.getValorImplicito(ent,arbol,listaErrores);
+                        let expr: Primitivo = new Primitivo(valor,this.linea,this.columna);
+                        let variables = [];
+                        variables.push(variable);
+                        let asignar:Asignacion = new Asignacion(variables,this.linea,this.columna,expr);
+                        asignar.ejecutar(entNuevo,arbol,listaErrores);
+                        for(var instruccion of this.instrucciones){
+                            instruccion.ejecutar(entNuevo,arbol,listaErrores);
+                        }
+                    }
+
+                }
                 break;
             }
             default:

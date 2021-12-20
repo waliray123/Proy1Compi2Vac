@@ -63,6 +63,19 @@ var ArrbegEnd = /** @class */ (function () {
         else {
             listaErrores.push(new ErrorG_1.ErrorG('semantico', 'no existe la variable ' + this.id, this.linea, this.columna));
         }
+        return null;
+    };
+    ArrbegEnd.prototype.getListaDatos = function (ent, arbol, listaErrores) {
+        this.isAlone = false;
+        var valor = this.getValorImplicito(ent, arbol, listaErrores);
+        this.isAlone = true;
+        if (valor === null) {
+            return [];
+        }
+        if (typeof (valor) === 'string') {
+            return [];
+        }
+        return valor;
     };
     ArrbegEnd.prototype.isInt = function (n) {
         return Number(n) === n && n % 1 === 0;

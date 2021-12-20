@@ -112,6 +112,22 @@ var Forin = /** @class */ (function () {
                 break;
             }
             case CasoForIn.ARRBEGEND: {
+                if (condicion instanceof ArrbegEnd_1.ArrbegEnd) {
+                    var content = condicion.getListaDatos(ent, arbol, listaErrores);
+                    for (var _e = 0, content_1 = content; _e < content_1.length; _e++) {
+                        var atributo = content_1[_e];
+                        var valor = atributo.getValorImplicito(ent, arbol, listaErrores);
+                        var expr = new Primitivo_1.Primitivo(valor, this.linea, this.columna);
+                        var variables = [];
+                        variables.push(variable);
+                        var asignar = new Asignacion_1.Asignacion(variables, this.linea, this.columna, expr);
+                        asignar.ejecutar(entNuevo, arbol, listaErrores);
+                        for (var _f = 0, _g = this.instrucciones; _f < _g.length; _f++) {
+                            var instruccion = _g[_f];
+                            instruccion.ejecutar(entNuevo, arbol, listaErrores);
+                        }
+                    }
+                }
                 break;
             }
             default:

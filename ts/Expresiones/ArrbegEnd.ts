@@ -79,6 +79,21 @@ export class ArrbegEnd implements Expresion {
         }else{
             listaErrores.push(new ErrorG('semantico','no existe la variable ' + this.id,this.linea,this.columna));
         }
+        return null;
+    }
+
+    getListaDatos(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>){
+        this.isAlone = false;
+        const valor = this.getValorImplicito(ent, arbol,listaErrores);
+        this.isAlone = true;
+        if (valor === null) {
+            return [];
+        }
+        if (typeof(valor) === 'string') {
+            return [];
+        }
+        return valor;
+
     }
 
     isInt(n:number){
