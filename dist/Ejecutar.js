@@ -5,7 +5,9 @@ var Entorno_1 = require("./AST/Entorno");
 var Resultado3D_1 = require("./AST/Resultado3D");
 var Temporales_1 = require("./AST/Temporales");
 var GenerarNativas_1 = require("./AST/GenerarNativas");
+var FuncionesReportes_1 = require("./Objetos/FuncionesReportes");
 var gramatica = require('../jison/Gramatica');
+var listaErroresGlobal = [];
 window.ejecutarCodigo = function (entrada) {
     //Reiniciar consola
     reiniciarConsola();
@@ -28,9 +30,11 @@ window.ejecutarCodigo = function (entrada) {
     // console.log(listaErrores);
     // console.log(instrucciones);
     if (listaErrores.length > 0) {
-        console.log(listaErrores);
-        var areaConsola = document.getElementById('consola');
-        areaConsola.value = "Hay errores, revise la lista";
+        //console.log(listaErrores);
+        var areaConsola_1 = document.getElementById('consola');
+        listaErrores.forEach(function (err) {
+            areaConsola_1.value += err.mostrarErrorConsola();
+        });
     }
     else {
         //Obtengo las funciones y strucs globales y se los asigno al ast
@@ -49,10 +53,15 @@ window.ejecutarCodigo = function (entrada) {
     }
     //mostrar los errores semanticos
     if (listaErrores.length > 0) {
-        console.log(listaErrores);
+        var areaConsola_2 = document.getElementById('consola');
+        listaErrores.forEach(function (err) {
+            areaConsola_2.value += err.mostrarErrorConsola();
+        });
     }
+    listaErroresGlobal = listaErrores;
 };
 window.traducirCodigo = function (entrada) {
+    reiniciarConsola();
     reiniciarTraduccion();
     var resultado3d = new Resultado3D_1.Resultado3D();
     var temporales = new Temporales_1.Temporales();
@@ -73,9 +82,10 @@ window.traducirCodigo = function (entrada) {
         }
     });
     if (listaErrores.length > 0) {
-        console.log(listaErrores);
-        var areaConsola = document.getElementById('consola');
-        areaConsola.value = "Hay errores y no se puede traducir, revise la lista";
+        var areaConsola_3 = document.getElementById('consola');
+        listaErrores.forEach(function (err) {
+            areaConsola_3.value += err.mostrarErrorConsola();
+        });
     }
     else {
         //Obtengo las funciones y strucs globales y se los asigno al ast
@@ -92,6 +102,14 @@ window.traducirCodigo = function (entrada) {
         });
         traducirCompleto(entornoGlobal_2, resultado3d, temporales, ast_2, listaErrores);
     }
+    //mostrar los errores semanticos
+    if (listaErrores.length > 0) {
+        var areaConsola_4 = document.getElementById('consola');
+        listaErrores.forEach(function (err) {
+            areaConsola_4.value += err.mostrarErrorConsola();
+        });
+    }
+    listaErroresGlobal = listaErrores;
 };
 function reiniciarConsola() {
     var areaConsola = document.getElementById('consola');
@@ -188,3 +206,13 @@ function traducirCompleto(ent, resultado3D, temporales, arbol, listaErrores) {
     var areaTraduccion = document.getElementById('traduccion');
     areaTraduccion.value = resultado;
 }
+window.reporteError = function (isActive) {
+    var areaError = document.getElementById('listaErrores');
+    var funReport = new FuncionesReportes_1.FuncionesReportes();
+    if (isActive) {
+        areaError.innerHTML = '';
+    }
+    else {
+        areaError.innerHTML = funReport.generarTablaError(listaErroresGlobal);
+    }
+};

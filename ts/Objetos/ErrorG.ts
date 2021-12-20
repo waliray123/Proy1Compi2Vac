@@ -13,4 +13,8 @@ export class ErrorG{
         this.ambito = 'global';
     }
     
+    mostrarErrorConsola(){
+        let resultado =  '\nError '+ this.tipoError + ', '+ this.descripcion + ' -> linea '+ this.linea + ' y columna ' + this.columna;
+        return resultado;
+    }
 }

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.ConcatenacionString = exports.ConcatenarTraduccion = void 0;
 var Tipo_1 = require("../AST/Tipo");
 var ConcatenarTraduccion = /** @class */ (function () {
     function ConcatenarTraduccion(valAsign, tipo) {
