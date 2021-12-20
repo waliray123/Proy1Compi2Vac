@@ -118,7 +118,7 @@ window.traducirCodigo = function (entrada:string){
             }
         })
 
-        traducirCompleto(resultado3d,temporales);
+        traducirCompleto(entornoGlobal,resultado3d,temporales,ast,listaErrores);
     }
 }
 
@@ -196,7 +196,7 @@ function generarEntornoGlobalTraducir(ast:AST,structs:Array<Struct>,resultado3D:
 }
 
 
-function traducirCompleto(resultado3D:Resultado3D,temporales:Temporales){
+function traducirCompleto(ent:Entorno,resultado3D:Resultado3D,temporales:Temporales,arbol:AST,listaErrores:Array<ErrorG>){
 
     //Traer el codigo en 3D    
 
@@ -208,7 +208,12 @@ function traducirCompleto(resultado3D:Resultado3D,temporales:Temporales){
 
     //Generar las funciones nativas
     let generador =  new GenerarNativas();
+    //Generar funciones 
+    let codFunc = generador.generarFunciones(ent,arbol,temporales,listaErrores);
+    //Generar Nativas
     let nativas = generador.generar(temporales);
+
+    
 
     //Inicializar todos los temporales
     let codTemporales = '';
@@ -224,7 +229,8 @@ function traducirCompleto(resultado3D:Resultado3D,temporales:Temporales){
         }
     }
 
-    encabezado += codTemporales;
+    encabezado += codTemporales;    
+
     //Generar el proceso main
 
     let procMain = '\nvoid main() { \n\tP = 0; \n\tH = 0;\n';
@@ -239,7 +245,7 @@ function traducirCompleto(resultado3D:Resultado3D,temporales:Temporales){
 
     //Mostrar en el text area
 
-    let resultado = encabezado + nativas + procMain;
+    let resultado = encabezado + nativas+ codFunc + procMain;
 
     const areaTraduccion = document.getElementById('traduccion') as HTMLTextAreaElement;
     areaTraduccion.value = resultado;

@@ -23,20 +23,38 @@ export class AccesoVariable implements Expresion {
     }
 
     traducir(ent: Entorno, arbol: AST, resultado3d: Resultado3D, temporales: Temporales,recursivo: number) {
-        if (ent.existe(this.id)) {
-            let simbol: Simbolo = ent.getSimbolo(this.id);
-            
-            //TODO: Alv ya me canse de esto mejor hago la declaracion de los strings  AAAAAAAAAAAAAA
-
-            let valor = 'stack[(int)'+simbol.valor + ']';
-            resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
-            let valR = 't' + temporales.ultimoTemp;
-            temporales.ultimoTemp += 1;
-            temporales.ultimoTipo = this.getTipo(ent,arbol,[]);
-            return valR;
-        } else {
-            console.log('No existe el id ' + this.id + ' no hay tipo');
+        if(temporales.esFuncion == true){
+            if (ent.existe(this.id)) {
+                let simbol: Simbolo = ent.getSimbolo(this.id);
+                
+                
+                temporales.ultimoTemp +=1;
+                resultado3d.codigo3D += 't'+temporales.ultimoTemp + '= P +'+simbol.valor + ';\n';
+                let valor = 'stack[(int)t'+temporales.ultimoTemp +']';
+                temporales.ultimoTemp += 1;
+                resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
+                let valR = 't' + temporales.ultimoTemp;       
+                temporales.ultimoTipo = this.getTipo(ent,arbol,[]);
+                return valR;
+            } else {
+                console.log('No existe el id ' + this.id + ' no hay tipo');
+            }            
+        }else{
+            if (ent.existe(this.id)) {
+                let simbol: Simbolo = ent.getSimbolo(this.id);
+                                
+    
+                let valor = 'stack[(int)'+simbol.valor + ']';
+                resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
+                let valR = 't' + temporales.ultimoTemp;
+                temporales.ultimoTemp += 1;
+                temporales.ultimoTipo = this.getTipo(ent,arbol,[]);
+                return valR;
+            } else {
+                console.log('No existe el id ' + this.id + ' no hay tipo');
+            }
         }
+        
     }
 
     getTipo(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>): Tipo {

@@ -356,18 +356,35 @@ var AccesoVariable = /** @class */ (function () {
         this.isAlone = true;
     }
     AccesoVariable.prototype.traducir = function (ent, arbol, resultado3d, temporales, recursivo) {
-        if (ent.existe(this.id)) {
-            var simbol = ent.getSimbolo(this.id);
-            //TODO: Alv ya me canse de esto mejor hago la declaracion de los strings  AAAAAAAAAAAAAA
-            var valor = 'stack[(int)' + simbol.valor + ']';
-            resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
-            var valR = 't' + temporales.ultimoTemp;
-            temporales.ultimoTemp += 1;
-            temporales.ultimoTipo = this.getTipo(ent, arbol, []);
-            return valR;
+        if (temporales.esFuncion == true) {
+            if (ent.existe(this.id)) {
+                var simbol = ent.getSimbolo(this.id);
+                temporales.ultimoTemp += 1;
+                resultado3d.codigo3D += 't' + temporales.ultimoTemp + '= P +' + simbol.valor + ';\n';
+                var valor = 'stack[(int)t' + temporales.ultimoTemp + ']';
+                temporales.ultimoTemp += 1;
+                resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
+                var valR = 't' + temporales.ultimoTemp;
+                temporales.ultimoTipo = this.getTipo(ent, arbol, []);
+                return valR;
+            }
+            else {
+                console.log('No existe el id ' + this.id + ' no hay tipo');
+            }
         }
         else {
-            console.log('No existe el id ' + this.id + ' no hay tipo');
+            if (ent.existe(this.id)) {
+                var simbol = ent.getSimbolo(this.id);
+                var valor = 'stack[(int)' + simbol.valor + ']';
+                resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
+                var valR = 't' + temporales.ultimoTemp;
+                temporales.ultimoTemp += 1;
+                temporales.ultimoTipo = this.getTipo(ent, arbol, []);
+                return valR;
+            }
+            else {
+                console.log('No existe el id ' + this.id + ' no hay tipo');
+            }
         }
     };
     AccesoVariable.prototype.getTipo = function (ent, arbol, listaErrores) {
@@ -1477,20 +1494,44 @@ var Asignacion = /** @class */ (function () {
                     //Asignar al stack
                     var valAsign = this.expresion.traducir(ent, arbol, resultado3d, temporales, 0);
                     if (temporales.ultimoTipo == Tipo_1.Tipo.BOOL) {
-                        temporales.ultLiteral += 3;
-                        var ultLit = temporales.ultLiteral - 2;
-                        resultado3d.codigo3D += '\tif(' + valAsign + ') goto L' + ultLit + ';\n';
-                        resultado3d.codigo3D += '\tgoto L' + (ultLit + 1) + ';\n';
-                        resultado3d.codigo3D += '\tL' + ultLit + ':\n';
-                        resultado3d.codigo3D += '\tstack[(int)' + simbol.valor + '] = 1;\n';
-                        resultado3d.codigo3D += '\tgoto L' + (ultLit + 2) + ';\n';
-                        resultado3d.codigo3D += '\tL' + (ultLit + 1) + ':\n';
-                        resultado3d.codigo3D += '\tstack[(int)' + simbol.valor + '] = 0;\n';
-                        resultado3d.codigo3D += '\tL' + (ultLit + 2) + ':\n';
-                        temporales.ultLitEscr = (ultLit + 2);
+                        if (temporales.esFuncion) {
+                            temporales.ultimoTemp += 1;
+                            resultado3d.codigo3D += 't' + temporales.ultimoTemp + '= P +' + (simbol.valor) + ';\n';
+                            temporales.ultLiteral += 3;
+                            var ultLit = temporales.ultLiteral - 2;
+                            resultado3d.codigo3D += '\tif(' + valAsign + ') goto L' + ultLit + ';\n';
+                            resultado3d.codigo3D += '\tgoto L' + (ultLit + 1) + ';\n';
+                            resultado3d.codigo3D += '\tL' + ultLit + ':\n';
+                            resultado3d.codigo3D += '\tstack[(int)t' + temporales.ultimoTemp + '] = 1;\n';
+                            resultado3d.codigo3D += '\tgoto L' + (ultLit + 2) + ';\n';
+                            resultado3d.codigo3D += '\tL' + (ultLit + 1) + ':\n';
+                            resultado3d.codigo3D += '\tstack[(int)t' + temporales.ultimoTemp + '] = 0;\n';
+                            resultado3d.codigo3D += '\tL' + (ultLit + 2) + ':\n';
+                            temporales.ultLitEscr = (ultLit + 2);
+                        }
+                        else {
+                            temporales.ultLiteral += 3;
+                            var ultLit = temporales.ultLiteral - 2;
+                            resultado3d.codigo3D += '\tif(' + valAsign + ') goto L' + ultLit + ';\n';
+                            resultado3d.codigo3D += '\tgoto L' + (ultLit + 1) + ';\n';
+                            resultado3d.codigo3D += '\tL' + ultLit + ':\n';
+                            resultado3d.codigo3D += '\tstack[(int)' + simbol.valor + '] = 1;\n';
+                            resultado3d.codigo3D += '\tgoto L' + (ultLit + 2) + ';\n';
+                            resultado3d.codigo3D += '\tL' + (ultLit + 1) + ':\n';
+                            resultado3d.codigo3D += '\tstack[(int)' + simbol.valor + '] = 0;\n';
+                            resultado3d.codigo3D += '\tL' + (ultLit + 2) + ':\n';
+                            temporales.ultLitEscr = (ultLit + 2);
+                        }
                     }
                     else {
-                        resultado3d.codigo3D += '\tstack[(int)' + simbol.valor + '] =' + valAsign + ';\n';
+                        if (temporales.esFuncion) {
+                            temporales.ultimoTemp += 1;
+                            resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '= P +' + (simbol.valor) + ';\n';
+                            resultado3d.codigo3D += '\tstack[(int)t' + temporales.ultimoTemp + '] =' + valAsign + ';\n';
+                        }
+                        else {
+                            resultado3d.codigo3D += '\tstack[(int)' + simbol.valor + '] =' + valAsign + ';\n';
+                        }
                     }
                 }
                 else {
@@ -1790,20 +1831,48 @@ var Declaracion = /** @class */ (function () {
                         //Asignar el valor al stack
                         var valAsign = _this.expresion.traducir(ent, arbol, resultado3d, temporales, 0);
                         if (temporales.ultimoTipo == Tipo_1.Tipo.BOOL) {
-                            temporales.ultLiteral += 3;
-                            var ultLit = temporales.ultLiteral - 2;
-                            resultado3d.codigo3D += '\tif(' + valAsign + ') goto L' + ultLit + ';\n';
-                            resultado3d.codigo3D += '\tgoto L' + (ultLit + 1) + ';\n';
-                            resultado3d.codigo3D += '\tL' + ultLit + ':\n';
-                            resultado3d.codigo3D += '\tstack[(int)' + simbol.valor + '] = 1;\n';
-                            resultado3d.codigo3D += '\tgoto L' + (ultLit + 2) + ';\n';
-                            resultado3d.codigo3D += '\tL' + (ultLit + 1) + ':\n';
-                            resultado3d.codigo3D += '\tstack[(int)' + simbol.valor + '] = 0;\n';
-                            resultado3d.codigo3D += '\tL' + (ultLit + 2) + ':\n';
-                            temporales.ultLitEscr = (ultLit + 2);
+                            if (temporales.esFuncion) {
+                                temporales.ultimoTemp += 1;
+                                resultado3d.codigo3D += 't' + temporales.ultimoTemp + '= P +' + (temporales.cantidadParametrosFunc) + ';\n';
+                                simbol.valor = (temporales.cantidadParametrosFunc);
+                                temporales.cantidadParametrosFunc += 1;
+                                temporales.ultLiteral += 3;
+                                var ultLit = temporales.ultLiteral - 2;
+                                resultado3d.codigo3D += '\tif(' + valAsign + ') goto L' + ultLit + ';\n';
+                                resultado3d.codigo3D += '\tgoto L' + (ultLit + 1) + ';\n';
+                                resultado3d.codigo3D += '\tL' + ultLit + ':\n';
+                                resultado3d.codigo3D += '\tstack[(int)t' + temporales.ultimoTemp + '] = 1;\n';
+                                resultado3d.codigo3D += '\tgoto L' + (ultLit + 2) + ';\n';
+                                resultado3d.codigo3D += '\tL' + (ultLit + 1) + ':\n';
+                                resultado3d.codigo3D += '\tstack[(int)t' + temporales.ultimoTemp + '] = 0;\n';
+                                resultado3d.codigo3D += '\tL' + (ultLit + 2) + ':\n';
+                                temporales.ultLitEscr = (ultLit + 2);
+                            }
+                            else {
+                                temporales.ultLiteral += 3;
+                                var ultLit = temporales.ultLiteral - 2;
+                                resultado3d.codigo3D += '\tif(' + valAsign + ') goto L' + ultLit + ';\n';
+                                resultado3d.codigo3D += '\tgoto L' + (ultLit + 1) + ';\n';
+                                resultado3d.codigo3D += '\tL' + ultLit + ':\n';
+                                resultado3d.codigo3D += '\tstack[(int)' + simbol.valor + '] = 1;\n';
+                                resultado3d.codigo3D += '\tgoto L' + (ultLit + 2) + ';\n';
+                                resultado3d.codigo3D += '\tL' + (ultLit + 1) + ':\n';
+                                resultado3d.codigo3D += '\tstack[(int)' + simbol.valor + '] = 0;\n';
+                                resultado3d.codigo3D += '\tL' + (ultLit + 2) + ':\n';
+                                temporales.ultLitEscr = (ultLit + 2);
+                            }
                         }
                         else {
-                            resultado3d.codigo3D += '\tstack[(int)' + simbol.valor + '] =' + valAsign + ';\n';
+                            if (temporales.esFuncion) {
+                                temporales.ultimoTemp += 1;
+                                resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '= P +' + (temporales.cantidadParametrosFunc) + ';\n';
+                                simbol.valor = (temporales.cantidadParametrosFunc);
+                                temporales.cantidadParametrosFunc += 1;
+                                resultado3d.codigo3D += '\tstack[(int)t' + temporales.ultimoTemp + '] =' + valAsign + ';\n';
+                            }
+                            else {
+                                resultado3d.codigo3D += '\tstack[(int)' + simbol.valor + '] =' + valAsign + ';\n';
+                            }
                         }
                     }
                     else {
@@ -2305,9 +2374,26 @@ var Funcion = /** @class */ (function () {
     }
     Funcion.prototype.traducir = function (ent, arbol, resultado3D, temporales, listaErrores) {
         var entornoGlobal = new Entorno_1.Entorno(ent);
-        for (var _i = 0, _a = this.instrucciones; _i < _a.length; _i++) {
-            var element = _a[_i];
-            element.traducir(entornoGlobal, arbol, resultado3D, temporales, listaErrores);
+        if (this.nombrefuncion == "main") {
+            temporales.esFuncion = false;
+            for (var _i = 0, _a = this.instrucciones; _i < _a.length; _i++) {
+                var element = _a[_i];
+                element.traducir(entornoGlobal, arbol, resultado3D, temporales, listaErrores);
+            }
+        }
+        else {
+            //Traducir segun funcion
+            temporales.esFuncion = true;
+            temporales.cantidadParametrosFunc = this.parametros.length + 1;
+            //Traducir traer parametros
+            for (var _b = 0, _c = this.parametros; _b < _c.length; _b++) {
+                var parametro = _c[_b];
+            }
+            //Traducir completo
+            for (var _d = 0, _e = this.instrucciones; _d < _e.length; _d++) {
+                var element = _e[_d];
+                element.traducir(entornoGlobal, arbol, resultado3D, temporales, listaErrores);
+            }
         }
         /*
         this.instrucciones.forEach((element:Instruccion) => {
@@ -2375,13 +2461,46 @@ var FuncionReturn = /** @class */ (function () {
         this.columna = columna;
         this.parametros = parametros;
     }
-    FuncionReturn.prototype.traducir = function (ent, arbol) {
-        throw new Error("Method not implemented.");
-    };
-    FuncionReturn.prototype.ejecutar = function (ent, arbol, listaErrores) {
+    FuncionReturn.prototype.traducir = function (ent, arbol, resultado3d, temporales, listaErrores) {
         var funciones = arbol.funciones;
         for (var _i = 0, funciones_1 = funciones; _i < funciones_1.length; _i++) {
             var element = funciones_1[_i];
+            if (this.nombrefuncion == element.nombrefuncion) {
+                if (temporales.esFuncion) {
+                }
+                else {
+                    //let ultTemp = temporales.ultimoTemp;
+                    //Asignar parametros
+                    var cont = 0;
+                    for (var _a = 0, _b = this.parametros; _a < _b.length; _a++) {
+                        var parametro = _b[_a];
+                        var valAsign = parametro.valor.traducir(ent, arbol, resultado3d, temporales, 0);
+                        if (cont == 0) {
+                            temporales.ultimoTemp += 1;
+                            resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + ' = P + ' + (temporales.ultstack + 2) + ';\n';
+                            resultado3d.codigo3D += '\tstack[(int)t' + temporales.ultimoTemp + '] = ' + valAsign + ';\n';
+                        }
+                        else {
+                            resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + ' = ' + temporales.ultimoTemp + ' + 1;\n';
+                            resultado3d.codigo3D += '\tstack[(int)t' + temporales.ultimoTemp + '] = ' + valAsign + ';\n';
+                        }
+                    }
+                    //Llamar a la funcion
+                    resultado3d.codigo3D += '\tP = P + ' + (temporales.ultstack + 1) + ';\n';
+                    resultado3d.codigo3D += '\t' + this.nombrefuncion + '();\n';
+                    temporales.ultimoTemp += 1;
+                    resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + ' = stack[(int)P];\n';
+                    resultado3d.codigo3D += '\tP = P - ' + (temporales.ultstack + 1) + ';\n'; // en P insertare el return y lo parametros en P +1
+                }
+                //resultado3d.codigo3D += '\tstack[(int)t'+temporales.ultimoTemp+'] = '+valAsign+';\n';
+                break;
+            }
+        }
+    };
+    FuncionReturn.prototype.ejecutar = function (ent, arbol, listaErrores) {
+        var funciones = arbol.funciones;
+        for (var _i = 0, funciones_2 = funciones; _i < funciones_2.length; _i++) {
+            var element = funciones_2[_i];
             if (this.nombrefuncion == element.nombrefuncion) {
                 element.setParametrosReturn(this.parametros);
                 element.ejecutar(ent, arbol, listaErrores);
@@ -2391,8 +2510,8 @@ var FuncionReturn = /** @class */ (function () {
     };
     FuncionReturn.prototype.getTipo = function (ent, arbol, listaErrores) {
         var funciones = arbol.funciones;
-        for (var _i = 0, funciones_2 = funciones; _i < funciones_2.length; _i++) {
-            var element = funciones_2[_i];
+        for (var _i = 0, funciones_3 = funciones; _i < funciones_3.length; _i++) {
+            var element = funciones_3[_i];
             if (this.nombrefuncion == element.nombrefuncion) {
                 return element.tipoFuncion;
             }
@@ -2400,8 +2519,8 @@ var FuncionReturn = /** @class */ (function () {
     };
     FuncionReturn.prototype.getValorImplicito = function (ent, arbol, listaErrores) {
         var funciones = arbol.funciones;
-        for (var _i = 0, funciones_3 = funciones; _i < funciones_3.length; _i++) {
-            var element = funciones_3[_i];
+        for (var _i = 0, funciones_4 = funciones; _i < funciones_4.length; _i++) {
+            var element = funciones_4[_i];
             if (this.nombrefuncion == element.nombrefuncion) {
                 element.setParametrosReturn(this.parametros);
                 element.ejecutar(ent, arbol, listaErrores);
@@ -4478,6 +4597,7 @@ exports.Entorno = Entorno;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.GenerarNativas = void 0;
+var Resultado3D_1 = require("../AST/Resultado3D");
 var GenerarNativas = /** @class */ (function () {
     function GenerarNativas() {
     }
@@ -4503,11 +4623,26 @@ var GenerarNativas = /** @class */ (function () {
         }
         return resultado;
     };
+    GenerarNativas.prototype.generarFunciones = function (ent, arbol, temporales, listaErrores) {
+        var resultado = '';
+        for (var _i = 0, _a = arbol.funciones; _i < _a.length; _i++) {
+            var element = _a[_i];
+            if (element.nombrefuncion != 'main') {
+                var resultado3d = new Resultado3D_1.Resultado3D;
+                //Abrir funcion
+                resultado3d.codigo3D += 'void ' + element.nombrefuncion + '(){\n';
+                element.traducir(ent, arbol, resultado3d, temporales, listaErrores);
+                resultado3d.codigo3D += '}\n';
+                resultado += resultado3d.codigo3D;
+            }
+        }
+        return resultado;
+    };
     return GenerarNativas;
 }());
 exports.GenerarNativas = GenerarNativas;
 
-},{}],46:[function(require,module,exports){
+},{"../AST/Resultado3D":46}],46:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Resultado3D = void 0;
@@ -4537,6 +4672,8 @@ var Temporales = /** @class */ (function () {
         this.usoConcatStrings = false;
         this.usoPrintStrings = false;
         this.ultimoTipo = Tipo_1.Tipo.NULL;
+        this.esFuncion = false;
+        this.cantidadParametrosFunc = 0;
     }
     return Temporales;
 }());
@@ -4654,7 +4791,7 @@ window.traducirCodigo = function (entrada) {
                 element.traducir(entornoGlobal_2, ast_2, resultado3d, temporales, listaErrores);
             }
         });
-        traducirCompleto(resultado3d, temporales);
+        traducirCompleto(entornoGlobal_2, resultado3d, temporales, ast_2, listaErrores);
     }
 };
 function reiniciarConsola() {
@@ -4717,12 +4854,15 @@ function generarEntornoGlobalTraducir(ast, structs, resultado3D, temporales, lis
     });
     return entornoGlobal;
 }
-function traducirCompleto(resultado3D, temporales) {
+function traducirCompleto(ent, resultado3D, temporales, arbol, listaErrores) {
     //Traer el codigo en 3D    
     //Ingresar encabezado
     var encabezado = '#include <stdio.h> \n#include <math.h> \ndouble heap[30101999]; \ndouble stack[30101999]; \ndouble P; \ndouble H;\n';
     //Generar las funciones nativas
     var generador = new GenerarNativas_1.GenerarNativas();
+    //Generar funciones 
+    var codFunc = generador.generarFunciones(ent, arbol, temporales, listaErrores);
+    //Generar Nativas
     var nativas = generador.generar(temporales);
     //Inicializar todos los temporales
     var codTemporales = '';
@@ -4745,7 +4885,7 @@ function traducirCompleto(resultado3D, temporales) {
     //Cerrar     
     procMain += '\n\treturn; \n }';
     //Mostrar en el text area
-    var resultado = encabezado + nativas + procMain;
+    var resultado = encabezado + nativas + codFunc + procMain;
     var areaTraduccion = document.getElementById('traduccion');
     areaTraduccion.value = resultado;
 }

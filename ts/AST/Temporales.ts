@@ -11,6 +11,8 @@ export class Temporales{
     public usoConcatStrings:boolean;
     public usoPrintStrings:boolean;
     public ultimoTipo : Tipo;
+    public esFuncion:boolean;
+    public cantidadParametrosFunc: number;
     
 
     constructor(){
@@ -22,6 +24,8 @@ export class Temporales{
         this.usoConcatStrings = false;
         this.usoPrintStrings = false;
         this.ultimoTipo = Tipo.NULL;
+        this.esFuncion = false;
+        this.cantidadParametrosFunc = 0;
     }        
 
 }

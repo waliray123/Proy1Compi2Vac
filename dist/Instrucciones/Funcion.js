@@ -16,9 +16,26 @@ var Funcion = /** @class */ (function () {
     }
     Funcion.prototype.traducir = function (ent, arbol, resultado3D, temporales, listaErrores) {
         var entornoGlobal = new Entorno_1.Entorno(ent);
-        for (var _i = 0, _a = this.instrucciones; _i < _a.length; _i++) {
-            var element = _a[_i];
-            element.traducir(entornoGlobal, arbol, resultado3D, temporales, listaErrores);
+        if (this.nombrefuncion == "main") {
+            temporales.esFuncion = false;
+            for (var _i = 0, _a = this.instrucciones; _i < _a.length; _i++) {
+                var element = _a[_i];
+                element.traducir(entornoGlobal, arbol, resultado3D, temporales, listaErrores);
+            }
+        }
+        else {
+            //Traducir segun funcion
+            temporales.esFuncion = true;
+            temporales.cantidadParametrosFunc = this.parametros.length + 1;
+            //Traducir traer parametros
+            for (var _b = 0, _c = this.parametros; _b < _c.length; _b++) {
+                var parametro = _c[_b];
+            }
+            //Traducir completo
+            for (var _d = 0, _e = this.instrucciones; _d < _e.length; _d++) {
+                var element = _e[_d];
+                element.traducir(entornoGlobal, arbol, resultado3D, temporales, listaErrores);
+            }
         }
         /*
         this.instrucciones.forEach((element:Instruccion) => {

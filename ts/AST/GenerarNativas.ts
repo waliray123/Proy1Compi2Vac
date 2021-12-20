@@ -1,6 +1,9 @@
 
 import { Resultado3D } from "../AST/Resultado3D";
 import { Temporales } from "../AST/Temporales";
+import { ErrorG } from "../Objetos/ErrorG";
+import { AST } from "./AST";
+import { Entorno } from "./Entorno";
 
 
 export class GenerarNativas{
@@ -24,6 +27,25 @@ export class GenerarNativas{
             resultado += '\tgoto L'+(temporales.ultLiteral-1)+';\n';
             resultado += '\tL'+(temporales.ultLiteral)+':\n';
             resultado += '\treturn; \n\}\n';
+        }
+        return resultado;
+    }
+
+    generarFunciones(ent: Entorno, arbol: AST,temporales:Temporales,listaErrores:Array<ErrorG>){
+
+        let resultado = '';
+        
+        for (const element of arbol.funciones) {    
+            
+            if(element.nombrefuncion != 'main'){
+                let resultado3d = new Resultado3D;
+                //Abrir funcion
+                resultado3d.codigo3D += 'void '+element.nombrefuncion +'(){\n';
+                element.traducir(ent,arbol,resultado3d,temporales,listaErrores);
+                resultado3d.codigo3D += '}\n';
+                resultado += resultado3d.codigo3D;
+            }
+            
         }
         return resultado;
     }
