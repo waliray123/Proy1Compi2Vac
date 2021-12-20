@@ -8,12 +8,15 @@ import { Resultado3D } from "./AST/Resultado3D";
 import { Temporales } from "./AST/Temporales";
 import { ErrorG } from "./Objetos/ErrorG";
 import { GenerarNativas } from "./AST/GenerarNativas";
+import { FuncionesReportes } from "./Objetos/FuncionesReportes";
 
 const gramatica = require('../jison/Gramatica');
+let listaErroresGlobal:Array<ErrorG> = [];
 
 declare global {
     interface Window { ejecutarCodigo: any; }
     interface Window { traducirCodigo: any; }
+    interface Window { reporteError: any; }
 }
 
 window.ejecutarCodigo = function (entrada:string){
@@ -73,6 +76,7 @@ window.ejecutarCodigo = function (entrada:string){
             areaConsola.value += err.mostrarErrorConsola();
         });
     }
+    listaErroresGlobal = listaErrores;
     
 }
 
@@ -134,6 +138,7 @@ window.traducirCodigo = function (entrada:string){
             areaConsola.value += err.mostrarErrorConsola();
         });
     }
+    listaErroresGlobal = listaErrores;
 }
 
 function reiniciarConsola(){
@@ -264,4 +269,14 @@ function traducirCompleto(ent:Entorno,resultado3D:Resultado3D,temporales:Tempora
     const areaTraduccion = document.getElementById('traduccion') as HTMLTextAreaElement;
     areaTraduccion.value = resultado;
 
+}
+
+window.reporteError = function(isActive:boolean){
+    const areaError = document.getElementById('listaErrores') as HTMLDivElement;
+    let funReport:FuncionesReportes = new FuncionesReportes();
+    if (isActive) {
+        areaError.innerHTML = '';
+    }else{
+        areaError.innerHTML = funReport.generarTablaError(listaErroresGlobal);
+    }
 }

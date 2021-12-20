@@ -5,7 +5,9 @@ var Entorno_1 = require("./AST/Entorno");
 var Resultado3D_1 = require("./AST/Resultado3D");
 var Temporales_1 = require("./AST/Temporales");
 var GenerarNativas_1 = require("./AST/GenerarNativas");
+var FuncionesReportes_1 = require("./Objetos/FuncionesReportes");
 var gramatica = require('../jison/Gramatica');
+var listaErroresGlobal = [];
 window.ejecutarCodigo = function (entrada) {
     //Reiniciar consola
     reiniciarConsola();
@@ -56,6 +58,7 @@ window.ejecutarCodigo = function (entrada) {
             areaConsola_2.value += err.mostrarErrorConsola();
         });
     }
+    listaErroresGlobal = listaErrores;
 };
 window.traducirCodigo = function (entrada) {
     reiniciarConsola();
@@ -106,6 +109,7 @@ window.traducirCodigo = function (entrada) {
             areaConsola_4.value += err.mostrarErrorConsola();
         });
     }
+    listaErroresGlobal = listaErrores;
 };
 function reiniciarConsola() {
     var areaConsola = document.getElementById('consola');
@@ -202,3 +206,13 @@ function traducirCompleto(ent, resultado3D, temporales, arbol, listaErrores) {
     var areaTraduccion = document.getElementById('traduccion');
     areaTraduccion.value = resultado;
 }
+window.reporteError = function (isActive) {
+    var areaError = document.getElementById('listaErrores');
+    var funReport = new FuncionesReportes_1.FuncionesReportes();
+    if (isActive) {
+        areaError.innerHTML = '';
+    }
+    else {
+        areaError.innerHTML = funReport.generarTablaError(listaErroresGlobal);
+    }
+};

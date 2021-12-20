@@ -40,7 +40,12 @@
           <button onclick="addTab()" class="button-nav">Agregar Pestaña</button>
         </div>
 
+        <div class="col-sm">
+          <button id="report-error" onclick="generarReportError()" class="button-nav">Ver Reporte de errores</button>
+        </div>
+
       </div>
+      
     </div>
     <br>
     <div id="contenedor-secciones" >
@@ -109,7 +114,10 @@
         </table>
       </div>
     </div>
-        
+
+    <div id="listaErrores">
+    </div>
+
     <script src="plugins/codemirror-5.64.0/lib/codemirror.js"></script>    
     <script src="js/multPest.js"></script>
     <script src="js/funBasicas.js"></script>
