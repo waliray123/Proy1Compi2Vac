@@ -85,9 +85,7 @@ export class OperacionNativa implements Expresion {
             
         }else if(this.operadorNativa === OperadorNativa.STRING){
             let valor = '';
-            if (this.expresion instanceof Operacion) {
-                valor = this.expresion.op_izquierda.getValorImplicito(ent, arbol,listaErrores) + this.getSignoTipo(this.expresion.operador) + this.expresion.op_derecha.getValorImplicito(ent, arbol,listaErrores)
-            }else if(this.expresion instanceof AccesoArray){
+            if(this.expresion instanceof AccesoArray){
                 let contenido:Array<Expresion> = this.expresion.contenido;
                 valor = '[';
                 let i = 0;

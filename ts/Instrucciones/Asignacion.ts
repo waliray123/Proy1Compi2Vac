@@ -109,7 +109,8 @@ export class Asignacion implements Instruccion{
             if (ent.existe(id)) {
                 let simbol: Simbolo = ent.getSimbolo(id);
                 let tipo: Tipo = simbol.getTipo(ent,arbol);
-                if (tipo == this.expresion.getTipo(ent,arbol,listaErrores)) {
+                let tipoExpr:Tipo = this.expresion.getTipo(ent,arbol,listaErrores);
+                if ( tipo == tipoExpr ||  (tipoExpr==Tipo.INT && tipo == Tipo.DOUBLE)) {
                     simbol.valor = this.expresion.getValorImplicito(ent,arbol,listaErrores);
                 }else{
                     // console.log('Error semantico, El tipo de la variable (' + tipo +') no concuerda con el tipo asignado (' + this.expresion.getTipo(ent,arbol) + ') en la linea '+ this.linea + ' y columna ' + this.columna);

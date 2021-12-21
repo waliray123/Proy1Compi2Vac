@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.OperacionNativa = exports.OperadorNativa = void 0;
 var Tipo_1 = require("../AST/Tipo");
 var ErrorG_1 = require("../Objetos/ErrorG");
 var AccesoArray_1 = require("./AccesoArray");
@@ -73,10 +74,7 @@ var OperacionNativa = /** @class */ (function () {
         }
         else if (this.operadorNativa === OperadorNativa.STRING) {
             var valor_1 = '';
-            if (this.expresion instanceof Operacion_1.Operacion) {
-                valor_1 = this.expresion.op_izquierda.getValorImplicito(ent, arbol, listaErrores) + this.getSignoTipo(this.expresion.operador) + this.expresion.op_derecha.getValorImplicito(ent, arbol, listaErrores);
-            }
-            else if (this.expresion instanceof AccesoArray_1.AccesoArray) {
+            if (this.expresion instanceof AccesoArray_1.AccesoArray) {
                 var contenido_1 = this.expresion.contenido;
                 valor_1 = '[';
                 var i_1 = 0;

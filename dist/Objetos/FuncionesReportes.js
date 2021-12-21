@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.FuncionesReportes = void 0;
 var FuncionesReportes = /** @class */ (function () {
     function FuncionesReportes() {
     }

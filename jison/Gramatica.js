@@ -429,8 +429,11 @@ break;
 case 174:
 this.$ = new Primitivo(true, _$[$0].first_line, _$[$0].first_column);
 break;
-case 175: case 176:
+case 175:
 this.$ = new Primitivo(Number($$[$0]), _$[$0].first_line, _$[$0].first_column);
+break;
+case 176:
+let primitivo = new Primitivo(Number($$[$0]), _$[$0].first_line, _$[$0].first_column);primitivo.isFlotante=true;this.$ = primitivo;
 break;
 case 177: case 178:
 this.$ = new Primitivo($$[$0], _$[$0].first_line, _$[$0].first_column);
