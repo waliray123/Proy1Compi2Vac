@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Asignacion = void 0;
 var Tipo_1 = require("../AST/Tipo");
 var AccesoVariable_1 = require("../Expresiones/AccesoVariable");
 var ErrorG_1 = require("../Objetos/ErrorG");
@@ -99,7 +100,8 @@ var Asignacion = /** @class */ (function () {
             if (ent.existe(id)) {
                 var simbol = ent.getSimbolo(id);
                 var tipo = simbol.getTipo(ent, arbol);
-                if (tipo == this.expresion.getTipo(ent, arbol, listaErrores)) {
+                var tipoExpr = this.expresion.getTipo(ent, arbol, listaErrores);
+                if (tipo == tipoExpr || (tipoExpr == Tipo_1.Tipo.INT && tipo == Tipo_1.Tipo.DOUBLE)) {
                     simbol.valor = this.expresion.getValorImplicito(ent, arbol, listaErrores);
                 }
                 else {

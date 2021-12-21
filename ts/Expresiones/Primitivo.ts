@@ -10,11 +10,13 @@ export class Primitivo implements Expresion {
     linea: number;
     columna: number;
     public valor: any;
+    public isFlotante:boolean;
 
     constructor(valor:any, linea:number, columna:number){
         this.linea = linea;
         this.columna = columna;
         this.valor = valor;
+        this.isFlotante = false;
     }
     
     traducir(ent: Entorno, arbol: AST,resultado3d:Resultado3D,temporales:Temporales) {
@@ -61,6 +63,9 @@ export class Primitivo implements Expresion {
         }
         else if (typeof(valor) === 'number')
         {
+            if (this.isFlotante) {
+                return Tipo.DOUBLE;
+            }
             if(this.isInt(Number(valor))){
                 return Tipo.INT;
             }

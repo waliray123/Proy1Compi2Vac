@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Declaracion = void 0;
 var Simbolo_1 = require("../AST/Simbolo");
 var Tipo_1 = require("../AST/Tipo");
 var ErrorG_1 = require("../Objetos/ErrorG");
@@ -92,9 +93,9 @@ var Declaracion = /** @class */ (function () {
         var _this = this;
         // console.log('ejecutado...'+ this.id);
         this.id.forEach(function (id) {
-            if (ent.existe(id)) {
+            if (ent.existeEnActual(id)) {
                 // console.log('Id '+ id +' ya existe');
-                listaErrores.push(new ErrorG_1.ErrorG('semantico', 'la variable' + id + ' ya existe', _this.linea, _this.columna));
+                listaErrores.push(new ErrorG_1.ErrorG('semantico', 'la variable ' + id + ' ya existe', _this.linea, _this.columna));
             }
             else {
                 if (_this.expresion == null) {
@@ -103,7 +104,7 @@ var Declaracion = /** @class */ (function () {
                 }
                 else {
                     var tipoExpr = _this.expresion.getTipo(ent, arbol, listaErrores);
-                    if (tipoExpr == _this.tipo) {
+                    if (tipoExpr == _this.tipo || (tipoExpr == Tipo_1.Tipo.INT && _this.tipo == Tipo_1.Tipo.DOUBLE)) {
                         var simbol = new Simbolo_1.Simbolo(_this.tipo, id, _this.linea, _this.columna, _this.expresion.getValorImplicito(ent, arbol, listaErrores));
                         ent.agregar(id, simbol);
                     }
@@ -123,13 +124,13 @@ var Declaracion = /** @class */ (function () {
             return true;
         }
         else if (this.tipo == Tipo_1.Tipo.INT) {
-            return 1;
+            return 0;
         }
         else if (this.tipo == Tipo_1.Tipo.CHAR) {
             return 'a';
         }
         else if (this.tipo == Tipo_1.Tipo.DOUBLE) {
-            return 1.0;
+            return 0.0;
         }
         else {
             return null;

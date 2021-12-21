@@ -613,7 +613,7 @@ primitivas
     : STR_FALSE             {$$ = new Primitivo(false, @1.first_line, @1.first_column);}
     | STR_TRUE              {$$ = new Primitivo(true, @1.first_line, @1.first_column);}
     | ENTERO                {$$ = new Primitivo(Number($1), @1.first_line, @1.first_column);}
-    | FLOTANTE              {$$ = new Primitivo(Number($1), @1.first_line, @1.first_column);}
+    | FLOTANTE              {let primitivo = new Primitivo(Number($1), @1.first_line, @1.first_column);primitivo.isFlotante=true;$$ = primitivo;}
     | STRINGL               {$$ = new Primitivo($1, @1.first_line, @1.first_column);}
     | CHARL                 {$$ = new Primitivo($1, @1.first_line, @1.first_column);}
     | ID_VAR                {$$ = new AccesoVariable($1, @1.first_line, @1.first_column);}

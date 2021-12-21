@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Temporal = void 0;
 var Temporal = /** @class */ (function () {
     function Temporal(nombre) {
         this.nombre = nombre;

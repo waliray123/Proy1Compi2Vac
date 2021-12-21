@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.DoWhile = void 0;
 var Entorno_1 = require("../AST/Entorno");
 var DoWhile = /** @class */ (function () {
     function DoWhile(linea, columna, instrucciones, expresion) {
@@ -32,6 +33,12 @@ var DoWhile = /** @class */ (function () {
                 if (valR == 'RETORNAR') {
                     ent.valorReturn = entornolocal.valorReturn;
                     return 'RETORNAR';
+                }
+                else if (valR == 'ROMPER') {
+                    return;
+                }
+                else if (valR == 'CONTINUAR') {
+                    break;
                 }
             }
             realizar = this.expresion.getValorImplicito(entornolocal, arbol, listaErrores);

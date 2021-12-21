@@ -1,11 +1,13 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Primitivo = void 0;
 var Tipo_1 = require("../AST/Tipo");
 var Primitivo = /** @class */ (function () {
     function Primitivo(valor, linea, columna) {
         this.linea = linea;
         this.columna = columna;
         this.valor = valor;
+        this.isFlotante = false;
     }
     Primitivo.prototype.traducir = function (ent, arbol, resultado3d, temporales) {
         console.log("Traduciendo Primitivo");
@@ -46,6 +48,9 @@ var Primitivo = /** @class */ (function () {
             return Tipo_1.Tipo.STRING;
         }
         else if (typeof (valor) === 'number') {
+            if (this.isFlotante) {
+                return Tipo_1.Tipo.DOUBLE;
+            }
             if (this.isInt(Number(valor))) {
                 return Tipo_1.Tipo.INT;
             }

@@ -107,16 +107,16 @@ export class Declaracion implements Instruccion{
     ejecutar(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
         // console.log('ejecutado...'+ this.id);
         this.id.forEach((id:string)=>{
-            if (ent.existe(id) ){
+            if (ent.existeEnActual(id) ){
                 // console.log('Id '+ id +' ya existe');
-                listaErrores.push(new ErrorG('semantico','la variable' + id + ' ya existe',this.linea,this.columna));
+                listaErrores.push(new ErrorG('semantico','la variable ' + id + ' ya existe',this.linea,this.columna));
             }else{
                 if(this.expresion == null){
                     let simbol = new Simbolo(this.tipo,id,this.linea,this.columna,this.getValDefault());
                     ent.agregar(id,simbol);
                 }else{
                     let tipoExpr:Tipo = this.expresion.getTipo(ent,arbol,listaErrores);            
-                    if(tipoExpr == this.tipo){
+                    if(tipoExpr == this.tipo ||  (tipoExpr==Tipo.INT && this.tipo == Tipo.DOUBLE)){
                         let simbol = new Simbolo(this.tipo,id,this.linea,this.columna,this.expresion.getValorImplicito(ent,arbol,listaErrores));
                         ent.agregar(id,simbol);
                     }else{
@@ -134,11 +134,11 @@ export class Declaracion implements Instruccion{
         }else if (this.tipo == Tipo.BOOL){
             return true;
         }else if (this.tipo == Tipo.INT){
-            return 1;
+            return 0;
         }else if (this.tipo == Tipo.CHAR){
             return 'a';
         }else if (this.tipo == Tipo.DOUBLE) {
-            return 1.0;
+            return 0.0;
         }else{
             return null;
         }
