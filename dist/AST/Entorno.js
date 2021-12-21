@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Entorno = void 0;
 var Tipo_1 = require("./Tipo");
 var Entorno = /** @class */ (function () {
     function Entorno(anterior) {

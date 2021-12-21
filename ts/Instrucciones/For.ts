@@ -91,6 +91,10 @@ export class For implements Instruccion{
                 if(valR == 'RETORNAR'){                
                     ent.valorReturn = entornolocal.valorReturn;       
                     return 'RETORNAR';       
+                }else if(valR == 'ROMPER'){
+                    return;
+                }else if(valR == 'CONTINUAR'){
+                    break;
                 }
             }           
             //Sumar o realizar la expresion2            

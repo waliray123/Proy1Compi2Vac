@@ -88,6 +88,10 @@ export class If implements Instruccion {
                     if (valR == 'RETORNAR') {
                         ent.valorReturn = entornolocal.valorReturn;
                         return 'RETORNAR';
+                    }else if(valR == 'ROMPER'){
+                        return 'ROMPER';
+                    }else if(valR == 'CONTINUAR'){
+                        return 'CONTINUAR';
                     }
                 }
             } else {
@@ -102,6 +106,10 @@ export class If implements Instruccion {
                             if (valR == 'RETORNAR') {
                                 ent.valorReturn = entornolocal.valorReturn;
                                 return 'RETORNAR';
+                            }else if(valR == 'ROMPER'){
+                                return 'ROMPER';
+                            }else if(valR == 'CONTINUAR'){
+                                return 'CONTINUAR';
                             }
                             break;
                         }
@@ -117,6 +125,10 @@ export class If implements Instruccion {
                             if (valR == 'RETORNAR') {
                                 ent.valorReturn = entornolocal.valorReturn;
                                 return 'RETORNAR';
+                            }else if(valR == 'ROMPER'){
+                                return 'ROMPER';
+                            }else if(valR == 'CONTINUAR'){
+                                return 'CONTINUAR';
                             }
                             break;
                         }
@@ -133,6 +145,10 @@ export class If implements Instruccion {
                     console.log('VAl return');
                     console.log(ent.valorReturn);
                     return 'RETORNAR';
+                }else if(valR == 'ROMPER'){
+                    return 'ROMPER';
+                }else if(valR == 'CONTINUAR'){
+                    return 'CONTINUAR';
                 }
             }
         }

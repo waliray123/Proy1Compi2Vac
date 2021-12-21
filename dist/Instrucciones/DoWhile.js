@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DoWhile = void 0;
 var Entorno_1 = require("../AST/Entorno");
 var DoWhile = /** @class */ (function () {
     function DoWhile(linea, columna, instrucciones, expresion) {

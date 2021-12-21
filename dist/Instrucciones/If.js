@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.If = void 0;
 var Entorno_1 = require("../AST/Entorno");
 var If = /** @class */ (function () {
     function If(linea, columna, condicion, instrucciones, sinos, tipo) {
@@ -67,6 +66,12 @@ var If = /** @class */ (function () {
                         ent.valorReturn = entornolocal.valorReturn;
                         return 'RETORNAR';
                     }
+                    else if (valR == 'ROMPER') {
+                        return 'ROMPER';
+                    }
+                    else if (valR == 'CONTINUAR') {
+                        return 'CONTINUAR';
+                    }
                 }
             }
             else {
@@ -82,6 +87,12 @@ var If = /** @class */ (function () {
                                 ent.valorReturn = entornolocal.valorReturn;
                                 return 'RETORNAR';
                             }
+                            else if (valR == 'ROMPER') {
+                                return 'ROMPER';
+                            }
+                            else if (valR == 'CONTINUAR') {
+                                return 'CONTINUAR';
+                            }
                             break;
                         }
                     }
@@ -96,6 +107,12 @@ var If = /** @class */ (function () {
                             if (valR == 'RETORNAR') {
                                 ent.valorReturn = entornolocal.valorReturn;
                                 return 'RETORNAR';
+                            }
+                            else if (valR == 'ROMPER') {
+                                return 'ROMPER';
+                            }
+                            else if (valR == 'CONTINUAR') {
+                                return 'CONTINUAR';
                             }
                             break;
                         }
@@ -113,6 +130,12 @@ var If = /** @class */ (function () {
                     console.log('VAl return');
                     console.log(ent.valorReturn);
                     return 'RETORNAR';
+                }
+                else if (valR == 'ROMPER') {
+                    return 'ROMPER';
+                }
+                else if (valR == 'CONTINUAR') {
+                    return 'CONTINUAR';
                 }
             }
         }

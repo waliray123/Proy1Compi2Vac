@@ -314,7 +314,13 @@ instruccion_funcion
     | incremento_decremento {$$ = $1;}
     | funciones_arreglo     {$$ = $1;}
     | returns_bloque        {$$ = $1;}
+    | rompimientos_bloque   {$$ = $1;}
     | error PUNTCOMA                 {genError(yytext,@1.first_line,@1.first_column);}
+;
+
+rompimientos_bloque
+    : BREAK PUNTCOMA            {$$ = new Break(@1.first_line,@1.first_column);}
+    | CONTINUE PUNTCOMA         {$$ = new Continue(@1.first_line,@1.first_column);}
 ;
 
 returns_bloque
@@ -371,7 +377,7 @@ caso_switch
 ;
 
 contenido_caso
-    : instrucciones_funciones opcional_break        
+    : instrucciones_funciones {$$ = $1;}/* opcional_break        
         {
             if ($2 != null){
                 $1.push($2);
@@ -385,7 +391,7 @@ contenido_caso
             }else{
                 $$ = [$1];
             }
-        }
+        }*/
 ;
 
 opcional_default

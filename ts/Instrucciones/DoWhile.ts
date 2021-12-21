@@ -46,6 +46,10 @@ export class DoWhile implements Instruccion{
                 if(valR == 'RETORNAR'){                
                     ent.valorReturn = entornolocal.valorReturn;       
                     return 'RETORNAR';       
+                }else if(valR == 'ROMPER'){
+                    return;
+                }else if(valR == 'CONTINUAR'){
+                    break;
                 }
             } 
             realizar = this.expresion.getValorImplicito(entornolocal,arbol,listaErrores);            

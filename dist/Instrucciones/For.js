@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.For = void 0;
 var Entorno_1 = require("../AST/Entorno");
 var ErrorG_1 = require("../Objetos/ErrorG");
 var For = /** @class */ (function () {
@@ -63,6 +62,12 @@ var For = /** @class */ (function () {
                 if (valR == 'RETORNAR') {
                     ent.valorReturn = entornolocal.valorReturn;
                     return 'RETORNAR';
+                }
+                else if (valR == 'ROMPER') {
+                    return;
+                }
+                else if (valR == 'CONTINUAR') {
+                    break;
                 }
             }
             //Sumar o realizar la expresion2            

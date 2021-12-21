@@ -22,7 +22,7 @@ export class Break implements Instruccion{
     }
 
     ejecutar(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
-        return;
+        return 'ROMPER';
     }
 
 }

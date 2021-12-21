@@ -20,7 +20,7 @@ export class Continue implements Instruccion{
     }
 
     ejecutar(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
-        // console.log('ejecutado...'+ this.id);
+        return 'CONTINUAR';
     }
 
 }
