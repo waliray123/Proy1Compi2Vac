@@ -99,6 +99,9 @@ var DeclaracionStruct = /** @class */ (function () {
         //     return null;
         // }
     };
+    DeclaracionStruct.prototype.getTipo = function () {
+        return "declaracion";
+    };
     return DeclaracionStruct;
 }());
 exports.DeclaracionStruct = DeclaracionStruct;

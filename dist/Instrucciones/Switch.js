@@ -47,12 +47,17 @@ var Switch = /** @class */ (function () {
         }
     };
     Switch.prototype.ejecutar = function (ent, arbol, listaErrores) {
+        var isFound = false;
         for (var _i = 0, _a = this.lista_instrucciones; _i < _a.length; _i++) {
             var caso = _a[_i];
-            if (this.expresion.getValorImplicito(ent, arbol) == caso.id.getValorImplicito(ent, arbol, listaErrores) || caso.id.getTipo(ent, arbol, listaErrores) == Tipo_1.Tipo.NULL) {
+            if (this.expresion.getValorImplicito(ent, arbol) == caso.id.getValorImplicito(ent, arbol, listaErrores) || caso.id.getTipo(ent, arbol, listaErrores) == Tipo_1.Tipo.NULL || isFound) {
                 caso.ejecutar(ent, arbol, listaErrores);
+                isFound = true;
                 if (caso.getIsBreak()) {
                     break;
+                }
+                else if (caso.getIsContinue()) {
+                    continue;
                 }
             }
         }

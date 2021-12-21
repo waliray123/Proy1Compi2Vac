@@ -108,5 +108,8 @@ export class DeclaracionStruct implements Instruccion{
         //     return null;
         // }
     }
+    getTipo(){
+        return "declaracion";
+    }
 
 }

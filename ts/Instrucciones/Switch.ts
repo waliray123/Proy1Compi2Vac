@@ -67,11 +67,15 @@ export class Switch implements Instruccion{
     }
 
     ejecutar(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
+        let isFound = false;
         for(var caso of this.lista_instrucciones){
-            if (this.expresion.getValorImplicito(ent,arbol) == caso.id.getValorImplicito(ent, arbol,listaErrores) || caso.id.getTipo(ent,arbol,listaErrores) == Tipo.NULL) {
+            if (this.expresion.getValorImplicito(ent,arbol) == caso.id.getValorImplicito(ent, arbol,listaErrores) || caso.id.getTipo(ent,arbol,listaErrores) == Tipo.NULL || isFound) {
                 caso.ejecutar(ent,arbol,listaErrores);
+                isFound = true;
                 if (caso.getIsBreak()) {
                     break;
+                }else if(caso.getIsContinue()) {
+                    continue;
                 }
             }
         }

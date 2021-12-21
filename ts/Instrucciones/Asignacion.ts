@@ -4,7 +4,9 @@ import { Resultado3D } from "../AST/Resultado3D";
 import { Simbolo } from "../AST/Simbolo";
 import { Temporales } from "../AST/Temporales";
 import { Tipo } from "../AST/Tipo";
+import { AccesoArray } from "../Expresiones/AccesoArray";
 import { AccesoVariable } from "../Expresiones/AccesoVariable";
+import { Primitivo } from "../Expresiones/Primitivo";
 import { Expresion } from "../Interfaces/Expresion";
 import { Instruccion } from "../Interfaces/Instruccion";
 import { ErrorG } from "../Objetos/ErrorG";
@@ -169,7 +171,13 @@ export class Asignacion implements Instruccion{
                         this.asignacionStruct(i+1,val1,ent,arbol,listaErrores);
                     }                    
                 }else{
-                    atributo.expresion = this.expresion;
+                    if (this.expresion instanceof Primitivo || this.expresion instanceof AccesoArray ) {
+                        atributo.expresion = this.expresion;    
+                    }else{
+                        let valorC:any = this.expresion.getValorImplicito(ent,arbol,listaErrores);
+                        let primitivo = new Primitivo(valorC,this.expresion.linea,this.expresion.columna);
+                        atributo.expresion = primitivo;
+                    }
                 }                               
                 return;
             }
