@@ -2,7 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Asignacion = void 0;
 var Tipo_1 = require("../AST/Tipo");
+var AccesoArray_1 = require("../Expresiones/AccesoArray");
 var AccesoVariable_1 = require("../Expresiones/AccesoVariable");
+var Primitivo_1 = require("../Expresiones/Primitivo");
 var ErrorG_1 = require("../Objetos/ErrorG");
 var Asignacion = /** @class */ (function () {
     function Asignacion(id, linea, columna, expresion) {
@@ -162,7 +164,14 @@ var Asignacion = /** @class */ (function () {
                     }
                 }
                 else {
-                    atributo.expresion = this_1.expresion;
+                    if (this_1.expresion instanceof Primitivo_1.Primitivo || this_1.expresion instanceof AccesoArray_1.AccesoArray) {
+                        atributo.expresion = this_1.expresion;
+                    }
+                    else {
+                        var valorC = this_1.expresion.getValorImplicito(ent, arbol, listaErrores);
+                        var primitivo = new Primitivo_1.Primitivo(valorC, this_1.expresion.linea, this_1.expresion.columna);
+                        atributo.expresion = primitivo;
+                    }
                 }
                 return { value: void 0 };
             }

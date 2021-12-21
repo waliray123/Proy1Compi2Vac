@@ -146,10 +146,10 @@ function generarEntornoGlobal(ast, structs, listaErrores) {
             declaracionesG.push(element);
         }
     });
-    declaracionesG.forEach(function (element) {
+    structs.forEach(function (element) {
         element.ejecutar(entornoGlobal, ast, listaErrores);
     });
-    structs.forEach(function (element) {
+    declaracionesG.forEach(function (element) {
         element.ejecutar(entornoGlobal, ast, listaErrores);
     });
     return entornoGlobal;
@@ -163,10 +163,10 @@ function generarEntornoGlobalTraducir(ast, structs, resultado3D, temporales, lis
             declaracionesG.push(element);
         }
     });
-    declaracionesG.forEach(function (element) {
+    structs.forEach(function (element) {
         element.traducir(entornoGlobal, ast, resultado3D, temporales, listaErrores);
     });
-    structs.forEach(function (element) {
+    declaracionesG.forEach(function (element) {
         element.traducir(entornoGlobal, ast, resultado3D, temporales, listaErrores);
     });
     return entornoGlobal;

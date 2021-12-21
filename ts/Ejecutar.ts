@@ -182,13 +182,13 @@ function generarEntornoGlobal(ast:AST,structs:Array<Struct>,listaErrores:Array<E
         }
     });
 
-    declaracionesG.forEach((element:Declaracion) => {
-        element.ejecutar(entornoGlobal, ast,listaErrores);
-    });
-
     structs.forEach((element:Instruccion)=>{
         element.ejecutar(entornoGlobal, ast,listaErrores);
     })
+
+    declaracionesG.forEach((element:Declaracion) => {
+        element.ejecutar(entornoGlobal, ast,listaErrores);
+    });   
 
     return entornoGlobal;
 }
@@ -203,13 +203,13 @@ function generarEntornoGlobalTraducir(ast:AST,structs:Array<Struct>,resultado3D:
         }
     });
 
-    declaracionesG.forEach((element:Declaracion) => {
-        element.traducir(entornoGlobal, ast,resultado3D,temporales,listaErrores);
-    });
-
     structs.forEach((element:Instruccion)=>{
         element.traducir(entornoGlobal, ast,resultado3D,temporales,listaErrores);
     })
+
+    declaracionesG.forEach((element:Declaracion) => {
+        element.traducir(entornoGlobal, ast,resultado3D,temporales,listaErrores);
+    });   
 
     return entornoGlobal;
 }

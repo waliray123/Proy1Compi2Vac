@@ -312,7 +312,7 @@ export class Operacion implements Expresion {
             //AMPERSON
             else if (this.operador == Operador.AMPERSON) {
                 if (typeof (op1 === 'string') && typeof (op2 === 'string')) {
-                    return op1.concat(op2.toString());
+                    return op1.toString().concat(op2.toString());
                 }
                 else{
                     // console.log('Error semantico, Solo se puede concatenar (&) Strings en la linea '+ this.linea + ' y columna ' + this.columna);

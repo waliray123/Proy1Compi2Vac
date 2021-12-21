@@ -7,6 +7,7 @@ import { Expresion } from "../Interfaces/Expresion";
 import { Instruccion } from "../Interfaces/Instruccion";
 import { ErrorG } from "../Objetos/ErrorG";
 import { Break } from "./Break";
+import { Continue } from "./Continue";
 import { Declaracion } from "./Declaracion";
 
 // print("hola mundo");
@@ -17,6 +18,7 @@ export class SwitchCaso implements Instruccion{
     public id:Expresion;
     public lista_instrucciones: Array<Instruccion>;
     private isBreak: boolean
+    private IsContinue: boolean;
 
     constructor(id:Expresion,lista_intstrucciones:Array<Instruccion>, linea:number, columna:number){
         this.id = id;
@@ -24,6 +26,7 @@ export class SwitchCaso implements Instruccion{
         this.linea = linea;
         this.columna = columna;
         this.isBreak = false;
+        this.IsContinue = false;
     }
 
     traducir(ent: Entorno, arbol: AST,resultado3D:Resultado3D,temporales:Temporales,listaErrores:Array<ErrorG>) {
@@ -37,6 +40,9 @@ export class SwitchCaso implements Instruccion{
             if (ints instanceof Break) {
                 this.isBreak = true;
                 break;
+            }else if(ints instanceof Continue) {
+                this.IsContinue = true;
+                continue;
             }else{
                 ints.ejecutar(ent, arbol,listaErrores);
             }            
@@ -45,5 +51,8 @@ export class SwitchCaso implements Instruccion{
 
     getIsBreak(){
         return this.isBreak;
+    }
+    getIsContinue(){
+        return this.IsContinue;
     }
 }
