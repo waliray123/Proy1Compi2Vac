@@ -4,6 +4,7 @@ import { Resultado3D } from "../AST/Resultado3D";
 import { Simbolo } from "../AST/Simbolo";
 import { Temporales } from "../AST/Temporales";
 import { Tipo } from "../AST/Tipo";
+import { Primitivo } from "../Expresiones/Primitivo";
 import { Expresion } from "../Interfaces/Expresion";
 import { Instruccion } from "../Interfaces/Instruccion";
 import { Arreglo } from "../Objetos/Arreglo";
@@ -59,7 +60,13 @@ export class AsignacionArray implements Instruccion{
                 if (typeof(pos) == 'number') {
                     if (pos >= 0 && pos < valor.length) {
                         if (this.expresion.getTipo(ent,arbol,listaErrores) == valor.tipo ) {
-                            valor.contenido[pos] = this.expresion;
+                            if (this.expresion instanceof Primitivo) {
+                                valor.contenido[pos] = this.expresion;    
+                            }else{
+                                let valorC:any = this.expresion.getValorImplicito(ent,arbol,listaErrores);
+                                let primitivo = new Primitivo(valorC,this.expresion.linea,this.expresion.columna);
+                                valor.contenido[pos] = primitivo;
+                            }                            
                         }else{
                             listaErrores.push(new ErrorG('semantico','no esta en el rango del arreglo',this.linea,this.columna));
                         }

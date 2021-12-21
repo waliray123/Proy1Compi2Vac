@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.AsignacionArray = void 0;
 var Tipo_1 = require("../AST/Tipo");
+var Primitivo_1 = require("../Expresiones/Primitivo");
 var ErrorG_1 = require("../Objetos/ErrorG");
 var AsignacionArray = /** @class */ (function () {
     function AsignacionArray(id, posicion, linea, columna, expresion) {
@@ -42,7 +43,14 @@ var AsignacionArray = /** @class */ (function () {
                 if (typeof (pos) == 'number') {
                     if (pos >= 0 && pos < valor.length) {
                         if (this.expresion.getTipo(ent, arbol, listaErrores) == valor.tipo) {
-                            valor.contenido[pos] = this.expresion;
+                            if (this.expresion instanceof Primitivo_1.Primitivo) {
+                                valor.contenido[pos] = this.expresion;
+                            }
+                            else {
+                                var valorC = this.expresion.getValorImplicito(ent, arbol, listaErrores);
+                                var primitivo = new Primitivo_1.Primitivo(valorC, this.expresion.linea, this.expresion.columna);
+                                valor.contenido[pos] = primitivo;
+                            }
                         }
                         else {
                             listaErrores.push(new ErrorG_1.ErrorG('semantico', 'no esta en el rango del arreglo', this.linea, this.columna));
