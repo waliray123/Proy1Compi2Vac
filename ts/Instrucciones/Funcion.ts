@@ -8,6 +8,8 @@ import { Declaracion } from "./Declaracion";
 import { Resultado3D } from "../AST/Resultado3D";
 import { Temporales } from "../AST/Temporales";
 import { ErrorG } from "../Objetos/ErrorG";
+import { Primitivo } from "../Expresiones/Primitivo";
+import { Simbolo } from "../AST/Simbolo";
 
 export class Funcion implements Instruccion{
     linea: number;
@@ -40,9 +42,7 @@ export class Funcion implements Instruccion{
             temporales.esFuncion = true;
             temporales.cantidadParametrosFunc = this.parametros.length+1;
             //Traducir traer parametros
-            for (const parametro of this.parametros) {
-                
-            }
+            this.declararParametrosTraducir(entornoGlobal,arbol,resultado3D,temporales,listaErrores);
             //Traducir completo
             for(let element of this.instrucciones){
                 element.traducir(entornoGlobal,arbol,resultado3D,temporales,listaErrores);
@@ -102,5 +102,41 @@ export class Funcion implements Instruccion{
             listaErrores.push(new ErrorG('semantico','Error al declarar un parametro',this.linea,this.columna));
         }
         
+    }
+
+    declararParametrosReturnTraducir(ent: Entorno, arbol: AST,resultado3d:Resultado3D,temporales:Temporales,listaErrores:Array<ErrorG>){
+        try {
+            for(let i = 0; i < this.parametros.length; i++){
+                let parametro = this.parametros[i];  
+                let exp =new Primitivo(0,parametro.linea,parametro.columna);
+                if(parametro.tipoParametro == Tipo.BOOL){
+                    exp = new Primitivo(true,parametro.linea,parametro.columna);
+                }else if(parametro.tipoParametro == Tipo.INT){
+                    exp = new Primitivo(0,parametro.linea,parametro.columna);
+                }else if(parametro.tipoParametro == Tipo.DOUBLE){
+                    exp = new Primitivo(0,parametro.linea,parametro.columna);
+                }else if(parametro.tipoParametro == Tipo.STRING){
+                    exp = new Primitivo('',parametro.linea,parametro.columna);
+                }else if(parametro.tipoParametro == Tipo.CHAR){
+                    exp = new Primitivo('',parametro.linea,parametro.columna);
+                }
+                
+                let declPar = new Declaracion([parametro.id],parametro.tipoParametro,this.linea,this.columna,exp);
+                declPar.traducir(ent,arbol,resultado3d,temporales,listaErrores);
+            }    
+        } catch (error) {
+            // console.log("Error al declarar un parametro");
+            listaErrores.push(new ErrorG('semantico','Error al declarar un parametro',this.linea,this.columna));
+        }
+        
+    }
+
+    declararParametrosTraducir(ent: Entorno, arbol: AST,resultado3d:Resultado3D,temporales:Temporales,listaErrores:Array<ErrorG>){
+        for(let i = 0; i < this.parametros.length; i++){
+            let parametro = this.parametros[i];  
+            let id = parametro.id;
+            let simbol = new Simbolo(parametro.tipoParametro,id,parametro.linea,parametro.columna,(i+1));
+            ent.agregar(id,simbol);
+        }
     }
 }

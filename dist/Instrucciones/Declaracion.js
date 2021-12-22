@@ -24,7 +24,16 @@ var Declaracion = /** @class */ (function () {
                     var simbol = new Simbolo_1.Simbolo(_this.tipo, id, _this.linea, _this.columna, temporales.ultstack);
                     temporales.ultstack += 1;
                     ent.agregar(id, simbol);
-                    resultado3d.codigo3D += 'stack[(int)' + simbol.valor + '];\n';
+                    if (temporales.esFuncion) {
+                        temporales.ultimoTemp += 1;
+                        resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '= P +' + (temporales.cantidadParametrosFunc) + ';\n';
+                        simbol.valor = (temporales.cantidadParametrosFunc);
+                        temporales.cantidadParametrosFunc += 1;
+                        resultado3d.codigo3D += '\tstack[(int)t' + temporales.ultimoTemp + '];\n';
+                    }
+                    else {
+                        resultado3d.codigo3D += '\tstack[(int)' + simbol.valor + '];\n';
+                    }
                 }
                 else {
                     var tipoExpr = _this.expresion.getTipo(ent, arbol, listaErrores);

@@ -370,7 +370,7 @@ var AccesoVariable = /** @class */ (function () {
             if (ent.existe(this.id)) {
                 var simbol = ent.getSimbolo(this.id);
                 temporales.ultimoTemp += 1;
-                resultado3d.codigo3D += 't' + temporales.ultimoTemp + '= P +' + simbol.valor + ';\n';
+                resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '= P +' + simbol.valor + ';\n';
                 var valor = 'stack[(int)t' + temporales.ultimoTemp + ']';
                 temporales.ultimoTemp += 1;
                 resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
@@ -2089,7 +2089,16 @@ var Declaracion = /** @class */ (function () {
                     var simbol = new Simbolo_1.Simbolo(_this.tipo, id, _this.linea, _this.columna, temporales.ultstack);
                     temporales.ultstack += 1;
                     ent.agregar(id, simbol);
-                    resultado3d.codigo3D += 'stack[(int)' + simbol.valor + '];\n';
+                    if (temporales.esFuncion) {
+                        temporales.ultimoTemp += 1;
+                        resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '= P +' + (temporales.cantidadParametrosFunc) + ';\n';
+                        simbol.valor = (temporales.cantidadParametrosFunc);
+                        temporales.cantidadParametrosFunc += 1;
+                        resultado3d.codigo3D += '\tstack[(int)t' + temporales.ultimoTemp + '];\n';
+                    }
+                    else {
+                        resultado3d.codigo3D += '\tstack[(int)' + simbol.valor + '];\n';
+                    }
                 }
                 else {
                     var tipoExpr = _this.expresion.getTipo(ent, arbol, listaErrores);
@@ -2787,8 +2796,11 @@ exports.Forin = Forin;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Entorno_1 = require("../AST/Entorno");
+var Tipo_1 = require("../AST/Tipo");
 var Declaracion_1 = require("./Declaracion");
 var ErrorG_1 = require("../Objetos/ErrorG");
+var Primitivo_1 = require("../Expresiones/Primitivo");
+var Simbolo_1 = require("../AST/Simbolo");
 var Funcion = /** @class */ (function () {
     function Funcion(nombrefuncion, tipoFuncion, linea, columna, instrucciones, parametros) {
         if (parametros === void 0) { parametros = []; }
@@ -2814,12 +2826,10 @@ var Funcion = /** @class */ (function () {
             temporales.esFuncion = true;
             temporales.cantidadParametrosFunc = this.parametros.length + 1;
             //Traducir traer parametros
-            for (var _b = 0, _c = this.parametros; _b < _c.length; _b++) {
-                var parametro = _c[_b];
-            }
+            this.declararParametrosTraducir(entornoGlobal, arbol, resultado3D, temporales, listaErrores);
             //Traducir completo
-            for (var _d = 0, _e = this.instrucciones; _d < _e.length; _d++) {
-                var element = _e[_d];
+            for (var _b = 0, _c = this.instrucciones; _b < _c.length; _b++) {
+                var element = _c[_b];
                 element.traducir(entornoGlobal, arbol, resultado3D, temporales, listaErrores);
             }
         }
@@ -2870,11 +2880,48 @@ var Funcion = /** @class */ (function () {
             listaErrores.push(new ErrorG_1.ErrorG('semantico', 'Error al declarar un parametro', this.linea, this.columna));
         }
     };
+    Funcion.prototype.declararParametrosReturnTraducir = function (ent, arbol, resultado3d, temporales, listaErrores) {
+        try {
+            for (var i = 0; i < this.parametros.length; i++) {
+                var parametro = this.parametros[i];
+                var exp = new Primitivo_1.Primitivo(0, parametro.linea, parametro.columna);
+                if (parametro.tipoParametro == Tipo_1.Tipo.BOOL) {
+                    exp = new Primitivo_1.Primitivo(true, parametro.linea, parametro.columna);
+                }
+                else if (parametro.tipoParametro == Tipo_1.Tipo.INT) {
+                    exp = new Primitivo_1.Primitivo(0, parametro.linea, parametro.columna);
+                }
+                else if (parametro.tipoParametro == Tipo_1.Tipo.DOUBLE) {
+                    exp = new Primitivo_1.Primitivo(0, parametro.linea, parametro.columna);
+                }
+                else if (parametro.tipoParametro == Tipo_1.Tipo.STRING) {
+                    exp = new Primitivo_1.Primitivo('', parametro.linea, parametro.columna);
+                }
+                else if (parametro.tipoParametro == Tipo_1.Tipo.CHAR) {
+                    exp = new Primitivo_1.Primitivo('', parametro.linea, parametro.columna);
+                }
+                var declPar = new Declaracion_1.Declaracion([parametro.id], parametro.tipoParametro, this.linea, this.columna, exp);
+                declPar.traducir(ent, arbol, resultado3d, temporales, listaErrores);
+            }
+        }
+        catch (error) {
+            // console.log("Error al declarar un parametro");
+            listaErrores.push(new ErrorG_1.ErrorG('semantico', 'Error al declarar un parametro', this.linea, this.columna));
+        }
+    };
+    Funcion.prototype.declararParametrosTraducir = function (ent, arbol, resultado3d, temporales, listaErrores) {
+        for (var i = 0; i < this.parametros.length; i++) {
+            var parametro = this.parametros[i];
+            var id = parametro.id;
+            var simbol = new Simbolo_1.Simbolo(parametro.tipoParametro, id, parametro.linea, parametro.columna, (i + 1));
+            ent.agregar(id, simbol);
+        }
+    };
     return Funcion;
 }());
 exports.Funcion = Funcion;
 
-},{"../AST/Entorno":1,"../Objetos/ErrorG":43,"./Declaracion":22}],29:[function(require,module,exports){
+},{"../AST/Entorno":1,"../AST/Simbolo":2,"../AST/Tipo":3,"../Expresiones/Primitivo":16,"../Objetos/ErrorG":43,"./Declaracion":22}],29:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var FuncionReturn = /** @class */ (function () {
@@ -2887,17 +2934,40 @@ var FuncionReturn = /** @class */ (function () {
     }
     FuncionReturn.prototype.traducir = function (ent, arbol, resultado3d, temporales, listaErrores) {
         var funciones = arbol.funciones;
+        var temporalReturn = '';
         for (var _i = 0, funciones_1 = funciones; _i < funciones_1.length; _i++) {
             var element = funciones_1[_i];
             if (this.nombrefuncion == element.nombrefuncion) {
                 if (temporales.esFuncion) {
+                    //Asignar parametros
+                    var cont = 0;
+                    for (var _a = 0, _b = this.parametros; _a < _b.length; _a++) {
+                        var parametro = _b[_a];
+                        var valAsign = parametro.valor.traducir(ent, arbol, resultado3d, temporales, 0);
+                        if (cont == 0) {
+                            temporales.ultimoTemp += 1;
+                            resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + ' = P + ' + (temporales.ultstack + 4) + ';\n';
+                            resultado3d.codigo3D += '\tstack[(int)t' + temporales.ultimoTemp + '] = ' + valAsign + ';\n';
+                        }
+                        else {
+                            resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + ' = ' + temporales.ultimoTemp + ' + 1;\n';
+                            resultado3d.codigo3D += '\tstack[(int)t' + temporales.ultimoTemp + '] = ' + valAsign + ';\n';
+                        }
+                    }
+                    //Llamar a la funcion
+                    resultado3d.codigo3D += '\tP = P + ' + (temporales.ultstack + 3) + ';\n';
+                    resultado3d.codigo3D += '\t' + this.nombrefuncion + '();\n';
+                    temporales.ultimoTemp += 1;
+                    resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + ' = stack[(int)P];\n';
+                    resultado3d.codigo3D += '\tP = P - ' + (temporales.ultstack + 3) + ';\n'; // en P insertare el return y lo parametros en P +1
+                    temporalReturn = 't' + temporales.ultimoTemp;
                 }
                 else {
                     //let ultTemp = temporales.ultimoTemp;
                     //Asignar parametros
                     var cont = 0;
-                    for (var _a = 0, _b = this.parametros; _a < _b.length; _a++) {
-                        var parametro = _b[_a];
+                    for (var _c = 0, _d = this.parametros; _c < _d.length; _c++) {
+                        var parametro = _d[_c];
                         var valAsign = parametro.valor.traducir(ent, arbol, resultado3d, temporales, 0);
                         if (cont == 0) {
                             temporales.ultimoTemp += 1;
@@ -2915,11 +2985,13 @@ var FuncionReturn = /** @class */ (function () {
                     temporales.ultimoTemp += 1;
                     resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + ' = stack[(int)P];\n';
                     resultado3d.codigo3D += '\tP = P - ' + (temporales.ultstack + 1) + ';\n'; // en P insertare el return y lo parametros en P +1
+                    temporalReturn = 't' + temporales.ultimoTemp;
                 }
                 //resultado3d.codigo3D += '\tstack[(int)t'+temporales.ultimoTemp+'] = '+valAsign+';\n';
                 break;
             }
         }
+        return temporalReturn;
     };
     FuncionReturn.prototype.ejecutar = function (ent, arbol, listaErrores) {
         var funciones = arbol.funciones;
@@ -3384,6 +3456,7 @@ exports.Push = Push;
 },{"../AST/Tipo":3,"../Objetos/ErrorG":43}],37:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var Tipo_1 = require("../AST/Tipo");
 // print("hola mundo");
 var Return = /** @class */ (function () {
     function Return(exp, linea, columna) {
@@ -3392,6 +3465,30 @@ var Return = /** @class */ (function () {
         this.columna = columna;
     }
     Return.prototype.traducir = function (ent, arbol, resultado3d, temporales) {
+        var valAsign = this.expresion.traducir(ent, arbol, resultado3d, temporales, 0);
+        if (temporales.ultimoTipo == Tipo_1.Tipo.BOOL) {
+            if (temporales.esFuncion) {
+                temporales.ultLiteral += 3;
+                var ultLit = temporales.ultLiteral - 2;
+                resultado3d.codigo3D += '\tif(' + valAsign + ') goto L' + ultLit + ';\n';
+                resultado3d.codigo3D += '\tgoto L' + (ultLit + 1) + ';\n';
+                resultado3d.codigo3D += '\tL' + ultLit + ':\n';
+                resultado3d.codigo3D += '\tstack[(int)P] = 1;\n';
+                resultado3d.codigo3D += '\treturn;\n';
+                resultado3d.codigo3D += '\tgoto L' + (ultLit + 2) + ';\n';
+                resultado3d.codigo3D += '\tL' + (ultLit + 1) + ':\n';
+                resultado3d.codigo3D += '\tstack[(int)P] = 0;\n';
+                resultado3d.codigo3D += '\treturn;\n';
+                resultado3d.codigo3D += '\tL' + (ultLit + 2) + ':\n';
+                temporales.ultLitEscr = (ultLit + 2);
+            }
+        }
+        else {
+            if (temporales.esFuncion) {
+                resultado3d.codigo3D += '\tstack[(int)P] =' + valAsign + ';\n';
+                resultado3d.codigo3D += '\treturn;\n';
+            }
+        }
     };
     Return.prototype.ejecutar = function (ent, arbol, listaErrores) {
         console.log('Ejecutando return');
@@ -3406,7 +3503,7 @@ var Return = /** @class */ (function () {
 }());
 exports.Return = Return;
 
-},{}],38:[function(require,module,exports){
+},{"../AST/Tipo":3}],38:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Simbolo_1 = require("../AST/Simbolo");
@@ -6215,7 +6312,7 @@ var GenerarNativas = /** @class */ (function () {
                 //Abrir funcion
                 resultado3d.codigo3D += 'void ' + element.nombrefuncion + '(){\n';
                 element.traducir(ent, arbol, resultado3d, temporales, listaErrores);
-                resultado3d.codigo3D += '}\n';
+                resultado3d.codigo3D += 'return;\n}\n';
                 resultado += resultado3d.codigo3D;
             }
         }

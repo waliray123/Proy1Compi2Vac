@@ -14,7 +14,7 @@ var AccesoVariable = /** @class */ (function () {
             if (ent.existe(this.id)) {
                 var simbol = ent.getSimbolo(this.id);
                 temporales.ultimoTemp += 1;
-                resultado3d.codigo3D += 't' + temporales.ultimoTemp + '= P +' + simbol.valor + ';\n';
+                resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '= P +' + simbol.valor + ';\n';
                 var valor = 'stack[(int)t' + temporales.ultimoTemp + ']';
                 temporales.ultimoTemp += 1;
                 resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
