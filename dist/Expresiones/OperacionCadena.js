@@ -51,6 +51,9 @@ var OperacionCadena = /** @class */ (function () {
             if (this.id instanceof AccesoVariable_1.AccesoVariable) {
                 this.id.isAlone = false;
                 var valor = this.id.getValorImplicito(ent, arbol, listaErrores);
+                if (this.id instanceof AccesoVariable_1.AccesoVariable) {
+                    this.id.isAlone = true;
+                }
                 if (valor instanceof Arreglo_1.Arreglo) {
                     return valor.length;
                 }
@@ -82,6 +85,9 @@ var OperacionCadena = /** @class */ (function () {
                 this.id.isAlone = false;
             }
             var valor = this.id.getValorImplicito(ent, arbol, listaErrores);
+            if (this.id instanceof AccesoVariable_1.AccesoVariable) {
+                this.id.isAlone = true;
+            }
             if (typeof (valor) === 'string') {
                 return valor.toLocaleLowerCase();
             }
@@ -95,6 +101,9 @@ var OperacionCadena = /** @class */ (function () {
                 this.id.isAlone = false;
             }
             var valor = this.id.getValorImplicito(ent, arbol, listaErrores);
+            if (this.id instanceof AccesoVariable_1.AccesoVariable) {
+                this.id.isAlone = true;
+            }
             if (typeof (valor) === 'string') {
                 return valor.toLocaleUpperCase();
             }
@@ -108,6 +117,9 @@ var OperacionCadena = /** @class */ (function () {
                 this.id.isAlone = false;
             }
             var valor = this.id.getValorImplicito(ent, arbol, listaErrores);
+            if (this.id instanceof AccesoVariable_1.AccesoVariable) {
+                this.id.isAlone = true;
+            }
             if (typeof (valor) === 'string') {
                 var posChar = this.expr1.getValorImplicito(ent, arbol, listaErrores);
                 if (typeof (posChar) === 'number') {
@@ -134,12 +146,15 @@ var OperacionCadena = /** @class */ (function () {
                 this.id.isAlone = false;
             }
             var valor = this.id.getValorImplicito(ent, arbol, listaErrores);
+            if (this.id instanceof AccesoVariable_1.AccesoVariable) {
+                this.id.isAlone = true;
+            }
             if (typeof (valor) === 'string') {
                 var inicial = this.expr1.getValorImplicito(ent, arbol, listaErrores);
                 var final = this.expr2.getValorImplicito(ent, arbol, listaErrores);
                 if (typeof (final) === 'number' && typeof (inicial) === 'number') {
                     if (this.isInt(Number(inicial)) && this.isInt(Number(final))) {
-                        return valor.substring(inicial, final + 1);
+                        return valor.substring(inicial, final);
                     }
                     else {
                         //no es un int
@@ -160,6 +175,9 @@ var OperacionCadena = /** @class */ (function () {
             if (this.id instanceof AccesoVariable_1.AccesoVariable) {
                 this.id.isAlone = false;
                 var valor = this.id.getValorImplicito(ent, arbol, listaErrores);
+                if (this.id instanceof AccesoVariable_1.AccesoVariable) {
+                    this.id.isAlone = true;
+                }
                 if (valor instanceof Arreglo_1.Arreglo) {
                     if (this.isEjecutar) {
                         var val = (_a = valor.pop()) === null || _a === void 0 ? void 0 : _a.getValorImplicito(ent, arbol, listaErrores);
