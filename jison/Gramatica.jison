@@ -74,6 +74,7 @@ BSL               "\\".
 "typeof"                return 'STR_TYPEOF';
 "push"                  return 'STR_PUSH';
 "pop"                   return 'STR_POP';
+"graficar_ts"          	return 'STR_GRAFICAR';
 
 
 
@@ -152,6 +153,7 @@ BSL               "\\".
     const {Funcion} = require("../dist/Instrucciones/Funcion");
     const {Struct} = require("../dist/Instrucciones/Struct");
     const {Switch} = require("../dist/Instrucciones/Switch");
+    const {GraficarTS} = require("../dist/Instrucciones/GraficarTS");
     const {Ternario} = require("../dist/Expresiones/Ternario");
     const {AccesoAtributo} = require("../dist/Expresiones/AccesoAtributo");
     const {DeclaracionStruct} = require("../dist/Instrucciones/DeclaracionStruct");
@@ -315,7 +317,12 @@ instruccion_funcion
     | funciones_arreglo     {$$ = $1;}
     | returns_bloque        {$$ = $1;}
     | rompimientos_bloque   {$$ = $1;}
+    | graficar_bloque       {$$ = $1;}
     | error PUNTCOMA                 {genError(yytext,@1.first_line,@1.first_column);}
+;
+
+graficar_bloque
+    : STR_GRAFICAR PARI PARD PUNTCOMA   {$$ = new GraficarTS();}
 ;
 
 rompimientos_bloque

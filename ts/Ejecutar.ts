@@ -22,6 +22,7 @@ declare global {
 window.ejecutarCodigo = function (entrada:string){
     //Reiniciar consola
     reiniciarConsola();
+    limpiarTablaSimbolos();
     //traigo todas las raices    
 
     //declaro los array's
@@ -269,6 +270,13 @@ function traducirCompleto(ent:Entorno,resultado3D:Resultado3D,temporales:Tempora
     const areaTraduccion = document.getElementById('traduccion') as HTMLTextAreaElement;
     areaTraduccion.value = resultado;
 
+}
+
+function limpiarTablaSimbolos(){
+    const tablaSimbolos = document.getElementById('tabla-simbolos') as HTMLTableElement;
+    tablaSimbolos.innerHTML = "";
+    let valorfila = '<th>Funcion o variable</th><th>Id</th><th>Tipo</th><th>Linea</th><th>Columna</th><th>Posicion</th><th>Entorno</th><th>Valor</th>';
+    tablaSimbolos.insertRow(-1).innerHTML = valorfila;
 }
 
 window.reporteError = function(isActive:boolean){

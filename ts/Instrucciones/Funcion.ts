@@ -29,7 +29,7 @@ export class Funcion implements Instruccion{
     }
 
     traducir(ent: Entorno, arbol: AST,resultado3D:Resultado3D,temporales:Temporales,listaErrores:Array<ErrorG>) {
-        const entornoGlobal:Entorno = new Entorno(ent);
+        const entornoGlobal:Entorno = new Entorno(ent);        
         if(this.nombrefuncion == "main"){
             temporales.esFuncion = false;
             for(let element of this.instrucciones){
@@ -60,6 +60,8 @@ export class Funcion implements Instruccion{
 
         
         const entornoGlobal:Entorno = new Entorno(ent);
+        console.log("Insertando nombreEntorno" + this.nombrefuncion);
+        entornoGlobal.nombreEntorno = this.nombrefuncion;
         
         //Declarar todos los parametros
         this.declararParametrosReturn(entornoGlobal,arbol,listaErrores);

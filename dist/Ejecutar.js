@@ -11,6 +11,7 @@ var listaErroresGlobal = [];
 window.ejecutarCodigo = function (entrada) {
     //Reiniciar consola
     reiniciarConsola();
+    limpiarTablaSimbolos();
     //traigo todas las raices    
     //declaro los array's
     var array = [];
@@ -205,6 +206,12 @@ function traducirCompleto(ent, resultado3D, temporales, arbol, listaErrores) {
     var resultado = encabezado + nativas + codFunc + procMain;
     var areaTraduccion = document.getElementById('traduccion');
     areaTraduccion.value = resultado;
+}
+function limpiarTablaSimbolos() {
+    var tablaSimbolos = document.getElementById('tabla-simbolos');
+    tablaSimbolos.innerHTML = "";
+    var valorfila = '<th>Funcion o variable</th><th>Id</th><th>Tipo</th><th>Linea</th><th>Columna</th><th>Posicion</th><th>Entorno</th><th>Valor</th>';
+    tablaSimbolos.insertRow(-1).innerHTML = valorfila;
 }
 window.reporteError = function (isActive) {
     var areaError = document.getElementById('listaErrores');

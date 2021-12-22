@@ -1,13 +1,22 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Entorno = void 0;
 var Tipo_1 = require("./Tipo");
 var Entorno = /** @class */ (function () {
     function Entorno(anterior) {
         this.tabla = {};
         this.anterior = anterior;
         this.valorReturn = null;
+        this.nombreEntorno = '';
+        this.insertarNombreEntorno();
     }
+    Entorno.prototype.insertarNombreEntorno = function () {
+        if (this.anterior != null) {
+            var nombr = this.anterior.nombreEntorno;
+            if (nombr != '') {
+                this.nombreEntorno = nombr;
+            }
+        }
+    };
     Entorno.prototype.agregar = function (id, simbolo) {
         id = id;
         simbolo.indentificador = simbolo.indentificador;

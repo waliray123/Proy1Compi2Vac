@@ -65,6 +65,16 @@ p {
     font-size: 14px;
 }
 
+#tabla-simbolos{
+    font-family: "Ubuntu Mono", monospace;
+    font-size: 21px;
+    color: #f3f3f3;
+    max-width: 100%;
+    width: 80%;
+    border:2px #f3f3f3;
+    border-radius: 5px;
+}
+
 /*---COLORES DE TEXTOS---*/
 /*
     public void private -> 

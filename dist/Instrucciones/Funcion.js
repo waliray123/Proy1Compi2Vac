@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Funcion = void 0;
 var Entorno_1 = require("../AST/Entorno");
 var Declaracion_1 = require("./Declaracion");
 var ErrorG_1 = require("../Objetos/ErrorG");
@@ -46,6 +45,8 @@ var Funcion = /** @class */ (function () {
     };
     Funcion.prototype.ejecutar = function (ent, arbol, listaErrores) {
         var entornoGlobal = new Entorno_1.Entorno(ent);
+        console.log("Insertando nombreEntorno" + this.nombrefuncion);
+        entornoGlobal.nombreEntorno = this.nombrefuncion;
         //Declarar todos los parametros
         this.declararParametrosReturn(entornoGlobal, arbol, listaErrores);
         //recorro todas las raices  RECURSIVA

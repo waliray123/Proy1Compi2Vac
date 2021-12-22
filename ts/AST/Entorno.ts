@@ -3,14 +3,26 @@ import { Tipo } from "./Tipo";
 
 
 export class Entorno{
-    private anterior:Entorno;
-    private tabla:{[id:string] : Simbolo};
-    public  valorReturn:any;
+    public anterior:Entorno;
+    public tabla:{[id:string] : Simbolo};
+    public valorReturn:any;
+    public nombreEntorno:String;
 
     constructor(anterior:any){
         this.tabla = {};
-        this.anterior = anterior;
+        this.anterior = anterior;        
         this.valorReturn = null;
+        this.nombreEntorno = '';
+        this.insertarNombreEntorno();
+    }
+
+    insertarNombreEntorno(){
+        if(this.anterior != null){
+            let nombr = this.anterior.nombreEntorno;
+            if(nombr != ''){
+                this.nombreEntorno = nombr;
+            }
+        }        
     }
 
     agregar(id:string, simbolo:Simbolo){

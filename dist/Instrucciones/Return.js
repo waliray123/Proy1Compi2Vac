@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Return = void 0;
 // print("hola mundo");
 var Return = /** @class */ (function () {
     function Return(exp, linea, columna) {
