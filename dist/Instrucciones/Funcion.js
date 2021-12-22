@@ -5,13 +5,10 @@ var Entorno_1 = require("../AST/Entorno");
 var Tipo_1 = require("../AST/Tipo");
 var Declaracion_1 = require("./Declaracion");
 var ErrorG_1 = require("../Objetos/ErrorG");
-<<<<<<< HEAD
-var Primitivo_1 = require("../Expresiones/Primitivo");
-var Simbolo_1 = require("../AST/Simbolo");
-=======
 var AccesoVariable_1 = require("../Expresiones/AccesoVariable");
 var DeclaracionArray_1 = require("./DeclaracionArray");
->>>>>>> eba1c10ce4a005ef5998fcc6f603de981eb96028
+var Simbolo_1 = require("../AST/Simbolo");
+var Primitivo_1 = require("../Expresiones/Primitivo");
 var Funcion = /** @class */ (function () {
     function Funcion(nombrefuncion, tipoFuncion, linea, columna, instrucciones, parametros) {
         if (parametros === void 0) { parametros = []; }
@@ -52,7 +49,7 @@ var Funcion = /** @class */ (function () {
     };
     Funcion.prototype.ejecutar = function (ent, arbol, listaErrores) {
         var entornoGlobal = new Entorno_1.Entorno(ent);
-        console.log("Insertando nombreEntorno" + this.nombrefuncion);
+        // console.log("Insertando nombreEntorno" + this.nombrefuncion);
         entornoGlobal.nombreEntorno = this.nombrefuncion;
         //Declarar todos los parametros
         this.declararParametrosReturn(entornoGlobal, arbol, listaErrores);
@@ -61,9 +58,9 @@ var Funcion = /** @class */ (function () {
             var element = _a[_i];
             var valR = element.ejecutar(entornoGlobal, arbol, listaErrores);
             if (valR == 'RETORNAR') {
-                console.log('VAl return Funcion');
+                // console.log('VAl return Funcion');   
                 ent.valorReturn = entornoGlobal.valorReturn;
-                console.log(ent.valorReturn);
+                // console.log(ent.valorReturn);         
                 break;
             }
         }
@@ -86,7 +83,7 @@ var Funcion = /** @class */ (function () {
                         if (paramR instanceof AccesoVariable_1.AccesoVariable) {
                             paramR.isAlone = false;
                             var valorR = paramR.getValorImplicito(ent, arbol, listaErrores);
-                            console.log(valorR);
+                            // console.log(valorR);
                             paramR.isAlone = true;
                             if (valorR.tipo == parametro.tipoParametro) {
                                 //@ts-ignore

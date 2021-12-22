@@ -128,8 +128,8 @@ var If = /** @class */ (function () {
                 var valR = element.ejecutar(entornolocal, arbol, listaErrores);
                 if (valR == 'RETORNAR') {
                     ent.valorReturn = entornolocal.valorReturn;
-                    console.log('VAl return');
-                    console.log(ent.valorReturn);
+                    // console.log('VAl return');
+                    // console.log(ent.valorReturn);
                     return 'RETORNAR';
                 }
                 else if (valR == 'ROMPER') {

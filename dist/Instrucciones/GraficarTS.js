@@ -10,7 +10,7 @@ var GraficarTS = /** @class */ (function () {
         //Traducri
     };
     GraficarTS.prototype.ejecutar = function (ent, arbol, listaErrores) {
-        console.log('Ejecutando grafica');
+        // console.log('Ejecutando grafica');   
         var tablaSimbolos = document.getElementById('tabla-simbolos');
         for (var e = ent; e != null; e = e.anterior) {
             var tabla = e.tabla;
