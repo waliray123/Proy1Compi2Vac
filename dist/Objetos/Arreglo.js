@@ -23,12 +23,23 @@ var Arreglo = /** @class */ (function () {
     Arreglo.prototype.pop = function () {
         var pop = this.contenido.pop();
         var valor = this.contenido.length;
-        this.length = valor;
-        this.dimension = valor;
+        if (valor == null) {
+            this.length = 0;
+            this.dimension = 0;
+        }
+        else {
+            this.length = valor;
+            this.dimension = valor;
+        }
         return pop;
     };
     Arreglo.prototype.getLastContenido = function () {
         return this.contenido[this.length - 1];
+    };
+    Arreglo.prototype.cambiarContenido = function (contenido) {
+        this.contenido = contenido;
+        this.length = this.contenido.length;
+        this.dimension = this.length;
     };
     Arreglo.prototype.comprobarTipo = function (ent, arbol, listaErrores) {
         var _this = this;

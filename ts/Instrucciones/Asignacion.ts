@@ -9,6 +9,7 @@ import { AccesoVariable } from "../Expresiones/AccesoVariable";
 import { Primitivo } from "../Expresiones/Primitivo";
 import { Expresion } from "../Interfaces/Expresion";
 import { Instruccion } from "../Interfaces/Instruccion";
+import { Arreglo } from "../Objetos/Arreglo";
 import { ErrorG } from "../Objetos/ErrorG";
 import { Declaracion } from "./Declaracion";
 import { Struct } from "./Struct";
@@ -113,7 +114,12 @@ export class Asignacion implements Instruccion{
                 let tipo: Tipo = simbol.getTipo(ent,arbol);
                 let tipoExpr:Tipo = this.expresion.getTipo(ent,arbol,listaErrores);
                 if ( tipo == tipoExpr ||  (tipoExpr==Tipo.INT && tipo == Tipo.DOUBLE)) {
-                    simbol.valor = this.expresion.getValorImplicito(ent,arbol,listaErrores);
+                    if (tipo == Tipo.ARRAY) {
+                        let arreglo:Arreglo = simbol.valor;
+                        arreglo.cambiarContenido(this.expresion.getValorImplicito(ent,arbol,listaErrores));
+                    }else{
+                        simbol.valor = this.expresion.getValorImplicito(ent,arbol,listaErrores);
+                    }                    
                 }else{
                     // console.log('Error semantico, El tipo de la variable (' + tipo +') no concuerda con el tipo asignado (' + this.expresion.getTipo(ent,arbol) + ') en la linea '+ this.linea + ' y columna ' + this.columna);
                     listaErrores.push(new ErrorG('semantico','El tipo de la variable (' + this.getNameTipo(tipo) +') no concuerda con el tipo asignado',this.linea,this.columna));

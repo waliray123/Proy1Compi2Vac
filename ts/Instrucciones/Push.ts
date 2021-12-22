@@ -3,6 +3,7 @@ import { AST } from "../AST/AST";
 import { Entorno } from "../AST/Entorno";
 import { Simbolo } from "../AST/Simbolo";
 import { Tipo } from "../AST/Tipo";
+import { Primitivo } from "../Expresiones/Primitivo";
 import { Expresion} from "../Interfaces/Expresion";
 import { Instruccion } from "../Interfaces/Instruccion";
 import { Arreglo } from "../Objetos/Arreglo";
@@ -32,7 +33,13 @@ export class Push implements Instruccion{
             let simbol: Simbolo = ent.getSimbolo(this.id);
             if (simbol.getTipo(ent,arbol) == Tipo.ARRAY) {
                 let valor:Arreglo = simbol.getValorImplicito(ent,arbol);
-                valor.push(ent,arbol,this.expresion,listaErrores);
+                if (this.expresion instanceof Primitivo) {
+                    valor.push(ent,arbol,this.expresion,listaErrores);
+                }else{
+                    let valorC:any = this.expresion.getValorImplicito(ent,arbol,listaErrores);
+                    let primitivo = new Primitivo(valorC,this.expresion.linea,this.expresion.columna);
+                    valor.push(ent,arbol,primitivo,listaErrores); 
+                }                
             }else{
                 //no es de tipo array
                 listaErrores.push(new ErrorG('semantico','la variable no es del tipo array',this.linea,this.columna));

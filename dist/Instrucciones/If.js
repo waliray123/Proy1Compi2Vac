@@ -55,7 +55,7 @@ var If = /** @class */ (function () {
         }
     };
     If.prototype.ejecutar = function (ent, arbol, listaErrores) {
-        console.log('ejecutado...ifnormal');
+        // console.log('ejecutado...ifnormal');
         //Revisar la condicion del if
         if (this.tipo == "if" || this.tipo == "elseif") {
             if (this.condicion.getValorImplicito(ent, arbol, listaErrores) == true) {

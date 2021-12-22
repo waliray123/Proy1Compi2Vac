@@ -74,12 +74,12 @@ export class For implements Instruccion{
     }
 
     ejecutar(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
-        console.log('ejecutado...fornormal');
+        // console.log('ejecutado...fornormal');
         const entornolocal:Entorno = new Entorno(ent);        
         this.declAsign.ejecutar(entornolocal,arbol);
 
         //expresion 1 es la que hay que validar 
-        console.log("empezando el while  en for");
+        // console.log("empezando el while  en for");
 
         
         let realizar = true;

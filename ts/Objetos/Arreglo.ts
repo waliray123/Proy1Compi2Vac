@@ -38,13 +38,25 @@ export class Arreglo{
     pop(){
         let pop = this.contenido.pop();
         let valor = this.contenido.length;
-        this.length = valor;
-        this.dimension = valor;
+        if (valor == null) {
+            this.length = 0;
+            this.dimension = 0;
+        }else{
+            this.length = valor;
+            this.dimension = valor;
+        }
+        
         return pop;
     }
 
     getLastContenido(){
         return this.contenido[this.length-1];
+    }
+
+    cambiarContenido(contenido: Array<Expresion>){
+        this.contenido = contenido;
+        this.length =  this.contenido.length;
+        this.dimension = this.length;
     }
 
     comprobarTipo(ent:Entorno, arbol: AST,listaErrores:Array<ErrorG>):boolean{

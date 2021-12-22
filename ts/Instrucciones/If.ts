@@ -75,7 +75,7 @@ export class If implements Instruccion {
     }
 
     ejecutar(ent: Entorno, arbol: AST, listaErrores: Array<ErrorG>) {
-        console.log('ejecutado...ifnormal');
+        // console.log('ejecutado...ifnormal');
 
 
         //Revisar la condicion del if

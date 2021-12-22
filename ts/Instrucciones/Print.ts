@@ -81,7 +81,7 @@ export class Print implements Instruccion{
     ejecutar(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
         const valor = this.expresion.getValorImplicito(ent, arbol,listaErrores);
         if(valor!==null){
-            console.log('>',valor);
+            //console.log('>',valor);
             const area = document.getElementById('consola') as HTMLTextAreaElement;
 
             if(this.haysalto){
@@ -92,7 +92,7 @@ export class Print implements Instruccion{
             
             
         }else{
-            console.log('>> Error, no se pueden imprimir valores nulos');
+            //console.log('>> Error, no se pueden imprimir valores nulos');
             listaErrores.push(new ErrorG('semantico','>> Error, no se pueden imprimir valores nulos',this.linea,this.columna));
         }
     }
