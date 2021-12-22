@@ -79,8 +79,8 @@ var Funcion = /** @class */ (function () {
             for (var i = 0; i < this.parametros.length; i++) {
                 var parametro = this.parametros[i];
                 var parametroR = this.parametrosR[i];
+                var tipoR = parametroR.getTipo(ent, arbol, listaErrores);
                 if (parametro.isArray) {
-                    var tipoR = parametroR.getTipo(ent, arbol, listaErrores);
                     if (tipoR == Tipo_1.Tipo.ARRAY) {
                         var paramR = parametroR.valor;
                         if (paramR instanceof AccesoVariable_1.AccesoVariable) {
@@ -104,7 +104,7 @@ var Funcion = /** @class */ (function () {
                         listaErrores.push(new ErrorG_1.ErrorG('semantico', 'Error, el tipo del parametro no es un arreglo', parametroR.linea, parametroR.columna));
                     }
                 }
-                else if (parametroR.getTipo(ent, arbol, listaErrores) == parametro.tipoParametro) {
+                else if (tipoR == parametro.tipoParametro || (tipoR == Tipo_1.Tipo.INT && parametro.tipoParametro == Tipo_1.Tipo.DOUBLE)) {
                     //id:Array<string>,tipo:Tipo, linea:number, columna:number,expresion:Expresion                                        
                     var declPar = new Declaracion_1.Declaracion([parametro.id], parametro.tipoParametro, this.linea, this.columna, parametroR.valor);
                     declPar.ejecutar(ent, arbol, listaErrores);
