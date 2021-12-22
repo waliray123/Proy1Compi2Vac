@@ -5,8 +5,13 @@ var Entorno_1 = require("../AST/Entorno");
 var Tipo_1 = require("../AST/Tipo");
 var Declaracion_1 = require("./Declaracion");
 var ErrorG_1 = require("../Objetos/ErrorG");
+<<<<<<< HEAD
+var Primitivo_1 = require("../Expresiones/Primitivo");
+var Simbolo_1 = require("../AST/Simbolo");
+=======
 var AccesoVariable_1 = require("../Expresiones/AccesoVariable");
 var DeclaracionArray_1 = require("./DeclaracionArray");
+>>>>>>> eba1c10ce4a005ef5998fcc6f603de981eb96028
 var Funcion = /** @class */ (function () {
     function Funcion(nombrefuncion, tipoFuncion, linea, columna, instrucciones, parametros) {
         if (parametros === void 0) { parametros = []; }
@@ -32,12 +37,10 @@ var Funcion = /** @class */ (function () {
             temporales.esFuncion = true;
             temporales.cantidadParametrosFunc = this.parametros.length + 1;
             //Traducir traer parametros
-            for (var _b = 0, _c = this.parametros; _b < _c.length; _b++) {
-                var parametro = _c[_b];
-            }
+            this.declararParametrosTraducir(entornoGlobal, arbol, resultado3D, temporales, listaErrores);
             //Traducir completo
-            for (var _d = 0, _e = this.instrucciones; _d < _e.length; _d++) {
-                var element = _e[_d];
+            for (var _b = 0, _c = this.instrucciones; _b < _c.length; _b++) {
+                var element = _c[_b];
                 element.traducir(entornoGlobal, arbol, resultado3D, temporales, listaErrores);
             }
         }
@@ -111,6 +114,43 @@ var Funcion = /** @class */ (function () {
         catch (error) {
             // console.log("Error al declarar un parametro");
             listaErrores.push(new ErrorG_1.ErrorG('semantico', 'Error al declarar un parametro', this.linea, this.columna));
+        }
+    };
+    Funcion.prototype.declararParametrosReturnTraducir = function (ent, arbol, resultado3d, temporales, listaErrores) {
+        try {
+            for (var i = 0; i < this.parametros.length; i++) {
+                var parametro = this.parametros[i];
+                var exp = new Primitivo_1.Primitivo(0, parametro.linea, parametro.columna);
+                if (parametro.tipoParametro == Tipo_1.Tipo.BOOL) {
+                    exp = new Primitivo_1.Primitivo(true, parametro.linea, parametro.columna);
+                }
+                else if (parametro.tipoParametro == Tipo_1.Tipo.INT) {
+                    exp = new Primitivo_1.Primitivo(0, parametro.linea, parametro.columna);
+                }
+                else if (parametro.tipoParametro == Tipo_1.Tipo.DOUBLE) {
+                    exp = new Primitivo_1.Primitivo(0, parametro.linea, parametro.columna);
+                }
+                else if (parametro.tipoParametro == Tipo_1.Tipo.STRING) {
+                    exp = new Primitivo_1.Primitivo('', parametro.linea, parametro.columna);
+                }
+                else if (parametro.tipoParametro == Tipo_1.Tipo.CHAR) {
+                    exp = new Primitivo_1.Primitivo('', parametro.linea, parametro.columna);
+                }
+                var declPar = new Declaracion_1.Declaracion([parametro.id], parametro.tipoParametro, this.linea, this.columna, exp);
+                declPar.traducir(ent, arbol, resultado3d, temporales, listaErrores);
+            }
+        }
+        catch (error) {
+            // console.log("Error al declarar un parametro");
+            listaErrores.push(new ErrorG_1.ErrorG('semantico', 'Error al declarar un parametro', this.linea, this.columna));
+        }
+    };
+    Funcion.prototype.declararParametrosTraducir = function (ent, arbol, resultado3d, temporales, listaErrores) {
+        for (var i = 0; i < this.parametros.length; i++) {
+            var parametro = this.parametros[i];
+            var id = parametro.id;
+            var simbol = new Simbolo_1.Simbolo(parametro.tipoParametro, id, parametro.linea, parametro.columna, (i + 1));
+            ent.agregar(id, simbol);
         }
     };
     return Funcion;

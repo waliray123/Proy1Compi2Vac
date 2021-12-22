@@ -24,11 +24,31 @@ export class FuncionReturn implements Instruccion{
 
     traducir(ent: Entorno, arbol: AST,resultado3d:Resultado3D,temporales:Temporales,listaErrores:Array<ErrorG>) {
         const funciones = arbol.funciones;
+        let temporalReturn = '';
         for(let element of funciones){
             if(this.nombrefuncion == element.nombrefuncion){ 
                 
                 if(temporales.esFuncion){
-
+                    //Asignar parametros
+                    let cont = 0;
+                    for (const parametro of this.parametros) {
+                        let valAsign = parametro.valor.traducir(ent,arbol,resultado3d,temporales,0)
+                        if(cont == 0){
+                            temporales.ultimoTemp += 1;
+                            resultado3d.codigo3D += '\tt'+temporales.ultimoTemp+' = P + '+ (temporales.ultstack+4)+';\n';
+                            resultado3d.codigo3D += '\tstack[(int)t'+temporales.ultimoTemp+'] = '+valAsign+';\n'; 
+                        }else{
+                            resultado3d.codigo3D += '\tt'+temporales.ultimoTemp+' = '+temporales.ultimoTemp+' + 1;\n';
+                            resultado3d.codigo3D += '\tstack[(int)t'+temporales.ultimoTemp+'] = '+valAsign+';\n';                             
+                        }                   
+                    }             
+                    //Llamar a la funcion
+                    resultado3d.codigo3D += '\tP = P + '+(temporales.ultstack+3)+';\n';
+                    resultado3d.codigo3D += '\t'+this.nombrefuncion+'();\n';
+                    temporales.ultimoTemp += 1;
+                    resultado3d.codigo3D += '\tt'+temporales.ultimoTemp+' = stack[(int)P];\n';
+                    resultado3d.codigo3D += '\tP = P - '+(temporales.ultstack+3)+';\n'; // en P insertare el return y lo parametros en P +1
+                    temporalReturn = 't'+temporales.ultimoTemp;
                 }else{                    
                     //let ultTemp = temporales.ultimoTemp;
 
@@ -51,7 +71,7 @@ export class FuncionReturn implements Instruccion{
                     temporales.ultimoTemp += 1;
                     resultado3d.codigo3D += '\tt'+temporales.ultimoTemp+' = stack[(int)P];\n';
                     resultado3d.codigo3D += '\tP = P - '+(temporales.ultstack+1)+';\n'; // en P insertare el return y lo parametros en P +1
-
+                    temporalReturn = 't'+temporales.ultimoTemp;
 
 
                 }
@@ -62,6 +82,7 @@ export class FuncionReturn implements Instruccion{
                 break;
             }
         }
+        return temporalReturn;
     }
 
     ejecutar(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {

@@ -42,7 +42,7 @@ export class GenerarNativas{
                 //Abrir funcion
                 resultado3d.codigo3D += 'void '+element.nombrefuncion +'(){\n';
                 element.traducir(ent,arbol,resultado3d,temporales,listaErrores);
-                resultado3d.codigo3D += '}\n';
+                resultado3d.codigo3D += 'return;\n}\n';
                 resultado += resultado3d.codigo3D;
             }
             

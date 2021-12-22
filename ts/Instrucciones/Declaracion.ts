@@ -37,7 +37,16 @@ export class Declaracion implements Instruccion{
                     let simbol = new Simbolo(this.tipo,id,this.linea,this.columna,temporales.ultstack);
                     temporales.ultstack += 1;
                     ent.agregar(id,simbol);
-                    resultado3d.codigo3D += 'stack[(int)'+simbol.valor+'];\n';
+                    if(temporales.esFuncion){
+                        temporales.ultimoTemp += 1;
+                        resultado3d.codigo3D += '\tt'+temporales.ultimoTemp + '= P +'+(temporales.cantidadParametrosFunc) + ';\n';
+                        simbol.valor = (temporales.cantidadParametrosFunc);
+                        temporales.cantidadParametrosFunc += 1;
+                        resultado3d.codigo3D += '\tstack[(int)t'+temporales.ultimoTemp+'];\n';
+                    }else{
+                        resultado3d.codigo3D += '\tstack[(int)'+simbol.valor+'];\n';
+                    } 
+                    
                 }else{
                     let tipoExpr:Tipo = this.expresion.getTipo(ent,arbol,listaErrores);
                     if(tipoExpr == this.tipo){

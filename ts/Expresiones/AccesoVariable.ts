@@ -29,7 +29,7 @@ export class AccesoVariable implements Expresion {
                 
                 
                 temporales.ultimoTemp +=1;
-                resultado3d.codigo3D += 't'+temporales.ultimoTemp + '= P +'+simbol.valor + ';\n';
+                resultado3d.codigo3D += '\tt'+temporales.ultimoTemp + '= P +'+simbol.valor + ';\n';
                 let valor = 'stack[(int)t'+temporales.ultimoTemp +']';
                 temporales.ultimoTemp += 1;
                 resultado3d.codigo3D += '\tt' + temporales.ultimoTemp + '=' + valor + ';\n';
