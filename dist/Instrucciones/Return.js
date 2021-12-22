@@ -1,6 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+<<<<<<< HEAD
 var Tipo_1 = require("../AST/Tipo");
+=======
+exports.Return = void 0;
+>>>>>>> eba1c10ce4a005ef5998fcc6f603de981eb96028
 // print("hola mundo");
 var Return = /** @class */ (function () {
     function Return(exp, linea, columna) {

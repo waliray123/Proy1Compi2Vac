@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.GenerarNativas = void 0;
 var Resultado3D_1 = require("../AST/Resultado3D");
 var GenerarNativas = /** @class */ (function () {
     function GenerarNativas() {
