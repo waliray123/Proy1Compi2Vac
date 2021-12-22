@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Asignacion = void 0;
 var Tipo_1 = require("../AST/Tipo");
 var AccesoArray_1 = require("../Expresiones/AccesoArray");
 var AccesoVariable_1 = require("../Expresiones/AccesoVariable");
@@ -125,6 +126,9 @@ var Asignacion = /** @class */ (function () {
                     var atributos = simbol.getValorImplicito(ent, arbol);
                     this.asignacionStruct(i, atributos, ent, arbol, listaErrores);
                 }
+                else {
+                    listaErrores.push(new ErrorG_1.ErrorG('semantico', 'la variable ' + id + ' no es de tipo Struct', this.linea, this.columna));
+                }
             }
             else {
                 // console.log('Error semantico, no existe ' + id +' en la linea '+ this.linea + ' y columna ' + this.columna);
@@ -143,7 +147,7 @@ var Asignacion = /** @class */ (function () {
         }
         var idSig = this.id[i + 1];
         var _loop_1 = function () {
-            if (atributo.id[0] === idSig) {
+            if (atributo.id.toString() === idSig) {
                 // console.log(atributo.tipo);
                 var isStruct_1 = false;
                 arbol.structs.forEach(function (struct) {

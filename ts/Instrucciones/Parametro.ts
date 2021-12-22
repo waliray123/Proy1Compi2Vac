@@ -9,12 +9,14 @@ export class Parametro implements Instruccion{
     columna: number;
     public id:string;
     public tipoParametro:Tipo;
+    public isArray:boolean;
 
-    constructor(id:string, tipoParametro:Tipo,linea:number, columna:number){
+    constructor(id:string, tipoParametro:Tipo,linea:number, columna:number,isArray:boolean=false){
         this.id = id;
         this.linea = linea;
         this.columna = columna;
         this.tipoParametro = tipoParametro;
+        this.isArray = isArray;
     }
 
     traducir(ent: Entorno, arbol: AST) {
