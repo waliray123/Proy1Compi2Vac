@@ -1,8 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Funcion = void 0;
 var Entorno_1 = require("../AST/Entorno");
+var Tipo_1 = require("../AST/Tipo");
 var Declaracion_1 = require("./Declaracion");
 var ErrorG_1 = require("../Objetos/ErrorG");
+var AccesoVariable_1 = require("../Expresiones/AccesoVariable");
+var DeclaracionArray_1 = require("./DeclaracionArray");
 var Funcion = /** @class */ (function () {
     function Funcion(nombrefuncion, tipoFuncion, linea, columna, instrucciones, parametros) {
         if (parametros === void 0) { parametros = []; }
@@ -72,7 +76,32 @@ var Funcion = /** @class */ (function () {
             for (var i = 0; i < this.parametros.length; i++) {
                 var parametro = this.parametros[i];
                 var parametroR = this.parametrosR[i];
-                if (parametroR.getTipo(ent, arbol, listaErrores) == parametro.tipoParametro) {
+                if (parametro.isArray) {
+                    var tipoR = parametroR.getTipo(ent, arbol, listaErrores);
+                    if (tipoR == Tipo_1.Tipo.ARRAY) {
+                        var paramR = parametroR.valor;
+                        if (paramR instanceof AccesoVariable_1.AccesoVariable) {
+                            paramR.isAlone = false;
+                            var valorR = paramR.getValorImplicito(ent, arbol, listaErrores);
+                            console.log(valorR);
+                            paramR.isAlone = true;
+                            if (valorR.tipo == parametro.tipoParametro) {
+                                //@ts-ignore
+                                var declArr = new DeclaracionArray_1.DeclaracionArray([parametro.id], parametro.tipoParametro, [], this.linea, this.columna, null);
+                                declArr.ejecutar(ent, arbol, listaErrores);
+                                var simbol = ent.getSimbolo(parametro.id);
+                                simbol.valor = valorR;
+                            }
+                            else {
+                                listaErrores.push(new ErrorG_1.ErrorG('semantico', 'No es del mismo tipo la variable del arreglo', this.linea, this.columna));
+                            }
+                        }
+                    }
+                    else {
+                        listaErrores.push(new ErrorG_1.ErrorG('semantico', 'Error, el tipo del parametro no es un arreglo', parametroR.linea, parametroR.columna));
+                    }
+                }
+                else if (parametroR.getTipo(ent, arbol, listaErrores) == parametro.tipoParametro) {
                     //id:Array<string>,tipo:Tipo, linea:number, columna:number,expresion:Expresion                                        
                     var declPar = new Declaracion_1.Declaracion([parametro.id], parametro.tipoParametro, this.linea, this.columna, parametroR.valor);
                     declPar.ejecutar(ent, arbol, listaErrores);

@@ -132,6 +132,8 @@ export class Asignacion implements Instruccion{
                     if (tipo == Tipo.TIPO_STRUCT) {
                         let atributos:Array<Declaracion> = simbol.getValorImplicito(ent, arbol);
                         this.asignacionStruct(i,atributos,ent,arbol,listaErrores);                                          
+                    }else{
+                        listaErrores.push(new ErrorG('semantico','la variable ' + id + ' no es de tipo Struct',this.linea,this.columna));
                     }
                 }else{
                     // console.log('Error semantico, no existe ' + id +' en la linea '+ this.linea + ' y columna ' + this.columna);
@@ -152,7 +154,7 @@ export class Asignacion implements Instruccion{
         }
         let idSig = this.id[i+1];
         for (var atributo of atributos){
-            if (atributo.id[0] === idSig ) {
+            if (atributo.id.toString() === idSig ) {
                 // console.log(atributo.tipo);
                 let isStruct = false;
                 arbol.structs.forEach((struct:Struct) => {

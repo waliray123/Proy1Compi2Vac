@@ -272,7 +272,8 @@ parametros_funcion
 ;
 
 parametro_funcion
-    : tiposVar ID_VAR {$$ = new Parametro($2,$1,@1.first_line,@1.first_column);}
+    : tiposVar ID_VAR {$$ = new Parametro($2,$1,@1.first_line,@1.first_column,false);}
+    | tiposVar CORCHI CORCHD ID_VAR      {$$ = new Parametro($4,$1,@1.first_line,@1.first_column,true);}
     | error                 {genError(yytext,@1.first_line,@1.first_column);}
 ;
 
