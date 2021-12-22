@@ -95,8 +95,8 @@ export class Funcion implements Instruccion{
             for(let i = 0; i < this.parametros.length; i++){
                 let parametro = this.parametros[i];
                 let parametroR = this.parametrosR[i];
-                if (parametro.isArray) {
-                    let tipoR = parametroR.getTipo(ent,arbol,listaErrores);
+                let tipoR = parametroR.getTipo(ent,arbol,listaErrores);
+                if (parametro.isArray) {                    
                     if (tipoR == Tipo.ARRAY) {
                         let paramR = parametroR.valor;
                         if (paramR instanceof AccesoVariable) {
@@ -118,7 +118,7 @@ export class Funcion implements Instruccion{
                     }else{
                         listaErrores.push(new ErrorG('semantico','Error, el tipo del parametro no es un arreglo',parametroR.linea,parametroR.columna));
                     }
-                }else if(parametroR.getTipo(ent,arbol,listaErrores) == parametro.tipoParametro){
+                }else if(tipoR == parametro.tipoParametro  || (tipoR==Tipo.INT && parametro.tipoParametro == Tipo.DOUBLE) ){
                     //id:Array<string>,tipo:Tipo, linea:number, columna:number,expresion:Expresion                                        
                     let declPar = new Declaracion([parametro.id],parametro.tipoParametro,this.linea,this.columna,parametroR.valor);
                     declPar.ejecutar(ent,arbol,listaErrores);
