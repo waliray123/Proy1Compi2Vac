@@ -79,6 +79,77 @@ export class Primitivo implements Expresion {
     }
 
     getValorImplicito(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
+        if(typeof(this.valor) === 'string'){
+            const gramatica = require('../../jison/compilerExpresion/stringExpresion');
+            let continuar = false;
+            let PAI = 0;
+            let PAD = 0;
+            let resultado = '';
+            let resultados = [];
+            let stringNormales = [];
+            let ultCcharUsasdo = 0;
+            for(let i = 0; i < this.valor.length ;i++){
+                let letra = this.valor.charAt(i);
+                 if( (letra === '$' || continuar) && i+1 < this.valor.length){
+                     if (letra == '$'){
+                         stringNormales.push(this.valor.substring(ultCcharUsasdo,i));
+                     }
+                    let sig = this.valor.charAt(i+1);
+                    if (sig === '(') {
+                        PAI += 1;
+                        continuar =  true;
+                        resultado += sig;
+                    }else if(sig === ')') {
+                        PAD += 1;
+                        resultado += sig;
+                        if (PAI === PAD) {
+                            continuar = false;
+                            resultados.push(resultado);
+                            resultado = '';
+                            ultCcharUsasdo = i+2;
+                        }
+                    }else{
+                        resultado += sig;
+                        continuar =  true;
+                        if (PAI === PAD) {
+                            if (i+2 < this.valor.length) {
+                                if (this.valor.charAt(i+2) === ' ') {
+                                    continuar = false;
+                                    resultados.push(resultado);
+                                    resultado = '';
+                                    ultCcharUsasdo = i+2;
+                                }
+                            }else{
+                                continuar = false;
+                                resultados.push(resultado);
+                                resultado = '';
+                                ultCcharUsasdo = i+2;
+                            }                            
+                        }
+                    }
+                 }
+                 if (i+1 === this.valor.length) {
+                     if (!(ultCcharUsasdo === 0)) {
+                        stringNormales.push(this.valor.substring(ultCcharUsasdo,this.valor.length));
+                     }
+                 }
+
+            }
+            if (resultados.length > 0) {
+                let exprs: Array<Expresion>= []
+                for (var i = 0; i <resultados.length;i++ ){
+                    let inst = gramatica.parse(resultados[i]);
+                    exprs.push(inst);
+                }
+                let sendValor = '';
+                for(var i = 0; i < exprs.length;i++){
+                    sendValor += stringNormales[i] + '' + exprs[i].getValorImplicito(ent, arbol,listaErrores);
+                }
+                sendValor += stringNormales[stringNormales.length - 1];
+                console.log(sendValor);
+                return sendValor;
+            }
+        }
         return this.valor;
     }
 
