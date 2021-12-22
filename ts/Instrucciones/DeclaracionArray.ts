@@ -80,7 +80,7 @@ export class DeclaracionArray implements Instruccion{
     ejecutar(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {
         // console.log('ejecutado...'+ this.id);
         this.id.forEach((id:string)=>{
-            if(!ent.existe(id)){
+            if(!ent.existeEnActual(id)){
                 if (this.dimensiones.length == 0) {
                     
                     if (this.expresion == null) {

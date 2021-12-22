@@ -60,7 +60,7 @@ var DeclaracionArray = /** @class */ (function () {
         var _this = this;
         // console.log('ejecutado...'+ this.id);
         this.id.forEach(function (id) {
-            if (!ent.existe(id)) {
+            if (!ent.existeEnActual(id)) {
                 if (_this.dimensiones.length == 0) {
                     if (_this.expresion == null) {
                         var valor = new Arreglo_1.Arreglo(_this.tipo, 0, 0, [], _this.linea, _this.columna);
