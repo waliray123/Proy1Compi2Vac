@@ -21,7 +21,7 @@ export class GraficarTS implements Instruccion{
     }
 
     ejecutar(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {     
-        console.log('Ejecutando grafica');   
+        // console.log('Ejecutando grafica');   
         const tablaSimbolos = document.getElementById('tabla-simbolos') as HTMLTableElement;
 
         for (let e:Entorno = ent; e != null; e = e.anterior)

@@ -63,7 +63,7 @@ export class Funcion implements Instruccion{
 
         
         const entornoGlobal:Entorno = new Entorno(ent);
-        console.log("Insertando nombreEntorno" + this.nombrefuncion);
+        // console.log("Insertando nombreEntorno" + this.nombrefuncion);
         entornoGlobal.nombreEntorno = this.nombrefuncion;
         
         //Declarar todos los parametros
@@ -73,9 +73,9 @@ export class Funcion implements Instruccion{
         for(let element of this.instrucciones){
             let valR = element.ejecutar(entornoGlobal,arbol,listaErrores);            
             if(valR == 'RETORNAR'){        
-                console.log('VAl return Funcion');   
+                // console.log('VAl return Funcion');   
                 ent.valorReturn = entornoGlobal.valorReturn;
-                console.log(ent.valorReturn);         
+                // console.log(ent.valorReturn);         
                 break;
             }
         }
@@ -101,7 +101,7 @@ export class Funcion implements Instruccion{
                         if (paramR instanceof AccesoVariable) {
                             paramR.isAlone = false;
                             let valorR:Arreglo = paramR.getValorImplicito(ent,arbol,listaErrores);
-                            console.log(valorR);
+                            // console.log(valorR);
                             paramR.isAlone = true;
                             
                             if (valorR.tipo == parametro.tipoParametro) {
