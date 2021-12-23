@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Asignacion = void 0;
 var Tipo_1 = require("../AST/Tipo");
 var AccesoArray_1 = require("../Expresiones/AccesoArray");
 var AccesoVariable_1 = require("../Expresiones/AccesoVariable");
@@ -18,7 +19,7 @@ var Asignacion = /** @class */ (function () {
             if (ent.existe(id)) {
                 var simbol = ent.getSimbolo(id);
                 var tipo = simbol.getTipo(ent, arbol);
-                if (tipo == this.expresion.getTipo(ent, arbol, listaErrores)) {
+                if (tipo == this.expresion.getTipo(ent, arbol, listaErrores) || (this.expresion.getTipo(ent, arbol, listaErrores) == Tipo_1.Tipo.INT && tipo == Tipo_1.Tipo.DOUBLE)) {
                     //Asignar al stack
                     var valAsign = this.expresion.traducir(ent, arbol, resultado3d, temporales, 0);
                     if (temporales.ultimoTipo == Tipo_1.Tipo.BOOL) {

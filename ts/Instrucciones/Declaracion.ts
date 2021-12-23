@@ -28,7 +28,7 @@ export class Declaracion implements Instruccion{
     traducir(ent:Entorno, arbol:AST,resultado3d:Resultado3D,temporales:Temporales,listaErrores:Array<ErrorG>) {
         
         this.id.forEach((id:string)=>{
-            if (ent.existe(id) ){
+            if (ent.existeEnActual(id) ){
                 console.log('Id '+ id +' ya existe');
             }else{
                 if(this.expresion == null){

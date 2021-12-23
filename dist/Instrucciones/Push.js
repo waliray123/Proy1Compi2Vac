@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Push = void 0;
 var Tipo_1 = require("../AST/Tipo");
 var Primitivo_1 = require("../Expresiones/Primitivo");
 var ErrorG_1 = require("../Objetos/ErrorG");

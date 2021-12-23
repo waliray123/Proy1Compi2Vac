@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Primitivo = void 0;
 var Tipo_1 = require("../AST/Tipo");
 var Primitivo = /** @class */ (function () {
     function Primitivo(valor, linea, columna) {
@@ -9,7 +10,7 @@ var Primitivo = /** @class */ (function () {
         this.isFlotante = false;
     }
     Primitivo.prototype.traducir = function (ent, arbol, resultado3d, temporales) {
-        console.log("Traduciendo Primitivo");
+        // console.log("Traduciendo Primitivo");
         var tipo = this.getTipo(ent, arbol, []);
         temporales.ultimoTipo = tipo;
         if (tipo == Tipo_1.Tipo.STRING) {
@@ -20,7 +21,7 @@ var Primitivo = /** @class */ (function () {
                 var valLet = letra.charCodeAt();
                 resultado3d.codigo3D += '\theap[(int)H] = ' + valLet + ';\n';
                 resultado3d.codigo3D += '\tH = H + 1;\n';
-                console.log(valLet);
+                // console.log(valLet);
             }
             resultado3d.codigo3D += '\theap[(int)H] = -1;\n';
             resultado3d.codigo3D += '\tH = H + 1;\n';

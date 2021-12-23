@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.GraficarTS = void 0;
 var GraficarTS = /** @class */ (function () {
     function GraficarTS(linea, columna) {
         this.linea = linea;

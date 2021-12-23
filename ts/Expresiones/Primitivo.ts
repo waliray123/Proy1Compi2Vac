@@ -20,7 +20,7 @@ export class Primitivo implements Expresion {
     }
     
     traducir(ent: Entorno, arbol: AST,resultado3d:Resultado3D,temporales:Temporales) {
-        console.log("Traduciendo Primitivo");
+        // console.log("Traduciendo Primitivo");
         
         let tipo = this.getTipo(ent,arbol,[]);
         temporales.ultimoTipo = tipo;
@@ -34,7 +34,7 @@ export class Primitivo implements Expresion {
                 let valLet = letra.charCodeAt();
                 resultado3d.codigo3D += '\theap[(int)H] = '+valLet+';\n'; 
                 resultado3d.codigo3D += '\tH = H + 1;\n';
-                console.log(valLet);
+                // console.log(valLet);
             }
             resultado3d.codigo3D += '\theap[(int)H] = -1;\n'; 
             resultado3d.codigo3D += '\tH = H + 1;\n';

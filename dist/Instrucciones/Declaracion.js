@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Declaracion = void 0;
 var Simbolo_1 = require("../AST/Simbolo");
 var Tipo_1 = require("../AST/Tipo");
 var ErrorG_1 = require("../Objetos/ErrorG");
@@ -15,7 +16,7 @@ var Declaracion = /** @class */ (function () {
     Declaracion.prototype.traducir = function (ent, arbol, resultado3d, temporales, listaErrores) {
         var _this = this;
         this.id.forEach(function (id) {
-            if (ent.existe(id)) {
+            if (ent.existeEnActual(id)) {
                 console.log('Id ' + id + ' ya existe');
             }
             else {

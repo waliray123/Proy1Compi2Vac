@@ -34,7 +34,7 @@ export class Asignacion implements Instruccion{
             if (ent.existe(id)) {
                 let simbol: Simbolo = ent.getSimbolo(id);
                 let tipo: Tipo = simbol.getTipo(ent,arbol);
-                if (tipo == this.expresion.getTipo(ent,arbol,listaErrores)) {
+                if (tipo == this.expresion.getTipo(ent,arbol,listaErrores) ||  (this.expresion.getTipo(ent,arbol,listaErrores)==Tipo.INT && tipo == Tipo.DOUBLE)) {
                     //Asignar al stack
                     let valAsign = this.expresion.traducir(ent,arbol,resultado3d,temporales,0);
                     if(temporales.ultimoTipo == Tipo.BOOL){
