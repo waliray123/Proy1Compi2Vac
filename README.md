@@ -3,7 +3,12 @@
 - William Rodrigo Umaña de León / 201931448
 - Sergio Rolando Herdandez Perez / 201931555
 
-# Manual De usuario
+## Tabla de Contenidos
+1. [Manual de suario](#manualdeusuario)
+2. [Manual Técnico](#manualtecnico)
+3. [Reporte Gramatical](#reportegramatical)
+
+# Manual De usuario <a name="manualdeusuario"></a>
 ### **Descripcion**
 Compilador es un pequeño simulador de una IDE con un lenguaje singular, llamado Quetzal, es un lenguaje de programación inspirado en C, su característica principal es la inclusión de tipos implícitos. El sistema de tipos de Quetzal realiza una formalización de los tipos de C y Java. Esto permite a los desarrolladores definir variables y funciones tipadas sin perder la esencia. Otra inclusión importante de Quetzal es la simplificación de los lenguajes C y Java para poder realizar diferentes instrucciones en menos pasos.
 
@@ -759,7 +764,7 @@ En la recuperacion de errores, no dejan analizar las instrucciones si no esta to
 - Procesamiento
 El procesado que se realizo es algo pesado con lo que si hay muchas llamadas a funciones (como seria una llamada recursiva) puede llenar el stack, un ejemplo para mostrar el limite, es dentro de la carpeta entradas, hay un archivo que se llama funciones, y en el metodo recursiva1(int m, int n), en el main tiene los parametros m = 3 y n = 7, donde ese se puede decir que el stack casi a su limite, puesto que si cambia el valor de n = 8 , en la consola del navegador aparecera un desbordamiento de memoria, con lo que es aconsejable que, mientras se optimiza, sean funciones no tan cargadas.
 
-# Manual Técnico
+# Manual Técnico <a name="manualtecnico"></a>
 
 Manual técnico del Proyecto #1 de Organización de Lenguajes y Compiladores 2
 
@@ -821,7 +826,7 @@ browserify ../ts/Ejecutar.ts -p [ tsify --noImplicitAny] > bundle.js
 ```
 El comando debe ser ejecutado dentro de la carpeta disto. Aunque también existe un sh que realiza esto, el archivo se llama browserify_ts_alternativa. Este archivo se encuentra dentro de la carpeta dist.
 
-# Reporte Gramatical
+# Reporte Gramatical <a name="reportegramatical"></a>
 
 > En este reporte se describen las reglas gramaticales que se utilizaron para el diseño e implementación del proyecto.
 
