@@ -4,7 +4,7 @@
 - Sergio Rolando Herdandez Perez / 201931555
 
 ## Tabla de Contenidos
-1. [Manual de suario](#manualdeusuario)
+1. [Manual de Usuario](#manualdeusuario)
 2. [Manual Técnico](#manualtecnico)
 3. [Reporte Gramatical](#reportegramatical)
 
