@@ -756,6 +756,10 @@ _handle_error:
         let erro =  new ErrorG('sintactico',desc,linea,columna);
         errores.push(erro);
     }
+    function genErrorLex(desc,linea,columna){
+        let erro =  new ErrorG('lexico',desc,linea,columna);
+        errores.push(erro);
+    }
 
     function reiniciarArrays(instrucciones){
         var elemento = {'id':'instrucciones','cont':instrucciones};
@@ -1289,7 +1293,7 @@ case 95:return 144;
 break;
 case 96:return 4;
 break;
-case 97:return 'INVALID';
+case 97:genErrorLex('Simbolo no reconocido'+ yy_.yytext,yy_.yylloc.first_line,yy_.yylloc.first_column);
 break;
 }
 },

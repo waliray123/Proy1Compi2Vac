@@ -7,7 +7,7 @@ export class Simbolo implements Expresion {
     public indentificador: string;
     public valor: any;
     private tipo: Tipo;
-    private tipoStruct:string;
+    public tipoStruct:string;
     linea: number;
     columna: number;
 

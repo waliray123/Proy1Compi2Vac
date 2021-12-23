@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.IncrDecr = void 0;
 var Operacion_1 = require("../Expresiones/Operacion");
 var ErrorG_1 = require("../Objetos/ErrorG");
 // print("hola mundo");

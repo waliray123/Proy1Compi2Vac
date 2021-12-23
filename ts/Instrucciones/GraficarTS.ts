@@ -23,7 +23,9 @@ export class GraficarTS implements Instruccion{
     ejecutar(ent: Entorno, arbol: AST,listaErrores:Array<ErrorG>) {     
         console.log('Ejecutando grafica');   
         const tablaSimbolos = document.getElementById('tabla-simbolos') as HTMLTableElement;
+        let valorfila1 = '<td>'+'variable'+'</td><td>'+'Nueva Tabla'+'</td><td>'+''+'</td><td>'+''+'</td><td>'+''+'</td><td>'+''+'</td><td>'+''+'</td><td>'+''+'</td><td>';             
 
+        tablaSimbolos.insertRow(-1).innerHTML = valorfila1;
         for (let e:Entorno = ent; e != null; e = e.anterior)
         {   
             let tabla = e.tabla;        
@@ -35,7 +37,11 @@ export class GraficarTS implements Instruccion{
                 if(entorno == ''){
                     entorno = 'global';
                 }
-                let valorfila = '<td>'+'variable'+'</td><td>'+simbolo.indentificador+'</td><td>'+tipoSim+'</td><td>'+simbolo.linea+'</td><td>'
+                let tipoVar = 'variable';
+                if(simbolo.tipoStruct != ''){
+                    tipoVar = simbolo.tipoStruct;
+                }
+                let valorfila = '<td>'+tipoVar+'</td><td>'+simbolo.indentificador+'</td><td>'+tipoSim+'</td><td>'+simbolo.linea+'</td><td>'
                 +simbolo.columna+'</td><td>'+cont+'</td><td>'+entorno+'</td><td>'+simbolo.valor+'</td><td>';             
 
                 tablaSimbolos.insertRow(-1).innerHTML = valorfila;
@@ -48,7 +54,7 @@ export class GraficarTS implements Instruccion{
         let cont = 0;
         for (const funcion of funciones) {
             
-            let valorfila = '<td>'+'variable'+'</td><td>'+funcion.nombrefuncion+'</td><td>'+funcion.tipoFuncion+'</td><td>'+funcion.linea+'</td><td>'
+            let valorfila = '<td>'+'funcion'+'</td><td>'+funcion.nombrefuncion+'</td><td>'+funcion.tipoFuncion+'</td><td>'+funcion.linea+'</td><td>'
                 +funcion.columna+'</td><td>'+cont+'</td><td>'+'global'+'</td><td>'+''+'</td><td>';             
 
             tablaSimbolos.insertRow(-1).innerHTML = valorfila;

@@ -133,7 +133,7 @@ BSL               "\\".
 
 
 <<EOF>>               return 'EOF';
-.                     return 'INVALID';
+.                     {genErrorLex('Simbolo no reconocido'+ yytext,yylloc.first_line,yylloc.first_column);} return 'INVALID';
 /lex
 
 
@@ -189,6 +189,10 @@ BSL               "\\".
 
     function genError(desc,linea,columna){
         let erro =  new ErrorG('sintactico',desc,linea,columna);
+        errores.push(erro);
+    }
+    function genErrorLex(desc,linea,columna){
+        let erro =  new ErrorG('lexico',desc,linea,columna);
         errores.push(erro);
     }
 

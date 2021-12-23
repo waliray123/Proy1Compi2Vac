@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Simbolo = void 0;
 var Tipo_1 = require("./Tipo");
 var Simbolo = /** @class */ (function () {
     function Simbolo(tipo, id, linea, columna, valor) {

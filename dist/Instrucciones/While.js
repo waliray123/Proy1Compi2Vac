@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.While = void 0;
 var Entorno_1 = require("../AST/Entorno");
 var While = /** @class */ (function () {
     function While(linea, columna, instrucciones, expresion) {

@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Forin = exports.CasoForIn = void 0;
 var Entorno_1 = require("../AST/Entorno");
 var Simbolo_1 = require("../AST/Simbolo");
 var Tipo_1 = require("../AST/Tipo");

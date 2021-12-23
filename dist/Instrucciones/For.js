@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.For = void 0;
 var Entorno_1 = require("../AST/Entorno");
 var ErrorG_1 = require("../Objetos/ErrorG");
 var For = /** @class */ (function () {

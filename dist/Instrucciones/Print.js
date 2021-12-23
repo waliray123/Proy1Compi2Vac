@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.Print = void 0;
 var Tipo_1 = require("../AST/Tipo");
 var ConcatenacionString_1 = require("../Expresiones/ConcatenacionString");
 var ErrorG_1 = require("../Objetos/ErrorG");
