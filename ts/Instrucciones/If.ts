@@ -75,7 +75,7 @@ export class If implements Instruccion {
     }
 
     ejecutar(ent: Entorno, arbol: AST, listaErrores: Array<ErrorG>) {
-        console.log('ejecutado...ifnormal');
+        // console.log('ejecutado...ifnormal');
 
 
         //Revisar la condicion del if
@@ -142,8 +142,8 @@ export class If implements Instruccion {
                 let valR = element.ejecutar(entornolocal, arbol, listaErrores);
                 if (valR == 'RETORNAR') {
                     ent.valorReturn = entornolocal.valorReturn;
-                    console.log('VAl return');
-                    console.log(ent.valorReturn);
+                    // console.log('VAl return');
+                    // console.log(ent.valorReturn);
                     return 'RETORNAR';
                 }else if(valR == 'ROMPER'){
                     return 'ROMPER';

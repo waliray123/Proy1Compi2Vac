@@ -48,11 +48,11 @@ var For = /** @class */ (function () {
         temporales.ultLitEscr = ulLit + 2;
     };
     For.prototype.ejecutar = function (ent, arbol, listaErrores) {
-        console.log('ejecutado...fornormal');
+        // console.log('ejecutado...fornormal');
         var entornolocal = new Entorno_1.Entorno(ent);
         this.declAsign.ejecutar(entornolocal, arbol);
         //expresion 1 es la que hay que validar 
-        console.log("empezando el while  en for");
+        // console.log("empezando el while  en for");
         var realizar = true;
         while (this.expresion1.getValorImplicito(entornolocal, arbol, listaErrores) == true) {
             //Realizar instrucciones

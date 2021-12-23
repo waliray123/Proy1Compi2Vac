@@ -54,7 +54,7 @@ var If = /** @class */ (function () {
         }
     };
     If.prototype.ejecutar = function (ent, arbol, listaErrores) {
-        console.log('ejecutado...ifnormal');
+        // console.log('ejecutado...ifnormal');
         //Revisar la condicion del if
         if (this.tipo == "if" || this.tipo == "elseif") {
             if (this.condicion.getValorImplicito(ent, arbol, listaErrores) == true) {
@@ -127,8 +127,8 @@ var If = /** @class */ (function () {
                 var valR = element.ejecutar(entornolocal, arbol, listaErrores);
                 if (valR == 'RETORNAR') {
                     ent.valorReturn = entornolocal.valorReturn;
-                    console.log('VAl return');
-                    console.log(ent.valorReturn);
+                    // console.log('VAl return');
+                    // console.log(ent.valorReturn);
                     return 'RETORNAR';
                 }
                 else if (valR == 'ROMPER') {

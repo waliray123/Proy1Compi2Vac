@@ -35,11 +35,11 @@ var Return = /** @class */ (function () {
         }
     };
     Return.prototype.ejecutar = function (ent, arbol, listaErrores) {
-        console.log('Ejecutando return');
+        // console.log('Ejecutando return');
         if (this.expresion != null) {
             var valExpr = this.expresion.getValorImplicito(ent, arbol, listaErrores);
             ent.valorReturn = valExpr;
-            console.log(ent.valorReturn);
+            // console.log(ent.valorReturn);
         }
         return 'RETORNAR';
     };

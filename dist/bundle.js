@@ -1658,7 +1658,7 @@ var Primitivo = /** @class */ (function () {
                     sendValor += stringNormales[i] + '' + exprs[i].getValorImplicito(ent, arbol, listaErrores);
                 }
                 sendValor += stringNormales[stringNormales.length - 1];
-                console.log(sendValor);
+                // console.log(sendValor);
                 return sendValor;
             }
         }
@@ -1830,7 +1830,13 @@ var Asignacion = /** @class */ (function () {
                 var tipo = simbol.getTipo(ent, arbol);
                 var tipoExpr = this.expresion.getTipo(ent, arbol, listaErrores);
                 if (tipo == tipoExpr || (tipoExpr == Tipo_1.Tipo.INT && tipo == Tipo_1.Tipo.DOUBLE)) {
-                    simbol.valor = this.expresion.getValorImplicito(ent, arbol, listaErrores);
+                    if (tipo == Tipo_1.Tipo.ARRAY) {
+                        var arreglo = simbol.valor;
+                        arreglo.cambiarContenido(this.expresion.getValorImplicito(ent, arbol, listaErrores));
+                    }
+                    else {
+                        simbol.valor = this.expresion.getValorImplicito(ent, arbol, listaErrores);
+                    }
                 }
                 else {
                     // console.log('Error semantico, El tipo de la variable (' + tipo +') no concuerda con el tipo asignado (' + this.expresion.getTipo(ent,arbol) + ') en la linea '+ this.linea + ' y columna ' + this.columna);
@@ -2594,11 +2600,11 @@ var For = /** @class */ (function () {
         temporales.ultLitEscr = ulLit + 2;
     };
     For.prototype.ejecutar = function (ent, arbol, listaErrores) {
-        console.log('ejecutado...fornormal');
+        // console.log('ejecutado...fornormal');
         var entornolocal = new Entorno_1.Entorno(ent);
         this.declAsign.ejecutar(entornolocal, arbol);
         //expresion 1 es la que hay que validar 
-        console.log("empezando el while  en for");
+        // console.log("empezando el while  en for");
         var realizar = true;
         while (this.expresion1.getValorImplicito(entornolocal, arbol, listaErrores) == true) {
             //Realizar instrucciones
@@ -2643,6 +2649,7 @@ var Simbolo_1 = require("../AST/Simbolo");
 var Tipo_1 = require("../AST/Tipo");
 var ArrbegEnd_1 = require("../Expresiones/ArrbegEnd");
 var Primitivo_1 = require("../Expresiones/Primitivo");
+var Arreglo_1 = require("../Objetos/Arreglo");
 var ErrorG_1 = require("../Objetos/ErrorG");
 var Asignacion_1 = require("./Asignacion");
 var CasoForIn;
@@ -2687,7 +2694,13 @@ var Forin = /** @class */ (function () {
             if (ent.existe(condicion)) {
                 casoForIn = CasoForIn.IDVAR;
                 var simbol = ent.getSimbolo(condicion);
-                tipoVariable = simbol.getTipo(ent, arbol);
+                var valor = simbol.getValorImplicito(ent, arbol);
+                if (valor instanceof Arreglo_1.Arreglo) {
+                    tipoVariable = valor.tipo;
+                }
+                else {
+                    tipoVariable = simbol.getTipo(ent, arbol);
+                }
             }
             else {
                 listaErrores.push(new ErrorG_1.ErrorG('semantico', 'no existe la variable ' + condicion, this.linea, this.columna));
@@ -2734,16 +2747,33 @@ var Forin = /** @class */ (function () {
             case CasoForIn.IDVAR: {
                 var simbol = ent.getSimbolo(condicion);
                 var valor = simbol.getValorImplicito(ent, arbol);
-                for (var i = 0; i < valor.length; i++) {
-                    var letra = valor.substr(i, 1);
-                    var variables = [];
-                    variables.push(variable);
-                    var expr = new Primitivo_1.Primitivo(letra, this.linea, this.columna);
-                    var asignar = new Asignacion_1.Asignacion(variables, this.linea, this.columna, expr);
-                    asignar.ejecutar(entNuevo, arbol, listaErrores);
-                    for (var _c = 0, _d = this.instrucciones; _c < _d.length; _c++) {
-                        var instruccion = _d[_c];
-                        instruccion.ejecutar(entNuevo, arbol, listaErrores);
+                if (valor instanceof Arreglo_1.Arreglo) {
+                    for (var _c = 0, _d = valor.contenido; _c < _d.length; _c++) {
+                        atributo = _d[_c];
+                        var valor_1 = atributo.getValorImplicito(ent, arbol, listaErrores);
+                        var expr = new Primitivo_1.Primitivo(valor_1, this.linea, this.columna);
+                        var variables = [];
+                        variables.push(variable);
+                        var asignar = new Asignacion_1.Asignacion(variables, this.linea, this.columna, expr);
+                        asignar.ejecutar(entNuevo, arbol, listaErrores);
+                        for (var _e = 0, _f = this.instrucciones; _e < _f.length; _e++) {
+                            var instruccion = _f[_e];
+                            instruccion.ejecutar(entNuevo, arbol, listaErrores);
+                        }
+                    }
+                }
+                else {
+                    for (var i = 0; i < valor.length; i++) {
+                        var letra = valor.substr(i, 1);
+                        var variables = [];
+                        variables.push(variable);
+                        var expr = new Primitivo_1.Primitivo(letra, this.linea, this.columna);
+                        var asignar = new Asignacion_1.Asignacion(variables, this.linea, this.columna, expr);
+                        asignar.ejecutar(entNuevo, arbol, listaErrores);
+                        for (var _g = 0, _h = this.instrucciones; _g < _h.length; _g++) {
+                            var instruccion = _h[_g];
+                            instruccion.ejecutar(entNuevo, arbol, listaErrores);
+                        }
                     }
                 }
                 break;
@@ -2751,16 +2781,16 @@ var Forin = /** @class */ (function () {
             case CasoForIn.ARRBEGEND: {
                 if (condicion instanceof ArrbegEnd_1.ArrbegEnd) {
                     var content = condicion.getListaDatos(ent, arbol, listaErrores);
-                    for (var _e = 0, content_1 = content; _e < content_1.length; _e++) {
-                        var atributo = content_1[_e];
+                    for (var _j = 0, content_1 = content; _j < content_1.length; _j++) {
+                        var atributo = content_1[_j];
                         var valor = atributo.getValorImplicito(ent, arbol, listaErrores);
                         var expr = new Primitivo_1.Primitivo(valor, this.linea, this.columna);
                         var variables = [];
                         variables.push(variable);
                         var asignar = new Asignacion_1.Asignacion(variables, this.linea, this.columna, expr);
                         asignar.ejecutar(entNuevo, arbol, listaErrores);
-                        for (var _f = 0, _g = this.instrucciones; _f < _g.length; _f++) {
-                            var instruccion = _g[_f];
+                        for (var _k = 0, _l = this.instrucciones; _k < _l.length; _k++) {
+                            var instruccion = _l[_k];
                             instruccion.ejecutar(entNuevo, arbol, listaErrores);
                         }
                     }
@@ -2795,7 +2825,7 @@ var Forin = /** @class */ (function () {
 }());
 exports.Forin = Forin;
 
-},{"../AST/Entorno":1,"../AST/Simbolo":2,"../AST/Tipo":3,"../Expresiones/ArrbegEnd":8,"../Expresiones/Primitivo":16,"../Objetos/ErrorG":43,"./Asignacion":18}],28:[function(require,module,exports){
+},{"../AST/Entorno":1,"../AST/Simbolo":2,"../AST/Tipo":3,"../Expresiones/ArrbegEnd":8,"../Expresiones/Primitivo":16,"../Objetos/Arreglo":42,"../Objetos/ErrorG":43,"./Asignacion":18}],28:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Entorno_1 = require("../AST/Entorno");
@@ -2846,7 +2876,7 @@ var Funcion = /** @class */ (function () {
     };
     Funcion.prototype.ejecutar = function (ent, arbol, listaErrores) {
         var entornoGlobal = new Entorno_1.Entorno(ent);
-        console.log("Insertando nombreEntorno" + this.nombrefuncion);
+        // console.log("Insertando nombreEntorno" + this.nombrefuncion);
         entornoGlobal.nombreEntorno = this.nombrefuncion;
         //Declarar todos los parametros
         this.declararParametrosReturn(entornoGlobal, arbol, listaErrores);
@@ -2855,9 +2885,9 @@ var Funcion = /** @class */ (function () {
             var element = _a[_i];
             var valR = element.ejecutar(entornoGlobal, arbol, listaErrores);
             if (valR == 'RETORNAR') {
-                console.log('VAl return Funcion');
+                // console.log('VAl return Funcion');   
                 ent.valorReturn = entornoGlobal.valorReturn;
-                console.log(ent.valorReturn);
+                // console.log(ent.valorReturn);         
                 break;
             }
         }
@@ -2880,7 +2910,7 @@ var Funcion = /** @class */ (function () {
                         if (paramR instanceof AccesoVariable_1.AccesoVariable) {
                             paramR.isAlone = false;
                             var valorR = paramR.getValorImplicito(ent, arbol, listaErrores);
-                            console.log(valorR);
+                            // console.log(valorR);
                             paramR.isAlone = true;
                             if (valorR.tipo == parametro.tipoParametro) {
                                 //@ts-ignore
@@ -3070,7 +3100,7 @@ var GraficarTS = /** @class */ (function () {
         //Traducri
     };
     GraficarTS.prototype.ejecutar = function (ent, arbol, listaErrores) {
-        console.log('Ejecutando grafica');
+        // console.log('Ejecutando grafica');   
         var tablaSimbolos = document.getElementById('tabla-simbolos');
         var valorfila1 = '<td>' + 'variable' + '</td><td>' + 'Nueva Tabla' + '</td><td>' + '' + '</td><td>' + '' + '</td><td>' + '' + '</td><td>' + '' + '</td><td>' + '' + '</td><td>' + '' + '</td><td>';
         tablaSimbolos.insertRow(-1).innerHTML = valorfila1;
@@ -3170,7 +3200,7 @@ var If = /** @class */ (function () {
         }
     };
     If.prototype.ejecutar = function (ent, arbol, listaErrores) {
-        console.log('ejecutado...ifnormal');
+        // console.log('ejecutado...ifnormal');
         //Revisar la condicion del if
         if (this.tipo == "if" || this.tipo == "elseif") {
             if (this.condicion.getValorImplicito(ent, arbol, listaErrores) == true) {
@@ -3243,8 +3273,8 @@ var If = /** @class */ (function () {
                 var valR = element.ejecutar(entornolocal, arbol, listaErrores);
                 if (valR == 'RETORNAR') {
                     ent.valorReturn = entornolocal.valorReturn;
-                    console.log('VAl return');
-                    console.log(ent.valorReturn);
+                    // console.log('VAl return');
+                    // console.log(ent.valorReturn);
                     return 'RETORNAR';
                 }
                 else if (valR == 'ROMPER') {
@@ -3436,7 +3466,7 @@ var Print = /** @class */ (function () {
     Print.prototype.ejecutar = function (ent, arbol, listaErrores) {
         var valor = this.expresion.getValorImplicito(ent, arbol, listaErrores);
         if (valor !== null) {
-            console.log('>', valor);
+            //console.log('>',valor);
             var area = document.getElementById('consola');
             if (this.haysalto) {
                 area.value = area.value + valor + "\n";
@@ -3446,7 +3476,7 @@ var Print = /** @class */ (function () {
             }
         }
         else {
-            console.log('>> Error, no se pueden imprimir valores nulos');
+            //console.log('>> Error, no se pueden imprimir valores nulos');
             listaErrores.push(new ErrorG_1.ErrorG('semantico', '>> Error, no se pueden imprimir valores nulos', this.linea, this.columna));
         }
     };
@@ -3458,6 +3488,7 @@ exports.Print = Print;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Tipo_1 = require("../AST/Tipo");
+var Primitivo_1 = require("../Expresiones/Primitivo");
 var ErrorG_1 = require("../Objetos/ErrorG");
 // print("hola mundo");
 var Push = /** @class */ (function () {
@@ -3475,7 +3506,14 @@ var Push = /** @class */ (function () {
             var simbol = ent.getSimbolo(this.id);
             if (simbol.getTipo(ent, arbol) == Tipo_1.Tipo.ARRAY) {
                 var valor = simbol.getValorImplicito(ent, arbol);
-                valor.push(ent, arbol, this.expresion, listaErrores);
+                if (this.expresion instanceof Primitivo_1.Primitivo) {
+                    valor.push(ent, arbol, this.expresion, listaErrores);
+                }
+                else {
+                    var valorC = this.expresion.getValorImplicito(ent, arbol, listaErrores);
+                    var primitivo = new Primitivo_1.Primitivo(valorC, this.expresion.linea, this.expresion.columna);
+                    valor.push(ent, arbol, primitivo, listaErrores);
+                }
             }
             else {
                 //no es de tipo array
@@ -3491,7 +3529,7 @@ var Push = /** @class */ (function () {
 }());
 exports.Push = Push;
 
-},{"../AST/Tipo":3,"../Objetos/ErrorG":43}],37:[function(require,module,exports){
+},{"../AST/Tipo":3,"../Expresiones/Primitivo":16,"../Objetos/ErrorG":43}],37:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Tipo_1 = require("../AST/Tipo");
@@ -3529,11 +3567,11 @@ var Return = /** @class */ (function () {
         }
     };
     Return.prototype.ejecutar = function (ent, arbol, listaErrores) {
-        console.log('Ejecutando return');
+        // console.log('Ejecutando return');
         if (this.expresion != null) {
             var valExpr = this.expresion.getValorImplicito(ent, arbol, listaErrores);
             ent.valorReturn = valExpr;
-            console.log(ent.valorReturn);
+            // console.log(ent.valorReturn);
         }
         return 'RETORNAR';
     };
@@ -3777,12 +3815,23 @@ var Arreglo = /** @class */ (function () {
     Arreglo.prototype.pop = function () {
         var pop = this.contenido.pop();
         var valor = this.contenido.length;
-        this.length = valor;
-        this.dimension = valor;
+        if (valor == null) {
+            this.length = 0;
+            this.dimension = 0;
+        }
+        else {
+            this.length = valor;
+            this.dimension = valor;
+        }
         return pop;
     };
     Arreglo.prototype.getLastContenido = function () {
         return this.contenido[this.length - 1];
+    };
+    Arreglo.prototype.cambiarContenido = function (contenido) {
+        this.contenido = contenido;
+        this.length = this.contenido.length;
+        this.dimension = this.length;
     };
     Arreglo.prototype.comprobarTipo = function (ent, arbol, listaErrores) {
         var _this = this;
@@ -6469,11 +6518,11 @@ window.ejecutarCodigo = function (entrada) {
         var structsG = revisarStructsGlobales(instrucciones);
         var ast_1 = new AST_1.AST(instrucciones, structsG, funcionesG);
         var entornoGlobal_1 = generarEntornoGlobal(ast_1, structsG, listaErrores);
-        console.log(entornoGlobal_1);
+        // console.log(entornoGlobal); 
         //Buscar la funcion main    
         funcionesG.forEach(function (element) {
             if (element.nombrefuncion == "main") {
-                console.log("Se ejecutara");
+                // console.log("Se ejecutara");
                 element.ejecutar(entornoGlobal_1, ast_1, listaErrores);
             }
         });
@@ -6523,7 +6572,7 @@ window.traducirCodigo = function (entrada) {
         //Buscar la funcion main    
         funcionesG.forEach(function (element) {
             if (element.nombrefuncion == "main") {
-                console.log("Se ejecutara");
+                // console.log("Se ejecutara");
                 element.traducir(entornoGlobal_2, ast_2, resultado3d, temporales, listaErrores);
             }
         });

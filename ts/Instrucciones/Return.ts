@@ -48,11 +48,11 @@ export class Return implements Instruccion {
     }
 
     ejecutar(ent: Entorno, arbol: AST, listaErrores: Array<ErrorG>) {
-        console.log('Ejecutando return');
+        // console.log('Ejecutando return');
         if(this.expresion != null){
             let valExpr = this.expresion.getValorImplicito(ent,arbol,listaErrores);            
             ent.valorReturn = valExpr;
-            console.log(ent.valorReturn);
+            // console.log(ent.valorReturn);
         }
         return 'RETORNAR';
     }

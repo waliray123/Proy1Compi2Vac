@@ -5,6 +5,7 @@ var Simbolo_1 = require("../AST/Simbolo");
 var Tipo_1 = require("../AST/Tipo");
 var ArrbegEnd_1 = require("../Expresiones/ArrbegEnd");
 var Primitivo_1 = require("../Expresiones/Primitivo");
+var Arreglo_1 = require("../Objetos/Arreglo");
 var ErrorG_1 = require("../Objetos/ErrorG");
 var Asignacion_1 = require("./Asignacion");
 var CasoForIn;
@@ -49,7 +50,13 @@ var Forin = /** @class */ (function () {
             if (ent.existe(condicion)) {
                 casoForIn = CasoForIn.IDVAR;
                 var simbol = ent.getSimbolo(condicion);
-                tipoVariable = simbol.getTipo(ent, arbol);
+                var valor = simbol.getValorImplicito(ent, arbol);
+                if (valor instanceof Arreglo_1.Arreglo) {
+                    tipoVariable = valor.tipo;
+                }
+                else {
+                    tipoVariable = simbol.getTipo(ent, arbol);
+                }
             }
             else {
                 listaErrores.push(new ErrorG_1.ErrorG('semantico', 'no existe la variable ' + condicion, this.linea, this.columna));
@@ -96,16 +103,33 @@ var Forin = /** @class */ (function () {
             case CasoForIn.IDVAR: {
                 var simbol = ent.getSimbolo(condicion);
                 var valor = simbol.getValorImplicito(ent, arbol);
-                for (var i = 0; i < valor.length; i++) {
-                    var letra = valor.substr(i, 1);
-                    var variables = [];
-                    variables.push(variable);
-                    var expr = new Primitivo_1.Primitivo(letra, this.linea, this.columna);
-                    var asignar = new Asignacion_1.Asignacion(variables, this.linea, this.columna, expr);
-                    asignar.ejecutar(entNuevo, arbol, listaErrores);
-                    for (var _c = 0, _d = this.instrucciones; _c < _d.length; _c++) {
-                        var instruccion = _d[_c];
-                        instruccion.ejecutar(entNuevo, arbol, listaErrores);
+                if (valor instanceof Arreglo_1.Arreglo) {
+                    for (var _c = 0, _d = valor.contenido; _c < _d.length; _c++) {
+                        atributo = _d[_c];
+                        var valor_1 = atributo.getValorImplicito(ent, arbol, listaErrores);
+                        var expr = new Primitivo_1.Primitivo(valor_1, this.linea, this.columna);
+                        var variables = [];
+                        variables.push(variable);
+                        var asignar = new Asignacion_1.Asignacion(variables, this.linea, this.columna, expr);
+                        asignar.ejecutar(entNuevo, arbol, listaErrores);
+                        for (var _e = 0, _f = this.instrucciones; _e < _f.length; _e++) {
+                            var instruccion = _f[_e];
+                            instruccion.ejecutar(entNuevo, arbol, listaErrores);
+                        }
+                    }
+                }
+                else {
+                    for (var i = 0; i < valor.length; i++) {
+                        var letra = valor.substr(i, 1);
+                        var variables = [];
+                        variables.push(variable);
+                        var expr = new Primitivo_1.Primitivo(letra, this.linea, this.columna);
+                        var asignar = new Asignacion_1.Asignacion(variables, this.linea, this.columna, expr);
+                        asignar.ejecutar(entNuevo, arbol, listaErrores);
+                        for (var _g = 0, _h = this.instrucciones; _g < _h.length; _g++) {
+                            var instruccion = _h[_g];
+                            instruccion.ejecutar(entNuevo, arbol, listaErrores);
+                        }
                     }
                 }
                 break;
@@ -113,16 +137,16 @@ var Forin = /** @class */ (function () {
             case CasoForIn.ARRBEGEND: {
                 if (condicion instanceof ArrbegEnd_1.ArrbegEnd) {
                     var content = condicion.getListaDatos(ent, arbol, listaErrores);
-                    for (var _e = 0, content_1 = content; _e < content_1.length; _e++) {
-                        var atributo = content_1[_e];
+                    for (var _j = 0, content_1 = content; _j < content_1.length; _j++) {
+                        var atributo = content_1[_j];
                         var valor = atributo.getValorImplicito(ent, arbol, listaErrores);
                         var expr = new Primitivo_1.Primitivo(valor, this.linea, this.columna);
                         var variables = [];
                         variables.push(variable);
                         var asignar = new Asignacion_1.Asignacion(variables, this.linea, this.columna, expr);
                         asignar.ejecutar(entNuevo, arbol, listaErrores);
-                        for (var _f = 0, _g = this.instrucciones; _f < _g.length; _f++) {
-                            var instruccion = _g[_f];
+                        for (var _k = 0, _l = this.instrucciones; _k < _l.length; _k++) {
+                            var instruccion = _l[_k];
                             instruccion.ejecutar(entNuevo, arbol, listaErrores);
                         }
                     }

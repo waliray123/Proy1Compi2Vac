@@ -7,6 +7,7 @@ import { ArrbegEnd } from "../Expresiones/ArrbegEnd";
 import { Primitivo } from "../Expresiones/Primitivo";
 import { Expresion } from "../Interfaces/Expresion";
 import { Instruccion } from "../Interfaces/Instruccion";
+import { Arreglo } from "../Objetos/Arreglo";
 import { ErrorG } from "../Objetos/ErrorG";
 import { Asignacion } from "./Asignacion";
 import { Declaracion } from "./Declaracion";
@@ -69,7 +70,12 @@ export class Forin implements Instruccion{
             if(ent.existe(condicion)){
                 casoForIn = CasoForIn.IDVAR;
                 let simbol: Simbolo = ent.getSimbolo(condicion);
-                tipoVariable = simbol.getTipo(ent,arbol);
+                let valor = simbol.getValorImplicito(ent,arbol);
+                if (valor instanceof Arreglo) {
+                    tipoVariable = valor.tipo;
+                }else{
+                    tipoVariable = simbol.getTipo(ent,arbol);
+                }                
             }else{
                 listaErrores.push(new ErrorG('semantico','no existe la variable ' + condicion,this.linea,this.columna));
             }
@@ -118,18 +124,31 @@ export class Forin implements Instruccion{
             case CasoForIn.IDVAR:{
                 let simbol: Simbolo = ent.getSimbolo(condicion);
                 let valor = simbol.getValorImplicito(ent,arbol);
-
-                for (let i = 0; i < valor.length; i++) {                    
-                    let letra = valor.substr(i,1);
-                    let variables = [];
-                    variables.push(variable);
-                    let expr: Primitivo = new Primitivo(letra,this.linea,this.columna);
-                    let asignar:Asignacion = new Asignacion(variables,this.linea,this.columna,expr);
-                    asignar.ejecutar(entNuevo,arbol,listaErrores);
-                    for(var instruccion of this.instrucciones){
-                        instruccion.ejecutar(entNuevo,arbol,listaErrores);
+                if (valor instanceof Arreglo) {
+                    for (atributo of valor.contenido){
+                        let valor = atributo.getValorImplicito(ent,arbol,listaErrores);
+                        let expr: Primitivo = new Primitivo(valor,this.linea,this.columna);
+                        let variables = [];
+                        variables.push(variable);
+                        let asignar:Asignacion = new Asignacion(variables,this.linea,this.columna,expr);
+                        asignar.ejecutar(entNuevo,arbol,listaErrores);
+                        for(var instruccion of this.instrucciones){
+                            instruccion.ejecutar(entNuevo,arbol,listaErrores);
+                        }
                     }
-                }
+                }else{
+                    for (let i = 0; i < valor.length; i++) {                    
+                        let letra = valor.substr(i,1);
+                        let variables = [];
+                        variables.push(variable);
+                        let expr: Primitivo = new Primitivo(letra,this.linea,this.columna);
+                        let asignar:Asignacion = new Asignacion(variables,this.linea,this.columna,expr);
+                        asignar.ejecutar(entNuevo,arbol,listaErrores);
+                        for(var instruccion of this.instrucciones){
+                            instruccion.ejecutar(entNuevo,arbol,listaErrores);
+                        }
+                    }
+                }                
                 break;
             }
             case CasoForIn.ARRBEGEND:{

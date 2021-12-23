@@ -63,7 +63,7 @@ var Print = /** @class */ (function () {
     Print.prototype.ejecutar = function (ent, arbol, listaErrores) {
         var valor = this.expresion.getValorImplicito(ent, arbol, listaErrores);
         if (valor !== null) {
-            console.log('>', valor);
+            //console.log('>',valor);
             var area = document.getElementById('consola');
             if (this.haysalto) {
                 area.value = area.value + valor + "\n";
@@ -73,7 +73,7 @@ var Print = /** @class */ (function () {
             }
         }
         else {
-            console.log('>> Error, no se pueden imprimir valores nulos');
+            //console.log('>> Error, no se pueden imprimir valores nulos');
             listaErrores.push(new ErrorG_1.ErrorG('semantico', '>> Error, no se pueden imprimir valores nulos', this.linea, this.columna));
         }
     };

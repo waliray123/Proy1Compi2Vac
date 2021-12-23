@@ -58,13 +58,13 @@ window.ejecutarCodigo = function (entrada:string){
 
         const ast:AST = new AST(instrucciones,structsG,funcionesG);
         const entornoGlobal:Entorno = generarEntornoGlobal(ast,structsG,listaErrores);   
-        console.log(entornoGlobal); 
+        // console.log(entornoGlobal); 
         
         //Buscar la funcion main    
 
         funcionesG.forEach((element:Funcion) => {
             if(element.nombrefuncion == "main"){
-                console.log("Se ejecutara");
+                // console.log("Se ejecutara");
                 element.ejecutar(entornoGlobal,ast,listaErrores);
                 
             }
@@ -124,7 +124,7 @@ window.traducirCodigo = function (entrada:string){
 
         funcionesG.forEach((element:Funcion) => {
             if(element.nombrefuncion == "main"){
-                console.log("Se ejecutara");
+                // console.log("Se ejecutara");
                 element.traducir(entornoGlobal,ast,resultado3d,temporales,listaErrores);            
             }
         })

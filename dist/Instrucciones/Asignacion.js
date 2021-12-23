@@ -103,7 +103,13 @@ var Asignacion = /** @class */ (function () {
                 var tipo = simbol.getTipo(ent, arbol);
                 var tipoExpr = this.expresion.getTipo(ent, arbol, listaErrores);
                 if (tipo == tipoExpr || (tipoExpr == Tipo_1.Tipo.INT && tipo == Tipo_1.Tipo.DOUBLE)) {
-                    simbol.valor = this.expresion.getValorImplicito(ent, arbol, listaErrores);
+                    if (tipo == Tipo_1.Tipo.ARRAY) {
+                        var arreglo = simbol.valor;
+                        arreglo.cambiarContenido(this.expresion.getValorImplicito(ent, arbol, listaErrores));
+                    }
+                    else {
+                        simbol.valor = this.expresion.getValorImplicito(ent, arbol, listaErrores);
+                    }
                 }
                 else {
                     // console.log('Error semantico, El tipo de la variable (' + tipo +') no concuerda con el tipo asignado (' + this.expresion.getTipo(ent,arbol) + ') en la linea '+ this.linea + ' y columna ' + this.columna);

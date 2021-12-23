@@ -48,7 +48,7 @@ var Funcion = /** @class */ (function () {
     };
     Funcion.prototype.ejecutar = function (ent, arbol, listaErrores) {
         var entornoGlobal = new Entorno_1.Entorno(ent);
-        console.log("Insertando nombreEntorno" + this.nombrefuncion);
+        // console.log("Insertando nombreEntorno" + this.nombrefuncion);
         entornoGlobal.nombreEntorno = this.nombrefuncion;
         //Declarar todos los parametros
         this.declararParametrosReturn(entornoGlobal, arbol, listaErrores);
@@ -57,9 +57,9 @@ var Funcion = /** @class */ (function () {
             var element = _a[_i];
             var valR = element.ejecutar(entornoGlobal, arbol, listaErrores);
             if (valR == 'RETORNAR') {
-                console.log('VAl return Funcion');
+                // console.log('VAl return Funcion');   
                 ent.valorReturn = entornoGlobal.valorReturn;
-                console.log(ent.valorReturn);
+                // console.log(ent.valorReturn);         
                 break;
             }
         }
@@ -82,7 +82,7 @@ var Funcion = /** @class */ (function () {
                         if (paramR instanceof AccesoVariable_1.AccesoVariable) {
                             paramR.isAlone = false;
                             var valorR = paramR.getValorImplicito(ent, arbol, listaErrores);
-                            console.log(valorR);
+                            // console.log(valorR);
                             paramR.isAlone = true;
                             if (valorR.tipo == parametro.tipoParametro) {
                                 //@ts-ignore

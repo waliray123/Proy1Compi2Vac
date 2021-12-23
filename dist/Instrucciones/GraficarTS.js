@@ -9,7 +9,7 @@ var GraficarTS = /** @class */ (function () {
         //Traducri
     };
     GraficarTS.prototype.ejecutar = function (ent, arbol, listaErrores) {
-        console.log('Ejecutando grafica');
+        // console.log('Ejecutando grafica');   
         var tablaSimbolos = document.getElementById('tabla-simbolos');
         var valorfila1 = '<td>' + 'variable' + '</td><td>' + 'Nueva Tabla' + '</td><td>' + '' + '</td><td>' + '' + '</td><td>' + '' + '</td><td>' + '' + '</td><td>' + '' + '</td><td>' + '' + '</td><td>';
         tablaSimbolos.insertRow(-1).innerHTML = valorfila1;

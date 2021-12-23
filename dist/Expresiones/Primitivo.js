@@ -130,7 +130,7 @@ var Primitivo = /** @class */ (function () {
                     sendValor += stringNormales[i] + '' + exprs[i].getValorImplicito(ent, arbol, listaErrores);
                 }
                 sendValor += stringNormales[stringNormales.length - 1];
-                console.log(sendValor);
+                // console.log(sendValor);
                 return sendValor;
             }
         }

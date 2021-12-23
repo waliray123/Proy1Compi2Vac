@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Tipo_1 = require("../AST/Tipo");
+var Primitivo_1 = require("../Expresiones/Primitivo");
 var ErrorG_1 = require("../Objetos/ErrorG");
 // print("hola mundo");
 var Push = /** @class */ (function () {
@@ -18,7 +19,14 @@ var Push = /** @class */ (function () {
             var simbol = ent.getSimbolo(this.id);
             if (simbol.getTipo(ent, arbol) == Tipo_1.Tipo.ARRAY) {
                 var valor = simbol.getValorImplicito(ent, arbol);
-                valor.push(ent, arbol, this.expresion, listaErrores);
+                if (this.expresion instanceof Primitivo_1.Primitivo) {
+                    valor.push(ent, arbol, this.expresion, listaErrores);
+                }
+                else {
+                    var valorC = this.expresion.getValorImplicito(ent, arbol, listaErrores);
+                    var primitivo = new Primitivo_1.Primitivo(valorC, this.expresion.linea, this.expresion.columna);
+                    valor.push(ent, arbol, primitivo, listaErrores);
+                }
             }
             else {
                 //no es de tipo array
