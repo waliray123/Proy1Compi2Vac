@@ -31,7 +31,7 @@ export class DeclaracionArray implements Instruccion{
 
     traducir(ent: Entorno, arbol: AST,resultado3d: Resultado3D, temporales: Temporales,listaErrores:Array<ErrorG>) {
         this.id.forEach((id:string)=>{
-            if (!ent.existe(id)) {
+            if (!ent.existeEnActual(id)) {
                 if (this.dimensiones.length == 0) {
                     
                     if (this.expresion == null) {

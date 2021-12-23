@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.DeclaracionArray = void 0;
 var Simbolo_1 = require("../AST/Simbolo");
 var Tipo_1 = require("../AST/Tipo");
 var AccesoArray_1 = require("../Expresiones/AccesoArray");
@@ -18,7 +19,7 @@ var DeclaracionArray = /** @class */ (function () {
     DeclaracionArray.prototype.traducir = function (ent, arbol, resultado3d, temporales, listaErrores) {
         var _this = this;
         this.id.forEach(function (id) {
-            if (!ent.existe(id)) {
+            if (!ent.existeEnActual(id)) {
                 if (_this.dimensiones.length == 0) {
                     if (_this.expresion == null) {
                         // let valor:Arreglo = new Arreglo(this.tipo,0,0,[],this.linea,this.columna);
